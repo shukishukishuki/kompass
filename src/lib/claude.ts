@@ -4,7 +4,18 @@ import type { ClaudeGeneratedText } from "@/types/claude";
 import type { ScoringResult, UserLayer } from "@/types/scoring";
 
 /** 利用モデル（Kompass 診断コピー生成） */
-const CLAUDE_MODEL = "claude-sonnet-4-20250514";
+const DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
+
+/**
+ * 環境変数 ANTHROPIC_MODEL を優先し、未設定時は既定モデルを使う
+ */
+function resolveAnthropicModel(): string {
+  const configured = process.env.ANTHROPIC_MODEL;
+  if (configured === undefined || configured.trim() === "") {
+    return DEFAULT_ANTHROPIC_MODEL;
+  }
+  return configured.trim();
+}
 
 /** プロンプト・フォールバックで使う製品名（日本語UI向け） */
 const AI_LABEL_JA: Record<AiKind, string> = {
@@ -38,9 +49,10 @@ export async function generateDiagnosisTexts(
   try {
     const client = new Anthropic({ apiKey });
     const userContent = buildUserPrompt(scoringResult, userLayer);
+    const model = resolveAnthropicModel();
 
     const response = await client.messages.create({
-      model: CLAUDE_MODEL,
+      model,
       max_tokens: 1200,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userContent }],
