@@ -129,14 +129,14 @@ function applyClaudeCap(
 
 /**
  * Kompass_Scoring.md「一般層 / 上級者層の判定」
- * - Q4 で E または Q6 で E → 一般層（Q4 の「まだ使っていない・これから」は選択肢 E）
+ * - Q9 で E または Q6 で E → 一般層（Q9 の「ほとんど使っていない」は選択肢 E）
  * - Layer1 のみ完了（回答に questionId > 10 が含まれない）→ 一般層
  * - 上記以外かつ Layer2 以降に回答がある → 上級者層
  */
 function resolveUserLayer(answers: QuestionAnswer[]): "general" | "advanced" {
-  const q4 = getLastAnswerValue(answers, 4);
+  const q9 = getLastAnswerValue(answers, 9);
   const q6 = getLastAnswerValue(answers, 6);
-  if (q4 === "E" || q6 === "E") {
+  if (q9 === "E" || q6 === "E") {
     return "general";
   }
   const hasLayer2Or3 = answers.some((a) => a.questionId > 10);

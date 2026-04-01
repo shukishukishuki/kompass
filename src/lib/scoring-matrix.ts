@@ -6,7 +6,7 @@ import type { AiKind } from "@/types/ai";
  *
  * 選択肢キーは UI からの値（主に "A"〜"E"）。設問ごとに選択肢数が異なる。
  *
- * Q1〜Q3,Q5 は A〜D。Q4 は A〜E（一般層フラグは E）。Q6 は A〜E。Q7〜Q10 は A〜D。
+ * Q1〜Q8 は A〜D。Q9 は A〜E（一般層フラグは E）。Q10 は A〜E。
  * 文言を差し替える場合は Kompass_Scoring.md の行順と整合させること。
  */
 
@@ -24,9 +24,9 @@ export const SCORING_MATRIX: Readonly<
   },
   2: {
     A: { claude: 2 },
-    B: { gemini: 2, perplexity: 1 },
-    C: { claude: 1, perplexity: 2 },
-    D: { chatgpt: 2, copilot: 1, jiyujin: 1 },
+    B: { chatgpt: 2, copilot: 1 },
+    C: { gemini: 1, perplexity: 2 },
+    D: { claude: 1, copilot: 1, jiyujin: 2 },
   },
   3: {
     A: { claude: 2 },
@@ -35,49 +35,49 @@ export const SCORING_MATRIX: Readonly<
     D: { jiyujin: 2 },
   },
   4: {
-    A: { claude: 2, copilot: 1 },
-    B: { gemini: 2, perplexity: 2 },
-    C: { claude: 1, chatgpt: 2, jiyujin: 1 },
-    D: { chatgpt: 1, copilot: 2 },
-    /** 「まだ使っていない・これから」— 一般層フラグ＋ jiyujin 加点 */
-    E: { jiyujin: 2 },
+    A: { claude: 2 },
+    B: { chatgpt: 2 },
+    C: { gemini: 1, perplexity: 2, copilot: 1 },
+    D: { chatgpt: 1, jiyujin: 2 },
   },
   5: {
     A: { claude: 2 },
-    B: { chatgpt: 1, gemini: 2, perplexity: 1 },
-    C: { chatgpt: 1, copilot: 2 },
-    D: { chatgpt: 2, jiyujin: 1 },
+    B: { chatgpt: 2, gemini: 1, copilot: 1 },
+    C: { gemini: 1, perplexity: 2 },
+    D: { chatgpt: 1, copilot: 1, jiyujin: 2 },
   },
   6: {
-    A: { claude: 1 },
-    B: { chatgpt: 1 },
-    C: { perplexity: 1 },
-    D: { copilot: 1 },
-    E: { jiyujin: 1 },
+    A: { claude: 2 },
+    B: { chatgpt: 1, gemini: 1, perplexity: 1 },
+    C: { copilot: 2 },
+    D: { perplexity: 1, copilot: 1, jiyujin: 2 },
   },
   7: {
     A: { claude: 2 },
-    B: { chatgpt: 2, gemini: 1, copilot: 1, jiyujin: 1 },
-    C: { claude: 1, gemini: 1, perplexity: 2, copilot: 1 },
-    D: { chatgpt: 1, jiyujin: 2 },
+    B: { chatgpt: 2, copilot: 1 },
+    C: { gemini: 1, perplexity: 2 },
+    D: { copilot: 2, jiyujin: 1 },
   },
   8: {
     A: { claude: 2 },
-    B: { claude: 1, perplexity: 2 },
-    C: { chatgpt: 2, gemini: 1 },
-    D: { copilot: 1, jiyujin: 2 },
+    B: { chatgpt: 2, gemini: 1 },
+    C: { gemini: 1, perplexity: 2, jiyujin: 1 },
+    D: { perplexity: 1, copilot: 2 },
   },
   9: {
-    A: { chatgpt: 2, gemini: 1, jiyujin: 1 },
-    B: { gemini: 1, perplexity: 2 },
-    C: { claude: 1 },
-    D: { copilot: 2, jiyujin: 1 },
+    A: { claude: 2 },
+    B: { chatgpt: 1, gemini: 2, perplexity: 1 },
+    C: { claude: 1, chatgpt: 2, jiyujin: 1 },
+    D: { copilot: 2 },
+    /** 「ほとんど使っていない」— 一般層フラグ＋ jiyujin 加点 */
+    E: { jiyujin: 2 },
   },
   10: {
-    A: { claude: 2 },
-    B: { gemini: 1, perplexity: 2 },
-    C: { chatgpt: 1, gemini: 2, copilot: 1 },
-    D: { chatgpt: 2, jiyujin: 1 },
+    A: { gemini: 5 },
+    B: { copilot: 5 },
+    C: { chatgpt: 1 },
+    D: { gemini: 2, copilot: 2, jiyujin: 2 },
+    E: { claude: 1, chatgpt: 1, perplexity: 1 },
   },
   11: {
     A: { claude: 1, chatgpt: 1 },

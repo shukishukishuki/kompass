@@ -171,13 +171,21 @@ function isDiagnosisResult(value: unknown): value is DiagnosisResult {
       return false;
     }
     const p = pd as Record<string, unknown>;
-    if (typeof p.headline !== "string" || typeof p.body !== "string") {
+    if (
+      typeof p.catchCopy !== "string" ||
+      typeof p.supplement !== "string" ||
+      typeof p.contraryCopy !== "string" ||
+      typeof p.shareText !== "string"
+    ) {
       return false;
     }
-    if (!Array.isArray(p.traits)) {
+    if (!Array.isArray(p.strengths) || !Array.isArray(p.weaknesses)) {
       return false;
     }
-    if (!p.traits.every((t) => typeof t === "string")) {
+    if (
+      !p.strengths.every((t) => typeof t === "string") ||
+      !p.weaknesses.every((t) => typeof t === "string")
+    ) {
       return false;
     }
   }
@@ -520,7 +528,7 @@ export default function DiagnosisResultPage() {
       </header>
 
       <div className="mx-auto flex max-w-lg flex-col items-center gap-8 px-4 pt-10 text-center">
-        {personalityBlock !== null ? (
+        {personalityBlock !== null && result.layerCompleted === 1 ? (
           <section
             className="w-full text-left text-zinc-800"
             aria-labelledby="personality-heading"
@@ -528,14 +536,24 @@ export default function DiagnosisResultPage() {
             <h2 id="personality-heading" className="sr-only">
               性格特性
             </h2>
-            <p className="text-base font-semibold leading-relaxed">
-              {personalityBlock.headline}
+            <p className="text-2xl font-bold leading-relaxed">
+              {personalityBlock.catchCopy}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-zinc-700">
-              {personalityBlock.body}
+              {personalityBlock.supplement}
             </p>
-            <ul className="mt-5 list-disc space-y-2 pl-5 text-left text-sm leading-relaxed text-zinc-700">
-              {personalityBlock.traits.map((t) => (
+            <blockquote className="mt-4 border-l-4 border-zinc-300 pl-3 text-sm italic text-zinc-700">
+              {personalityBlock.contraryCopy}
+            </blockquote>
+            <p className="mt-5 text-sm font-semibold text-zinc-900">強み</p>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-left text-sm leading-relaxed text-zinc-700">
+              {personalityBlock.strengths.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
+            <p className="mt-5 text-sm font-semibold text-zinc-900">弱み</p>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-left text-sm leading-relaxed text-zinc-700">
+              {personalityBlock.weaknesses.map((t) => (
                 <li key={t}>{t}</li>
               ))}
             </ul>
@@ -600,6 +618,11 @@ export default function DiagnosisResultPage() {
           )}
         </section>
 
+        {personalityBlock !== null && result.layerCompleted === 1 ? (
+          <p className="w-full text-left text-xs text-zinc-500">
+            {personalityBlock.shareText}
+          </p>
+        ) : null}
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
           <a
             href={shareHref}

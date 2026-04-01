@@ -18,10 +18,12 @@ export interface DiagnosisQuestionDef {
 /** MBTI 前・Layer 区切り・戻るボタンなど */
 export interface DiagnosisFlowCopy {
   mbtiInvalid: string;
-  layer1BreakBody: string;
+  layer1Heading: string;
+  layer1Sub: string;
   layer1Continue: string;
   layer1ResultNow: string;
-  layer2BreakBody: string;
+  layer2Heading: string;
+  layer2Sub: string;
   layer2Continue: string;
   layer2ResultNow: string;
   backQuit: string;

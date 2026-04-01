@@ -32,13 +32,13 @@ const messagesByLocale: Record<string, MessagesFile> = {
 /** flow 未定義時の日本語フォールバック */
 const FALLBACK_FLOW: DiagnosisFlowCopy = {
   mbtiInvalid: "有効なMBTIタイプ（4文字）を入力するか、空のままにしてください",
-  layer1BreakBody:
-    "あなたのベースAIが見えてきました。より精度の高い結果のために、続けますか？（あと20問）",
-  layer1Continue: "続ける",
-  layer1ResultNow: "ここで結果を見る",
-  layer2BreakBody:
-    "残り10問で、プロ診断レベルの精度になります。続けますか？",
-  layer2Continue: "続ける",
+  layer1Heading: "あなたのAIタイプが、見えてきました。",
+  layer1Sub: "あと10問で、仕事スタイルまで診断できます。続けますか？",
+  layer1Continue: "もっと詳しく知る →",
+  layer1ResultNow: "ひとまず結果を見る",
+  layer2Heading: "診断精度が、グッと上がります。",
+  layer2Sub: "残り10問で、業種・職種まで踏み込んだ診断になります。",
+  layer2Continue: "プロ診断に進む →",
   layer2ResultNow: "ここで結果を見る",
   backQuit: "診断をやめる",
   backPrevious: "前の問題に戻る",
@@ -331,8 +331,11 @@ export default function DiagnosisPage() {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
         <div className="w-full max-w-lg space-y-8 text-center">
+          <h2 className="text-xl font-semibold text-zinc-900">
+            {flow.layer1Heading}
+          </h2>
           <p className="text-base leading-relaxed text-zinc-800">
-            {flow.layer1BreakBody}
+            {flow.layer1Sub}
           </p>
           {errorMessage !== null ? (
             <p className="text-sm text-red-600" role="alert">
@@ -423,8 +426,11 @@ export default function DiagnosisPage() {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
         <div className="w-full max-w-lg space-y-8 text-center">
+          <h2 className="text-xl font-semibold text-zinc-900">
+            {flow.layer2Heading}
+          </h2>
           <p className="text-base leading-relaxed text-zinc-800">
-            {flow.layer2BreakBody}
+            {flow.layer2Sub}
           </p>
           {errorMessage !== null ? (
             <p className="text-sm text-red-600" role="alert">

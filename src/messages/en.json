@@ -14,11 +14,13 @@
     },
     "flow": {
       "mbtiInvalid": "Enter a valid 4-letter MBTI type or leave the field empty.",
-      "layer1BreakBody": "Your base AI is taking shape. Continue for a more accurate result? (20 questions left)",
-      "layer1Continue": "Continue",
-      "layer1ResultNow": "See my result now",
-      "layer2BreakBody": "10 more questions for pro-level accuracy. Continue?",
-      "layer2Continue": "Continue",
+      "layer1Heading": "Your AI type is coming into focus.",
+      "layer1Sub": "10 more questions will reveal your work style. Continue?",
+      "layer1Continue": "See deeper insights →",
+      "layer1ResultNow": "See result for now",
+      "layer2Heading": "Accuracy gets significantly better here.",
+      "layer2Sub": "The last 10 questions add industry/job-level depth.",
+      "layer2Continue": "Go to pro diagnosis →",
       "layer2ResultNow": "See my result now",
       "backQuit": "Exit diagnosis",
       "backPrevious": "Previous question"
