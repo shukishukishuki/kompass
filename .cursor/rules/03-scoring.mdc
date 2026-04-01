@@ -1,0 +1,67 @@
+---
+description: 診断・スコアリングロジックのルール
+globs: ["**/scoringEngine.ts", "**/scoring/**"]
+---
+
+# スコアリングロジック — 編集ルール
+
+## ⚠️ このファイルは慎重に扱うこと
+
+`lib/scoringEngine.ts` はKompassの診断エンジンの核心です。
+**仕様書（Kompass_Scoring.md / Kompass_Logic_v1.2.md）と必ず照合してから編集すること。**
+
+## スコアリング基本仕様
+
+### 対象AI（6種）
+- Claude（相談相手タイプ）
+- ChatGPT（万能助手タイプ）
+- Gemini（情報通タイプ）
+- Perplexity（研究者タイプ）
+- Copilot（秘書タイプ）
+- 複数使い分け（自由人タイプ）
+
+### 重要な制御ルール（変更禁止）
+
+```typescript
+// 自由人タイプの出現率は20%以下に制御すること
+const JIYUJIN_MAX_RATE = 0.20;
+
+// Q14: インフラ環境によるボーナス
+// Google環境 → Geminiに +5
+// Microsoft環境 → Copilotに +5
+
+// Claude バイアス防止キャップ
+// Claudeが不当に高スコアにならないよう上限を設ける
+
+// ChatGPT: ファーストタッチAIとして一般層に優先表示
+// Claude: 品質AIとして上級者層に推薦
+```
+
+### スコア→displayMode 変換
+```typescript
+function getDisplayMode(scoreDiff: number, allLow: boolean): DisplayMode {
+  if (allLow) return "mixed";         // 全AI低スコア → 自由人fallback
+  if (scoreDiff >= 3) return "definitive";  // 差3点以上 → 断定表示
+  return "borderline";                // 差2点以内 → 中間表示
+}
+```
+
+### ユーザー層判定
+```typescript
+// 一般層: Q4でE選択 OR Q6でE選択（または Layer1 のみ完了）
+// 上級者層: それ以外かつ Layer2 以降
+function getUserTier(answers: Answer[]): "general" | "advanced" {
+  const q4Answer = answers.find(a => a.questionId === 4);
+  const q6Answer = answers.find(a => a.questionId === 6);
+  if (q4Answer?.value === "E" || q6Answer?.value === "E") return "general";
+  return "advanced";
+}
+```
+
+## テスト要件
+
+スコアリングロジックを変更した場合は必ず以下を確認：
+1. 自由人タイプの出現率が20%以下であること
+2. Q14のインフラボーナスが正しく加算されること
+3. displayModeが仕様通りに出力されること
+4. 一般層と上級者層で出力が正しく分岐すること

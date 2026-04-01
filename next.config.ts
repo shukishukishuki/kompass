@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  /** ルートURLを既定ロケールへ寄せる */
+  async redirects() {
+    return [{ source: "/", destination: "/ja", permanent: false }];
+  },
 };
 
 export default nextConfig;

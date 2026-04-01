@@ -1,0 +1,331 @@
+{
+  "diagnosis": {
+    "title": "Base AI Diagnosis",
+    "loadingLabel": "Calculating your result…",
+    "errorNoQuestions": "Could not load questions.",
+    "errorSubmit": "Something went wrong. Please check your connection and try again.",
+    "resultPage": {
+      "statsAggregating": "Aggregating…",
+      "statsPercentTemplate": "{percent}% of all respondents match this type",
+      "rarityOften": "Common type",
+      "rarityGeneral": "Fairly common",
+      "rarityUnusual": "Somewhat rare",
+      "rarityRare": "Rare type"
+    },
+    "flow": {
+      "mbtiInvalid": "Enter a valid 4-letter MBTI type or leave the field empty.",
+      "layer1BreakBody": "Your base AI is taking shape. Continue for a more accurate result? (20 questions left)",
+      "layer1Continue": "Continue",
+      "layer1ResultNow": "See my result now",
+      "layer2BreakBody": "10 more questions for pro-level accuracy. Continue?",
+      "layer2Continue": "Continue",
+      "layer2ResultNow": "See my result now",
+      "backQuit": "Exit diagnosis",
+      "backPrevious": "Previous question"
+    },
+    "questions": [
+      {
+        "id": 1,
+        "prompt": "When you get some solo time on a day off, what do you do?",
+        "options": [
+          { "value": "A", "label": "Stay home and binge dramas or music" },
+          { "value": "B", "label": "Message friends and go out" },
+          { "value": "C", "label": "Explore places or experiences on my own" },
+          { "value": "D", "label": "Push work or personal projects forward" }
+        ]
+      },
+      {
+        "id": 2,
+        "prompt": "When worries hit late at night, what do you do first?",
+        "options": [
+          { "value": "A", "label": "Want someone to listen (including AI)" },
+          { "value": "B", "label": "Search online for causes" },
+          { "value": "C", "label": "Sort it in my head, then sleep" },
+          { "value": "D", "label": "Leave it till morning; try not to dwell" }
+        ]
+      },
+      {
+        "id": 3,
+        "prompt": "What kind of partner are you drawn to?",
+        "options": [
+          { "value": "A", "label": "A good listener who empathizes" },
+          { "value": "B", "label": "Capable and dependable in everything" },
+          { "value": "C", "label": "Knowledgeable and teaches me a lot" },
+          { "value": "D", "label": "Respects my pace and doesn’t interfere too much" }
+        ]
+      },
+      {
+        "id": 4,
+        "prompt": "In the past week, where did you most want AI’s help?",
+        "options": [
+          { "value": "A", "label": "Writing documents, decks, or plans" },
+          { "value": "B", "label": "Research, learning, gathering info" },
+          { "value": "C", "label": "Someone to talk to or bounce ideas with" },
+          { "value": "D", "label": "Emails and messages" },
+          { "value": "E", "label": "Not using AI yet / starting soon" }
+        ]
+      },
+      {
+        "id": 5,
+        "prompt": "If AI were your friend, what would you ask?",
+        "options": [
+          { "value": "A", "label": "Listen to complaints and worries" },
+          { "value": "B", "label": "Look up anything and teach me" },
+          { "value": "C", "label": "Help with work and tasks" },
+          { "value": "D", "label": "Fun chats and small talk" }
+        ]
+      },
+      {
+        "id": 6,
+        "prompt": "Which AI do you most want to try right now?",
+        "options": [
+          { "value": "A", "label": "Claude" },
+          { "value": "B", "label": "ChatGPT" },
+          { "value": "C", "label": "Perplexity" },
+          { "value": "D", "label": "Copilot" },
+          { "value": "E", "label": "Nothing decided yet" }
+        ]
+      },
+      {
+        "id": 7,
+        "prompt": "Do you want AI to feel kind, or smart?",
+        "options": [
+          { "value": "A", "label": "Warmth and empathy" },
+          { "value": "B", "label": "Versatility and speed" },
+          { "value": "C", "label": "Accuracy and logical answers" },
+          { "value": "D", "label": "Flexibility to switch by situation" }
+        ]
+      },
+      {
+        "id": 8,
+        "prompt": "When stressed, how do you unwind?",
+        "options": [
+          { "value": "A", "label": "Talk to someone and vent" },
+          { "value": "B", "label": "Spend quiet time alone" },
+          { "value": "C", "label": "Move my body or take action" },
+          { "value": "D", "label": "Eat something I like or do something fun" }
+        ]
+      },
+      {
+        "id": 9,
+        "prompt": "How do you plan a trip?",
+        "options": [
+          { "value": "A", "label": "Let AI research everything and decide" },
+          { "value": "B", "label": "Research myself, then have AI organize it" },
+          { "value": "C", "label": "Ask friends or read reviews first" },
+          { "value": "D", "label": "Prefer to wing it" }
+        ]
+      },
+      {
+        "id": 10,
+        "prompt": "What do you want most from AI?",
+        "options": [
+          { "value": "A", "label": "Listen and care about my situation" },
+          { "value": "B", "label": "Accurate, trustworthy information" },
+          { "value": "C", "label": "Speed and versatility" },
+          { "value": "D", "label": "Fun and never boring" }
+        ]
+      },
+      {
+        "id": 11,
+        "prompt": "Where do you mainly use AI?",
+        "options": [
+          { "value": "A", "label": "Private life" },
+          { "value": "B", "label": "Work and business" },
+          { "value": "C", "label": "Study and self-improvement" },
+          { "value": "D", "label": "Both evenly" }
+        ]
+      },
+      {
+        "id": 12,
+        "prompt": "When writing, what do you want from AI?",
+        "options": [
+          { "value": "A", "label": "Keep my tone and polish" },
+          { "value": "B", "label": "Fast drafts from templates" },
+          { "value": "C", "label": "Accuracy and sources" },
+          { "value": "D", "label": "Lots of options—I’ll choose" }
+        ]
+      },
+      {
+        "id": 13,
+        "prompt": "How important is “freshness” of information?",
+        "options": [
+          { "value": "A", "label": "Very—always need the latest" },
+          { "value": "B", "label": "Important—but depth matters too" },
+          { "value": "C", "label": "Less important than quality" },
+          { "value": "D", "label": "Depends—I use both" }
+        ]
+      },
+      {
+        "id": 14,
+        "prompt": "Which Google or Microsoft services do you use?",
+        "options": [
+          { "value": "A", "label": "Gmail, Google Docs, Drive often" },
+          { "value": "B", "label": "Word, Excel, PowerPoint, Teams often" },
+          { "value": "C", "label": "Use both" },
+          { "value": "D", "label": "Rarely use either" }
+        ]
+      },
+      {
+        "id": 15,
+        "prompt": "Do your AI inputs include private or confidential info?",
+        "options": [
+          { "value": "A", "label": "Often—I care about privacy" },
+          { "value": "B", "label": "Sometimes—somewhat careful" },
+          { "value": "C", "label": "Rarely—not very concerned" },
+          { "value": "D", "label": "Often work-related confidential info" }
+        ]
+      },
+      {
+        "id": 16,
+        "prompt": "How much could you realistically pay per month for AI?",
+        "options": [
+          { "value": "A", "label": "Free only, or under ¥500" },
+          { "value": "B", "label": "About ¥1,000–2,000" },
+          { "value": "C", "label": "About ¥3,000–5,000" },
+          { "value": "D", "label": "¥5,000+ if it’s worth it" }
+        ]
+      },
+      {
+        "id": 17,
+        "prompt": "Do you want AI to read long text or docs and summarize?",
+        "options": [
+          { "value": "A", "label": "Often—that’s my top use" },
+          { "value": "B", "label": "Sometimes" },
+          { "value": "C", "label": "Rarely" },
+          { "value": "D", "label": "I want to load lots of PDFs" }
+        ]
+      },
+      {
+        "id": 18,
+        "prompt": "If you use images with AI, which scenario is most common?",
+        "options": [
+          { "value": "A", "label": "Create images (illustrations, assets)" },
+          { "value": "B", "label": "Show photos or documents to read" },
+          { "value": "C", "label": "Both" },
+          { "value": "D", "label": "Rarely use images" }
+        ]
+      },
+      {
+        "id": 19,
+        "prompt": "How do you feel when AI makes mistakes?",
+        "options": [
+          { "value": "A", "label": "Fine with some errors—I keep using it" },
+          { "value": "B", "label": "If wrong, show sources" },
+          { "value": "C", "label": "Can’t afford errors when it matters" },
+          { "value": "D", "label": "Fixing mistakes together is fun" }
+        ]
+      },
+      {
+        "id": 20,
+        "prompt": "How often do you imagine using AI?",
+        "options": [
+          { "value": "A", "label": "Daily—almost always open" },
+          { "value": "B", "label": "A few times a week when needed" },
+          { "value": "C", "label": "Only for specific tasks" },
+          { "value": "D", "label": "Rarely yet—want to start" }
+        ]
+      },
+      {
+        "id": 21,
+        "prompt": "What’s your role?",
+        "options": [
+          { "value": "A", "label": "Company employee (general or specialist)" },
+          { "value": "B", "label": "Executive or manager" },
+          { "value": "C", "label": "Freelancer or sole proprietor" },
+          { "value": "D", "label": "Student, job hunting, or studying" }
+        ]
+      },
+      {
+        "id": 22,
+        "prompt": "How much do you use AI at work now?",
+        "options": [
+          { "value": "A", "label": "Daily" },
+          { "value": "B", "label": "Tried it a bit" },
+          { "value": "C", "label": "Want to but haven’t really started" },
+          { "value": "D", "label": "Hardly at work" }
+        ]
+      },
+      {
+        "id": 23,
+        "prompt": "Do you want to drive AI adoption in your team?",
+        "options": [
+          { "value": "A", "label": "Yes—want to push it" },
+          { "value": "B", "label": "Interested but unsure how" },
+          { "value": "C", "label": "After I’m comfortable myself" },
+          { "value": "D", "label": "Only I need to use it" }
+        ]
+      },
+      {
+        "id": 24,
+        "prompt": "Do you enter company or customer secrets into AI?",
+        "options": [
+          { "value": "A", "label": "Yes—security worries me" },
+          { "value": "B", "label": "Yes—not too worried" },
+          { "value": "C", "label": "No—I avoid confidential work info" },
+          { "value": "D", "label": "No—don’t use AI much for work" }
+        ]
+      },
+      {
+        "id": 25,
+        "prompt": "Do you build or want to build apps or web services?",
+        "options": [
+          { "value": "A", "label": "Building—use AI a lot (I can code)" },
+          { "value": "B", "label": "Want to build with no-code tools" },
+          { "value": "C", "label": "No plans to build but use tools" },
+          { "value": "D", "label": "Not interested" }
+        ]
+      },
+      {
+        "id": 26,
+        "prompt": "Interested in automating work?",
+        "options": [
+          { "value": "A", "label": "Very—already doing it" },
+          { "value": "B", "label": "Interested but hard to start" },
+          { "value": "C", "label": "Some tasks are enough" },
+          { "value": "D", "label": "More interested in quality than automation" }
+        ]
+      },
+      {
+        "id": 27,
+        "prompt": "How much do you spend on AI per month (all services)?",
+        "options": [
+          { "value": "A", "label": "Free only" },
+          { "value": "B", "label": "¥1,000–3,000" },
+          { "value": "C", "label": "¥3,000–8,000" },
+          { "value": "D", "label": "¥8,000+" }
+        ]
+      },
+      {
+        "id": 28,
+        "prompt": "Will you likely teach colleagues or others how to use AI?",
+        "options": [
+          { "value": "A", "label": "Already teaching or in that role" },
+          { "value": "B", "label": "Likely—or I want to" },
+          { "value": "C", "label": "I’m still learning" },
+          { "value": "D", "label": "No plan or need to teach" }
+        ]
+      },
+      {
+        "id": 29,
+        "prompt": "What work problem do you most want AI to solve?",
+        "options": [
+          { "value": "A", "label": "Less time on docs, mail, materials" },
+          { "value": "B", "label": "Better research quality" },
+          { "value": "C", "label": "Meetings, tasks, daily efficiency" },
+          { "value": "D", "label": "Many issues at once" }
+        ]
+      },
+      {
+        "id": 30,
+        "prompt": "Would you use pro AI consulting or support if offered?",
+        "options": [
+          { "value": "A", "label": "Yes—right away" },
+          { "value": "B", "label": "Depends on the offer" },
+          { "value": "C", "label": "I can manage without it" },
+          { "value": "D", "label": "Not at that level yet" }
+        ]
+      }
+    ]
+  }
+}

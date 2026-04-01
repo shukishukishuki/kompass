@@ -1,0 +1,94 @@
+---
+description: ディレクトリ構造・アーキテクチャルール
+globs: ["**/*.ts", "**/*.tsx"]
+alwaysApply: true
+---
+
+# ディレクトリ構造
+
+```
+kompass/
+├── app/
+│   ├── [locale]/              # i18n対応（ja/en）
+│   │   ├── page.tsx           # トップページ
+│   │   ├── diagnosis/
+│   │   │   ├── page.tsx       # 診断開始
+│   │   │   └── result/
+│   │   │       └── page.tsx   # 診断結果
+│   │   └── guide/
+│   │       └── [slug]/
+│   │           └── page.tsx   # 移行ガイド
+│   └── api/
+│       ├── diagnosis/
+│       │   └── route.ts       # 診断結果生成API
+│       └── scoring/
+│           └── route.ts       # スコアリングAPI
+│
+├── components/
+│   ├── ui/                    # 汎用UIコンポーネント
+│   ├── diagnosis/             # 診断関連コンポーネント
+│   ├── result/                # 結果画面コンポーネント
+│   └── share/                 # シェアカード関連
+│
+├── lib/
+│   ├── scoringEngine.ts       # ⚠️ スコアリング独立ファイル（慎重に編集）
+│   ├── claude.ts              # Claude API クライアント
+│   ├── supabase.ts            # Supabase クライアント
+│   └── utils.ts               # 汎用ユーティリティ
+│
+├── types/
+│   ├── diagnosis.ts           # 診断関連の型定義
+│   ├── scoring.ts             # スコアリング関連の型定義
+│   └── ai.ts                  # AI・タイプ関連の型定義
+│
+├── public/
+│   └── og/                    # OGP画像（タイプ別）
+│
+└── messages/
+    ├── ja.json                # 日本語テキスト
+    └── en.json                # 英語テキスト
+```
+
+## アーキテクチャ原則
+
+### データフロー
+```
+ユーザー回答 → scoringEngine.ts → JSON出力 → Claude API → 結果表示
+```
+
+### scoringEngine.ts は独立させる（重要）
+- このファイルはOSS公開予定のロジックを含む
+- ビジネスロジックをUIと混在させない
+- 入力: 30問の回答配列
+- 出力: 後述のJSON構造（固定）
+
+### 出力JSONの構造（変更禁止）
+```typescript
+interface DiagnosisResult {
+  baseAI: {
+    name: string;           // AIの名前
+    score: number;          // スコア
+    reason: string;         // 推薦理由
+    setup: string;          // 初期設定アドバイス
+  };
+  subAI: {
+    name: string;           // サブAIの名前
+    usage: string;          // 使い方
+  };
+  expertView: string;       // 上級者向けコメント（Claude APIが生成）
+  type: string;             // タイプ名（日本語）
+  typeEn: string;           // タイプ名（英語）
+  scoreDiff: number;        // 1位と2位のスコア差
+  displayMode: "definitive" | "borderline" | "mixed";
+}
+```
+
+### displayMode の判定ルール
+- `scoreDiff >= 3` → `"definitive"`（「明確に○○タイプです」）
+- `scoreDiff <= 2` → `"borderline"`（「○○と△△の中間タイプです」）
+- 全AI低スコア → fallback: 自由人タイプ＋ChatGPT推奨
+
+## i18n ルール
+- テキストは必ず `messages/ja.json` と `messages/en.json` に分離
+- コンポーネント内に日本語文字列をハードコードしない
+- URLは `/en/` プレフィックスで英語版を提供

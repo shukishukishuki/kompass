@@ -1,0 +1,47 @@
+---
+description: Kompass プロジェクト全体の文脈・設計思想
+alwaysApply: true
+---
+
+# Kompass — プロジェクト概要
+
+## サービスの本質
+「あなたのベースAIを決める、AI意思決定サービス」
+
+- 思考スタイル（どんな人か）でAIを選ぶ
+- 「考えさせずに決める」がUXの核心
+- **ベースAI（1つ）＋ サブAI（用途別）の2層構造**
+
+## ユーザー層の分岐（重要）
+
+| 層 | 判定条件 | 出力 |
+|---|---|---|
+| 一般層 | Q4でE or Q6でE など | ベースAI1つ＋「まずこれだけでOK」 |
+| 上級者層 | Layer2以降 | ベースAI＋サブAI＋コンサルの一言 |
+
+## 6タイプ一覧
+
+| タイプ | 英語名 | 推奨AI |
+|---|---|---|
+| 相談相手タイプ | The Confidant | Claude |
+| 万能助手タイプ | The Generalist | ChatGPT |
+| 情報通タイプ | The Scout | Gemini |
+| 研究者タイプ | The Analyst | Perplexity |
+| 秘書タイプ | The Executive | Copilot |
+| 自由人タイプ | The Orchestrator | 複数使い分け |
+
+> ⚠️ **自由人タイプの出現率は20%以下に抑えること**（診断価値の崩壊を防ぐ）
+
+## 画面構成
+
+- `kompass.ai` — トップ（移行UI → 移行ガイド → 診断誘導）
+- `kompass.ai/diagnosis` — 30問診断 → 結果 → シェア
+- `kompass.ai/guide/[from]-to-[to]` — 移行ガイド
+- `kompass.ai/community/[type]` — 将来予約
+- `kompass.ai/forum` — 将来予約
+- `kompass.ai/en/` — 英語対応（i18n前提）
+
+## 開発者情報
+- 非エンジニアによるバイブコーディング開発
+- 設計・仕様はClaude、実装はCursorで分担
+- コードの説明は日本語で記述すること

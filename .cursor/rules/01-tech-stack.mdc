@@ -1,0 +1,53 @@
+---
+description: 技術スタック・コーディング規約
+alwaysApply: true
+---
+
+# 技術スタック（確定・変更禁止）
+
+## フレームワーク・ライブラリ
+
+```
+Next.js (App Router) + TypeScript
+Tailwind CSS
+Clerk（認証）
+Supabase（データベース）
+Vercel（デプロイ）
+```
+
+## 外部API
+
+```
+Claude API       — 診断結果の文章生成・コンサルコメント生成
+Perplexity API  — 上級者向け最新AI情報の自動収集
+Zapier          — 自動化パイプライン
+```
+
+## コーディング規約
+
+### TypeScript
+- `any` 型は使用禁止。必ず型定義を行う
+- 型定義は `types/` ディレクトリに集約する
+- コンポーネントのpropsは必ずinterfaceで定義する
+
+### 命名規則
+- コンポーネント: PascalCase（例: `DiagnosisCard`）
+- 関数・変数: camelCase（例: `calculateScore`）
+- 定数: UPPER_SNAKE_CASE（例: `MAX_QUESTIONS`）
+- ファイル名: kebab-case（例: `scoring-engine.ts`）
+
+### コメント
+- コードの説明コメントは**日本語**で書くこと
+- 関数には必ずJSDoc形式でコメントを付ける
+- 「なぜそう実装したか」の理由コメントを残す
+
+### エラー処理
+- API呼び出しは必ず try-catch で囲む
+- ユーザーに見せるエラーメッセージは日本語
+- コンソールログは日本語でわかりやすく
+
+## 禁止事項
+- `console.log` を本番コードに残さない（デバッグ用は `// DEBUG:` でマーク）
+- ハードコードされたAPIキーは絶対に書かない（`.env.local` を使う）
+- `any` 型の使用禁止
+- `// TODO` を未解決のまま放置しない

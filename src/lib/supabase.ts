@@ -1,0 +1,135 @@
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type { DiagnosisResult } from "@/types/diagnosis";
+import type { DiagnosisResultsInsertPayload } from "@/types/supabase-db";
+
+/** ブラウザ用シングルトン */
+let browserClient: SupabaseClient | null = null;
+
+/**
+ * クライアントサイド用の Supabase クライアントを返す
+ * URL / anon キーは NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY
+ */
+export function createSupabaseClient(): SupabaseClient {
+  if (browserClient !== null) {
+    return browserClient;
+  }
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (url === undefined || url.trim() === "") {
+    throw new Error(
+      "NEXT_PUBLIC_SUPABASE_URL が設定されていません。`.env.local` を確認してください。"
+    );
+  }
+  if (anonKey === undefined || anonKey.trim() === "") {
+    throw new Error(
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY が設定されていません。`.env.local` を確認してください。"
+    );
+  }
+  browserClient = createClient(url, anonKey);
+  return browserClient;
+}
+
+/**
+ * INSERT 応答の単一行に id が含まれるか
+ */
+function isRowWithId(value: unknown): value is { id: string } {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const o = value as Record<string, unknown>;
+  return typeof o.id === "string";
+}
+
+/**
+ * SELECT type 行の形か
+ */
+function isTypeRow(value: unknown): value is { type: string } {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const o = value as Record<string, unknown>;
+  return typeof o.type === "string";
+}
+
+/**
+ * 診断結果を diagnosis_results に保存する
+ * @returns 成功時は挿入行の id、失敗時は null
+ */
+export async function saveDiagnosisResult(
+  result: DiagnosisResult
+): Promise<string | null> {
+  try {
+    const supabase = createSupabaseClient();
+    const payload: DiagnosisResultsInsertPayload = {
+      type: result.type,
+      type_en: result.typeEn,
+      base_ai_name: result.baseAI.name,
+      display_mode: result.displayMode,
+    };
+
+    const { data, error } = await supabase
+      .from("diagnosis_results")
+      .insert(payload)
+      .select("id")
+      .single();
+
+    if (error !== null) {
+      console.error(
+        "[Supabase] 診断結果の保存に失敗しました:",
+        error.message,
+        error
+      );
+      return null;
+    }
+
+    if (!isRowWithId(data)) {
+      console.error(
+        "[Supabase] 診断結果の保存応答が不正です（id が取得できません）"
+      );
+      return null;
+    }
+
+    return data.id;
+  } catch (e) {
+    console.error("[Supabase] saveDiagnosisResult で例外が発生しました:", e);
+    return null;
+  }
+}
+
+/** getDiagnosisStats の戻り値：タイプ名 → 件数 */
+export type DiagnosisTypeStats = Record<string, number>;
+
+/**
+ * タイプ別の診断回数を集計する
+ */
+export async function getDiagnosisStats(): Promise<DiagnosisTypeStats> {
+  try {
+    const supabase = createSupabaseClient();
+    const { data, error } = await supabase
+      .from("diagnosis_results")
+      .select("type");
+
+    if (error !== null) {
+      console.error(
+        "[Supabase] 診断統計の取得に失敗しました:",
+        error.message,
+        error
+      );
+      return {};
+    }
+
+    const stats: DiagnosisTypeStats = {};
+    const rows = Array.isArray(data) ? data : [];
+    for (const row of rows) {
+      if (!isTypeRow(row)) {
+        continue;
+      }
+      const t = row.type;
+      stats[t] = (stats[t] ?? 0) + 1;
+    }
+    return stats;
+  } catch (e) {
+    console.error("[Supabase] getDiagnosisStats で例外が発生しました:", e);
+    return {};
+  }
+}
