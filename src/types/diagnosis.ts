@@ -15,6 +15,13 @@ export interface PersonalityDescription {
   contraryCopy: string;
   strengths: string[];
   weaknesses: string[];
+  oppositeType: {
+    typeJa: string;
+    aiName: string;
+    description: string;
+  };
+  ngUsage: string;
+  literacyAnalysis: string;
   shareText: string;
 }
 

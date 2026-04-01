@@ -11,7 +11,6 @@ import {
 import {
   getAiLabelJaForKind,
   getThemeColorForBaseAiName,
-  resolveAiKindFromDisplayName,
 } from "@/lib/ai-display";
 import {
   AI_KIND_TO_PERSONALITY_EN,
@@ -29,7 +28,7 @@ import jaMessages from "@/messages/ja.json";
 import type { DiagnosisResult } from "@/types/diagnosis";
 import type { DiagnosisResultPageCopy } from "@/types/diagnosis-messages";
 import type { MessagesFile } from "@/types/diagnosis-messages";
-import { AI_KINDS, type AiKind, type PersonalityTypeJa } from "@/types/ai";
+import { AI_KINDS, type AiKind } from "@/types/ai";
 import type { ScoringResult } from "@/types/scoring";
 
 const messagesByLocale: Record<string, MessagesFile> = {
@@ -175,7 +174,9 @@ function isDiagnosisResult(value: unknown): value is DiagnosisResult {
       typeof p.catchCopy !== "string" ||
       typeof p.supplement !== "string" ||
       typeof p.contraryCopy !== "string" ||
-      typeof p.shareText !== "string"
+      typeof p.shareText !== "string" ||
+      typeof p.ngUsage !== "string" ||
+      typeof p.literacyAnalysis !== "string"
     ) {
       return false;
     }
@@ -188,52 +189,20 @@ function isDiagnosisResult(value: unknown): value is DiagnosisResult {
     ) {
       return false;
     }
+    const opposite = p.oppositeType;
+    if (typeof opposite !== "object" || opposite === null) {
+      return false;
+    }
+    const o2 = opposite as Record<string, unknown>;
+    if (
+      typeof o2.typeJa !== "string" ||
+      typeof o2.aiName !== "string" ||
+      typeof o2.description !== "string"
+    ) {
+      return false;
+    }
   }
   return true;
-}
-
-/**
- * サブAIの表示名から、タイプ名風のラベルを推定（borderline 文言の2つ目用）
- */
-function subNameToTypeHint(subName: string): string | null {
-  const kind = resolveAiKindFromDisplayName(subName);
-  if (kind === null) {
-    return null;
-  }
-  const byKind: Record<AiKind, PersonalityTypeJa> = {
-    claude: "相談相手タイプ",
-    chatgpt: "万能助手タイプ",
-    gemini: "情報通タイプ",
-    perplexity: "研究者タイプ",
-    copilot: "秘書タイプ",
-    jiyujin: "自由人タイプ",
-  };
-  return byKind[kind];
-}
-
-/**
- * displayMode に応じた見出し文言
- */
-function getDisplayModeMessage(result: DiagnosisResult): string {
-  const { displayMode, type, typeEn } = result;
-
-  if (displayMode === "definitive") {
-    return `あなたは明確に${type}です`;
-  }
-
-  if (displayMode === "mixed") {
-    return "まずChatGPTから始めましょう";
-  }
-
-  const firstSub = result.subAI[0];
-  const second =
-    firstSub !== undefined && firstSub.name.trim() !== ""
-      ? subNameToTypeHint(firstSub.name)
-      : null;
-  if (second !== null && second !== type) {
-    return `あなたは${type}と${second}の中間タイプです`;
-  }
-  return `あなたは${type}（${typeEn}）に近い一方、別スタイルとも僅差の中間タイプです`;
 }
 
 /**
@@ -498,7 +467,6 @@ export default function DiagnosisResultPage() {
     );
   }
 
-  const modeMessage = getDisplayModeMessage(result);
   const advanced = isAdvancedPresentation(result);
 
   return (
@@ -528,7 +496,7 @@ export default function DiagnosisResultPage() {
       </header>
 
       <div className="mx-auto flex max-w-lg flex-col items-center gap-8 px-4 pt-10 text-center">
-        {personalityBlock !== null && result.layerCompleted === 1 ? (
+        {personalityBlock !== null ? (
           <section
             className="w-full text-left text-zinc-800"
             aria-labelledby="personality-heading"
@@ -536,7 +504,7 @@ export default function DiagnosisResultPage() {
             <h2 id="personality-heading" className="sr-only">
               性格特性
             </h2>
-            <p className="text-2xl font-bold leading-relaxed">
+            <p className="text-4xl font-extrabold leading-tight tracking-tight">
               {personalityBlock.catchCopy}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-zinc-700">
@@ -557,6 +525,40 @@ export default function DiagnosisResultPage() {
                 <li key={t}>{t}</li>
               ))}
             </ul>
+            {result.layerCompleted === 1 ? (
+              <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                <p className="text-sm font-semibold text-zinc-900">
+                  真逆のAIタイプ
+                </p>
+                <p className="mt-2 text-sm text-zinc-700">
+                  {personalityBlock.oppositeType.typeJa}（
+                  {personalityBlock.oppositeType.aiName}）
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-700">
+                  {personalityBlock.oppositeType.description}
+                </p>
+              </div>
+            ) : null}
+            {result.layerCompleted >= 2 ? (
+              <div className="mt-6 space-y-4">
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                  <p className="text-sm font-semibold text-zinc-900">
+                    NGな使い方
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-700">
+                    {personalityBlock.ngUsage}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                  <p className="text-sm font-semibold text-zinc-900">
+                    AIリテラシー分析
+                  </p>
+                  <p className="mt-2 text-sm leading-relaxed text-zinc-700">
+                    {personalityBlock.literacyAnalysis}
+                  </p>
+                </div>
+              </div>
+            ) : null}
           </section>
         ) : null}
 
@@ -573,15 +575,6 @@ export default function DiagnosisResultPage() {
               {statsDisplay.badge}
             </p>
           ) : null}
-        </section>
-
-        <section aria-labelledby="mode-heading">
-          <h2 id="mode-heading" className="sr-only">
-            診断の確度
-          </h2>
-          <p className="text-base font-medium leading-relaxed text-zinc-800">
-            {modeMessage}
-          </p>
         </section>
 
         <section

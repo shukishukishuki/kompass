@@ -32,13 +32,13 @@ const messagesByLocale: Record<string, MessagesFile> = {
 /** flow 未定義時の日本語フォールバック */
 const FALLBACK_FLOW: DiagnosisFlowCopy = {
   mbtiInvalid: "有効なMBTIタイプ（4文字）を入力するか、空のままにしてください",
-  layer1Heading: "あなたのAIタイプが、見えてきました。",
-  layer1Sub: "あと10問で、仕事スタイルまで診断できます。続けますか？",
-  layer1Continue: "もっと詳しく知る →",
-  layer1ResultNow: "ひとまず結果を見る",
-  layer2Heading: "診断精度が、グッと上がります。",
-  layer2Sub: "残り10問で、業種・職種まで踏み込んだ診断になります。",
-  layer2Continue: "プロ診断に進む →",
+  layer1Heading: "診断完了。",
+  layer1Sub: "あなたのAIタイプが判明しました。",
+  layer1Continue: "さらに精度を上げる →",
+  layer1ResultNow: "結果を見る",
+  layer2Heading: "精度が上がりました。",
+  layer2Sub: "より詳しい結果が出ました。",
+  layer2Continue: "最終チューニングへ →",
   layer2ResultNow: "ここで結果を見る",
   backQuit: "診断をやめる",
   backPrevious: "前の問題に戻る",
@@ -396,23 +396,9 @@ export default function DiagnosisPage() {
                 if (!applyLayer1MbtiIfNeeded()) {
                   return;
                 }
-                setErrorMessage(null);
-                setPhase("quiz");
-                setStep(10);
-              }}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-            >
-              {flow.layer1Continue}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!applyLayer1MbtiIfNeeded()) {
-                  return;
-                }
                 void runEarlyExit(1);
               }}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
             >
               {flow.layer1ResultNow}
             </button>
@@ -440,19 +426,8 @@ export default function DiagnosisPage() {
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <button
               type="button"
-              onClick={() => {
-                setErrorMessage(null);
-                setPhase("quiz");
-                setStep(20);
-              }}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-            >
-              {flow.layer2Continue}
-            </button>
-            <button
-              type="button"
               onClick={() => void runEarlyExit(2)}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
             >
               {flow.layer2ResultNow}
             </button>

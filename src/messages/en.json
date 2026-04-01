@@ -14,14 +14,14 @@
     },
     "flow": {
       "mbtiInvalid": "Enter a valid 4-letter MBTI type or leave the field empty.",
-      "layer1Heading": "Your AI type is coming into focus.",
-      "layer1Sub": "10 more questions will reveal your work style. Continue?",
-      "layer1Continue": "See deeper insights →",
-      "layer1ResultNow": "See result for now",
-      "layer2Heading": "Accuracy gets significantly better here.",
-      "layer2Sub": "The last 10 questions add industry/job-level depth.",
-      "layer2Continue": "Go to pro diagnosis →",
-      "layer2ResultNow": "See my result now",
+      "layer1Heading": "Diagnosis complete.",
+      "layer1Sub": "Your AI type is now identified.",
+      "layer1Continue": "Improve accuracy further →",
+      "layer1ResultNow": "See result",
+      "layer2Heading": "Accuracy has improved.",
+      "layer2Sub": "You now have a more detailed result.",
+      "layer2Continue": "Go to final tuning →",
+      "layer2ResultNow": "See updated result",
       "backQuit": "Exit diagnosis",
       "backPrevious": "Previous question"
     },
@@ -69,43 +69,42 @@
       },
       {
         "id": 5,
-        "prompt": "If AI were your friend, what would you ask?",
+        "prompt": "How do you naturally handle work and tasks?",
         "options": [
-          { "value": "A", "label": "Listen to complaints and worries" },
-          { "value": "B", "label": "Look up anything and teach me" },
-          { "value": "C", "label": "Help with work and tasks" },
-          { "value": "D", "label": "Fun chats and small talk" }
+          { "value": "A", "label": "Finish one thing completely, then move on" },
+          { "value": "B", "label": "Run multiple tasks in parallel" },
+          { "value": "C", "label": "Depends on the task; I do both" },
+          { "value": "D", "label": "I want to focus on one, but end up multitasking" }
         ]
       },
       {
         "id": 6,
-        "prompt": "Which AI do you most want to try right now?",
+        "prompt": "What kind of AI output do you prefer?",
         "options": [
-          { "value": "A", "label": "Claude" },
-          { "value": "B", "label": "ChatGPT" },
-          { "value": "C", "label": "Perplexity" },
-          { "value": "D", "label": "Copilot" },
-          { "value": "E", "label": "Nothing decided yet" }
+          { "value": "A", "label": "One single best answer" },
+          { "value": "B", "label": "Multiple surprising perspectives I wouldn’t think of" },
+          { "value": "C", "label": "One high-quality, carefully explained answer" },
+          { "value": "D", "label": "A lot of options; I’ll choose myself" }
         ]
       },
       {
         "id": 7,
-        "prompt": "Do you want AI to feel kind, or smart?",
+        "prompt": "What stresses you most in AI conversations?",
         "options": [
-          { "value": "A", "label": "Warmth and empathy" },
-          { "value": "B", "label": "Versatility and speed" },
-          { "value": "C", "label": "Accuracy and logical answers" },
-          { "value": "D", "label": "Flexibility to switch by situation" }
+          { "value": "A", "label": "Lies or factual mistakes" },
+          { "value": "B", "label": "Losing context and having to reset every time" },
+          { "value": "C", "label": "Too much extra talk / too long" },
+          { "value": "D", "label": "Answers are too generic and not surprising" }
         ]
       },
       {
         "id": 8,
-        "prompt": "When stressed, how do you unwind?",
+        "prompt": "Do you want AI to remember past context and background?",
         "options": [
-          { "value": "A", "label": "Talk to someone and vent" },
-          { "value": "B", "label": "Spend quiet time alone" },
-          { "value": "C", "label": "Move my body or take action" },
-          { "value": "D", "label": "Eat something I like or do something fun" }
+          { "value": "A", "label": "Remember everything; I don’t want to re-explain" },
+          { "value": "B", "label": "Remember enough basics" },
+          { "value": "C", "label": "Session-only is fine; keep it dry" },
+          { "value": "D", "label": "Project-level memory is enough" }
         ]
       },
       {

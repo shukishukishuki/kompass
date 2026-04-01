@@ -22,6 +22,16 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "納得してから動きたいので、初動が遅れることがある",
       "正しい意見でも「共感」がないと受け入れにくい",
     ],
+    oppositeType: {
+      typeJa: "秘書タイプ",
+      aiName: "Copilot",
+      description:
+        "効率と構造を最優先にする秘書タイプとは、AIへの向き合い方が最も異なります。でも、そのドライさを取り入れると生産性が変わります。",
+    },
+    ngUsage:
+      "AIに『正しい答えを一つ出して』と命令するように使うと、Claudeの本領が発揮されません。命令ではなく対話として使うのがこのタイプの正解です。",
+    literacyAnalysis:
+      "あなたは情報の『生成』より『整理・共鳴』にバイアスがかかっています。AIを思考の鏡として使う能力が高い。",
     shareText: "これ、あの人に見せたい。",
   },
   万能助手タイプ: {
@@ -38,6 +48,16 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "「とりあえずこれでいいか」が積み重なり、粗さが残ることがある",
       "深く詰める前に次へ進みがち",
     ],
+    oppositeType: {
+      typeJa: "研究者タイプ",
+      aiName: "Perplexity",
+      description:
+        "根拠を徹底的に確認してから動く研究者タイプとは、意思決定のスピードと順序が真逆です。ただし、彼らの検証プロセスは弱点を補います。",
+    },
+    ngUsage:
+      "ChatGPTを深い思考整理や感情の壁打ちに使うのは、ポテンシャルの無駄遣いです。量と速さが必要な場面に集中させましょう。",
+    literacyAnalysis:
+      "あなたは情報の『整理』より『実行』にバイアスがかかっています。アウトプット量でカバーするタイプのAI活用者です。",
     shareText: "心当たりある人、いません？",
   },
   情報通タイプ: {
@@ -54,6 +74,16 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "情報収集で満足してしまい、意思決定が遅れることがある",
       "広く追いすぎて、深さが足りなくなることがある",
     ],
+    oppositeType: {
+      typeJa: "相談相手タイプ",
+      aiName: "Claude",
+      description:
+        "感情と共感を重視する相談相手タイプとは、情報への向き合い方が対照的です。深い対話が苦手な場面で力を借りられます。",
+    },
+    ngUsage:
+      "Geminiを創作・感情対話に使うのは向いていません。情報収集とGoogleツール連携に特化させると力を発揮します。",
+    literacyAnalysis:
+      "あなたは情報の『深さ』より『鮮度と速度』にバイアスがかかっています。リアルタイム性を最大化したAI設計が向いています。",
     shareText: "情報収集が趣味の人、全員これ。",
   },
   研究者タイプ: {
@@ -70,6 +100,16 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "確実性を重視するあまり、スピード勝負に弱い場面がある",
       "感覚で判断する人の意思決定に違和感を持ちやすい",
     ],
+    oppositeType: {
+      typeJa: "万能助手タイプ",
+      aiName: "ChatGPT",
+      description:
+        "とりあえず動いて結果を出す万能助手タイプとは、情報処理の哲学が真逆です。スピードが求められる場面で彼らの動き方は参考になります。",
+    },
+    ngUsage:
+      "Perplexityでアイデア出しや感情の整理をしようとすると、出典のない回答に物足りなさを感じるはずです。調査・検証の場面だけに使うのが正解です。",
+    literacyAnalysis:
+      "あなたは情報の『量』より『根拠の質』にバイアスがかかっています。検証プロセスを持つ、信頼性の高いAI活用者です。",
     shareText: "うちの上司、絶対これ。",
   },
   秘書タイプ: {
@@ -86,6 +126,16 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "効率を優先しすぎて、遠回りの価値を見落とすことがある",
       "感情ベースのやり取りに疲れやすい",
     ],
+    oppositeType: {
+      typeJa: "相談相手タイプ",
+      aiName: "Claude",
+      description:
+        "感情を優先して考える相談相手タイプとは、判断の軸が真逆です。行き詰まったとき、彼らの視点が突破口になります。",
+    },
+    ngUsage:
+      "CopilotをGoogle環境や創作の場面で使おうとすると、連携の弱さが目立ちます。MS環境の中だけで使うのが最大効率です。",
+    literacyAnalysis:
+      "あなたは情報の『発見』より『処理と効率化』にバイアスがかかっています。既存フローにAIを統合する能力が高い。",
     shareText: "効率の鬼、集まれ。",
   },
   自由人タイプ: {
@@ -102,6 +152,16 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "「これでいい」と止める判断が難しい",
       "一つを極める前に次へ移りやすい",
     ],
+    oppositeType: {
+      typeJa: "秘書タイプ",
+      aiName: "Copilot",
+      description:
+        "一つのツールを深く使い込む秘書タイプとは、AIとの付き合い方が対照的です。選択肢を絞る力が、あなたの次のステージです。",
+    },
+    ngUsage:
+      "複数のAIを目的なく使い回すのは、かえって習熟を遅らせます。用途ごとに『これはこのAI』とルールを決めると力が出ます。",
+    literacyAnalysis:
+      "あなたは特定のAIへの依存を避ける、メタ的なAI活用スタイルを持っています。最適化思考が強い上級者タイプです。",
     shareText: "一つに決められない仲間を探してる。",
   },
 };
