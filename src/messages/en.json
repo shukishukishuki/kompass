@@ -38,97 +38,96 @@
     },
     "flow": {
       "mbtiInvalid": "Enter a valid 4-letter MBTI type or leave the field empty.",
-      "layer1Heading": "Diagnosis complete.",
-      "layer1Sub": "Your AI type is now identified.",
-      "layer1Continue": "Improve accuracy further →",
-      "layer1ResultNow": "See result",
-      "layer2Heading": "Accuracy has improved.",
-      "layer2Sub": "You now have a more detailed result.",
-      "layer2Continue": "Go to final tuning →",
-      "layer2ResultNow": "See updated result",
+      "layer1Heading": "Your AI type is coming into focus.",
+      "layer1Sub": "Ten more questions will give you a sharper read. Keep going?",
+      "layer1Continue": "Continue",
+      "layer1ResultNow": "See my result now",
+      "layer2Heading": "Accuracy jumps up from here.",
+      "layer2Sub": "Ten more questions unlock a more detailed profile.",
+      "layer2Continue": "Continue",
+      "layer2ResultNow": "See my result now",
       "backQuit": "Exit diagnosis",
       "backPrevious": "Previous question"
     },
     "questions": [
       {
         "id": 1,
-        "prompt": "A totally open day usually ends up like this:",
+        "prompt": "The weekend clears and you have zero plans. What happens?",
         "options": [
-          { "value": "A", "label": "Lounge at home and ride the chill wave" },
-          { "value": "B", "label": "Make plans with someone and head out" },
-          { "value": "C", "label": "Solo outing or trying something new" },
-          { "value": "D", "label": "Suddenly deep in research or work—can’t stop" }
+          { "value": "A", "label": "Stay home, take it easy, do what I enjoy" },
+          { "value": "B", "label": "Message friends and get out of the house" },
+          { "value": "C", "label": "Try a spot or experience I’ve been curious about, solo" },
+          { "value": "D", "label": "Slide into work or a personal project" }
         ]
       },
       {
         "id": 2,
-        "prompt": "When you’re worried, what’s your first move?",
+        "prompt": "When someone asks for your advice, what do you instinctively do?",
         "options": [
-          { "value": "A", "label": "Vent to someone, ASAP" },
-          { "value": "B", "label": "Hit the search / dig for facts" },
-          { "value": "C", "label": "Think it through alone first" },
-          { "value": "D", "label": "Move before I overthink" }
+          { "value": "A", "label": "Lead with empathy—“That sounds rough”" },
+          { "value": "B", "label": "Offer fixes fast—“Try this”" },
+          { "value": "C", "label": "Want to verify—“Is that actually true?”" },
+          { "value": "D", "label": "Tidy the options—“Let’s sort the paths together”" }
         ]
       },
       {
         "id": 3,
-        "prompt": "Honestly, these people feel the easiest to be around:",
+        "prompt": "What kind of partner type pulls you in?",
         "options": [
-          { "value": "A", "label": "They really listen and get you" },
-          { "value": "B", "label": "Can do anything; actually reliable" },
-          { "value": "C", "label": "Know a lot and teach you stuff" },
-          { "value": "D", "label": "Don’t meddle—just let you be" }
+          { "value": "A", "label": "A listener with real emotional attunement" },
+          { "value": "B", "label": "Capable and dependable at pretty much anything" },
+          { "value": "C", "label": "Well-read, teaches me all kinds of things" },
+          { "value": "D", "label": "Respects my pace and doesn’t over-involve" }
         ]
       },
       {
         "id": 4,
-        "prompt": "This past week, what did you most want AI for?",
+        "prompt": "It’s 1 a.m. and you want someone to hear you out. Do you open AI?",
         "options": [
-          { "value": "A", "label": "Draft letters or emails for me" },
-          { "value": "B", "label": "Research and summarize" },
-          { "value": "C", "label": "A brainstorming partner" },
-          { "value": "D", "label": "Haven’t really used AI properly yet" },
-          { "value": "E", "label": "Barely use it at all" }
+          { "value": "A", "label": "Yes—low social cost, easy" },
+          { "value": "B", "label": "Yes, but leaning Q&A for solutions" },
+          { "value": "C", "label": "No—for me AI is for pulling information" },
+          { "value": "D", "label": "Depends on my mood in the moment" }
         ]
       },
       {
         "id": 5,
-        "prompt": "Which pattern sounds like you?",
+        "prompt": "How do you naturally move through work and tasks?",
         "options": [
-          { "value": "A", "label": "One thing done before I touch the next" },
-          { "value": "B", "label": "Usually 2–3 things in parallel" },
-          { "value": "C", "label": "Ends up whatever the vibe is" },
-          { "value": "D", "label": "Wanted focus—somehow pile-ups happen" }
+          { "value": "A", "label": "Finish one fully, then the next" },
+          { "value": "B", "label": "Run several in parallel" },
+          { "value": "C", "label": "Depends on the task—I use both" },
+          { "value": "D", "label": "I want one-thread focus but end up multitasking" }
         ]
       },
       {
         "id": 6,
-        "prompt": "Which AI response would feel the most “yes” to you?",
+        "prompt": "What kind of AI output do you lean toward?",
         "options": [
-          { "value": "A", "label": "“Here’s the answer,” one shot" },
-          { "value": "B", "label": "A bunch of “wait, that angle?” ideas" },
-          { "value": "C", "label": "One option, deeply thought through" },
-          { "value": "D", "label": "Firehose of options—I’ll pick" }
+          { "value": "A", "label": "One single best answer, clearly" },
+          { "value": "B", "label": "Multiple angles I wouldn’t think of myself" },
+          { "value": "C", "label": "One answer, high quality and well reasoned" },
+          { "value": "D", "label": "Volume—I’ll choose from the pile" }
         ]
       },
       {
         "id": 7,
-        "prompt": "What quietly annoys you when using AI?",
+        "prompt": "What stresses you most in AI chats?",
         "options": [
-          { "value": "A", "label": "Sounds right but it’s BS" },
-          { "value": "B", "label": "Ignores the nuance you just explained" },
-          { "value": "C", "label": "Unwanted lectures / over-explaining" },
-          { "value": "D", "label": "Everything lands as “correct but bland”" }
+          { "value": "A", "label": "Wrong facts or confident BS" },
+          { "value": "B", "label": "Context doesn’t stick—reset every time" },
+          { "value": "C", "label": "Extra talk I didn’t ask for / too long" },
+          { "value": "D", "label": "Answers feel generic, nothing surprising" }
         ]
       },
       {
         "id": 8,
-        "prompt": "How deep should AI “know” you?",
+        "prompt": "Should AI remember your past exchanges and context?",
         "options": [
-          { "value": "A", "label": "No re-explaining—remember it all" },
-          { "value": "B", "label": "Remember the important stuff only" },
-          { "value": "C", "label": "This session is enough" },
-          { "value": "D", "label": "Per project is fine" }
+          { "value": "A", "label": "Remember everything—I don’t want to re-explain every time" },
+          { "value": "B", "label": "Remember the essentials; that’s enough" },
+          { "value": "C", "label": "This session only—dry is fine" },
+          { "value": "D", "label": "Per-project memory is enough" }
         ]
       },
       {

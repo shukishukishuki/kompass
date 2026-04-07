@@ -6,7 +6,7 @@ import type { AiKind } from "@/types/ai";
  *
  * 選択肢キーは UI からの値（主に "A"〜"E"）。設問ごとに選択肢数が異なる。
  *
- * Q1〜Q3,Q5〜Q8 は A〜D。Q4 は A〜E。Q9 は A〜E（一般層フラグは E）。Q10 は A〜E。
+ * Q1〜Q8 は A〜D。Q9 は A〜E（一般層フラグは E）。Q10 は A〜E。
  * 文言を差し替える場合は Kompass_Scoring.md の行順と整合させること。
  */
 
@@ -38,10 +38,7 @@ export const SCORING_MATRIX: Readonly<
     A: { claude: 2 },
     B: { chatgpt: 2 },
     C: { gemini: 1, perplexity: 2, copilot: 1 },
-    /** 文言差し替え後も旧 D（気分による）と同一配点 */
     D: { chatgpt: 1, jiyujin: 2 },
-    /** 「ほとんど使っていない」（一般層フラグは Q9 の E のみ） */
-    E: { jiyujin: 2 },
   },
   5: {
     A: { claude: 1, perplexity: 1, copilot: 2 },
