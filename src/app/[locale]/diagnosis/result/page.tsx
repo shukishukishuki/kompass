@@ -23,6 +23,7 @@ import {
 import { getPersonalityDescription } from "@/lib/personality-descriptions";
 import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
 import { getDiagnosisStats, type DiagnosisTypeStats } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 import enMessages from "@/messages/en.json";
 import jaMessages from "@/messages/ja.json";
 import type { DiagnosisResult } from "@/types/diagnosis";
@@ -30,6 +31,16 @@ import type { DiagnosisResultPageCopy } from "@/types/diagnosis-messages";
 import type { MessagesFile } from "@/types/diagnosis-messages";
 import { AI_KINDS, type AiKind } from "@/types/ai";
 import type { ScoringResult } from "@/types/scoring";
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 
 const messagesByLocale: Record<string, MessagesFile> = {
   ja: jaMessages as MessagesFile,
@@ -44,6 +55,31 @@ const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   rarityGeneral: "一般的なタイプ",
   rarityUnusual: "少し珍しいタイプ",
   rarityRare: "レアタイプ",
+  screenshotTagline: "当たりすぎてちょっと怖い",
+  shareOnX: "Xでシェア",
+  redoDiagnosis: "もう一度診断する",
+  recommendedAi: "おすすめAI",
+  detailTitle: "もうちょい深く",
+  strengths: "強み",
+  weaknesses: "弱み",
+  contraryTitle: "逆張りコピー",
+  oppositeTitle: "真逆のAIタイプ",
+  ngTitle: "NGな使い方",
+  literacyTitle: "AIリテラシー分析",
+  statsTitle: "タイプの割合",
+  nextStepTitle: "次の一歩",
+  subAiLabel: "サブAI（補助）",
+  mbtiCardTitle: "MBTIを入力すると精度が上がります（任意）",
+  mbtiApply: "適用する",
+  mbtiPlaceholder: "例: INFJ",
+  mbtiInvalid: "有効なMBTIタイプを入力してください（例：INFJ）",
+  mbtiNoScores: "スコア情報がありません。もう一度診断してください。",
+  mbtiNoScoresHint:
+    "スコア情報がないため MBTI 補正は使えません。最新の診断フローでもう一度お試しください。",
+  mbtiWhatLink: "MBTIって何？",
+  continueLayer1: "続きを診断する（残り20問）",
+  continueLayer2: "続きを診断する（残り10問）",
+  setupOkTitle: "まずこれだけでOK",
 };
 
 /** MBTI 適用後の表示用スナップショット */
@@ -171,6 +207,7 @@ function isDiagnosisResult(value: unknown): value is DiagnosisResult {
     }
     const p = pd as Record<string, unknown>;
     if (
+      typeof p.characterName !== "string" ||
       typeof p.catchCopy !== "string" ||
       typeof p.supplement !== "string" ||
       typeof p.contraryCopy !== "string" ||
@@ -385,6 +422,20 @@ export default function DiagnosisResultPage() {
     return resolvePercentAndRarity(typeStats, typeKey, resultPageCopy);
   }, [result, typeStats, resultPageCopy, mbtiApplied]);
 
+  /** タイプ割合バー用（0–100）。集計できないときは null */
+  const userTypePercent = useMemo(() => {
+    if (result === null || typeStats === null) {
+      return null;
+    }
+    const total = sumTypeStats(typeStats);
+    if (total === 0) {
+      return null;
+    }
+    const typeKey = mbtiApplied?.correctedPersonalityJa ?? result.type;
+    const count = typeStats[typeKey] ?? 0;
+    return Math.round((count / total) * 100);
+  }, [result, typeStats, mbtiApplied]);
+
   const headerBg = useMemo(() => {
     if (result === null) {
       return "#52525b";
@@ -400,15 +451,11 @@ export default function DiagnosisResultPage() {
     }
     const normalized = normalizeMBTI(mbtiInput);
     if (normalized === null) {
-      setMbtiFieldError(
-        "有効なMBTIタイプを入力してください（例：INFJ）"
-      );
+      setMbtiFieldError(resultPageCopy.mbtiInvalid);
       return;
     }
     if (scoringSnapshot === null) {
-      setMbtiFieldError(
-        "スコア情報がありません。もう一度診断してください。"
-      );
+      setMbtiFieldError(resultPageCopy.mbtiNoScores);
       return;
     }
 
@@ -436,7 +483,7 @@ export default function DiagnosisResultPage() {
       correctedTypeEn: AI_KIND_TO_PERSONALITY_EN[newSr.first],
       displayPrimaryLabel: getAiLabelJaForKind(newSr.displayPrimaryAi),
     });
-  }, [mbtiInput, result, scoringSnapshot]);
+  }, [mbtiInput, result, scoringSnapshot, resultPageCopy]);
 
   const shareHref = useMemo(() => {
     if (result === null) {
@@ -451,190 +498,248 @@ export default function DiagnosisResultPage() {
       return null;
     }
     if (result.layerCompleted === 1) {
-      return "続きを診断する（残り20問）";
+      return resultPageCopy.continueLayer1;
     }
     if (result.layerCompleted === 2) {
-      return "続きを診断する（残り10問）";
+      return resultPageCopy.continueLayer2;
     }
     return null;
-  }, [result]);
+  }, [result, resultPageCopy]);
 
   if (!hydrated || result === null) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4">
-        <p className="text-sm text-zinc-500">読み込み中…</p>
+        <p className="text-sm text-muted-foreground">{copy.diagnosis.loadingLabel}</p>
       </main>
     );
   }
 
   const advanced = isAdvancedPresentation(result);
+  const heroCharacterName =
+    personalityBlock?.characterName ?? displayPersonalityJa;
 
   return (
     <main className="min-h-screen pb-16">
-      <header
+      {/* 上部ゾーン（スクショ用）：キャラ名・コピー・固定文・推奨AI・シェア */}
+      <section
         className="px-4 pb-10 pt-14 text-center text-white shadow-lg"
         style={{ backgroundColor: headerBg }}
+        aria-labelledby="hero-heading"
       >
-        <p className="text-sm font-medium uppercase tracking-wide opacity-90">
+        <p className="text-xs font-medium uppercase tracking-wide opacity-90">
           {mbtiApplied?.correctedTypeEn ?? result.typeEn}
         </p>
-        <h1 className="mt-2 text-2xl font-bold leading-tight md:text-3xl">
-          {mbtiApplied?.correctedPersonalityJa ?? result.type}
+        <h1
+          id="hero-heading"
+          className="mt-2 text-3xl font-extrabold leading-tight md:text-4xl"
+        >
+          {heroCharacterName}
         </h1>
-        <p className="mt-6 text-xl font-semibold md:text-2xl">
+        {personalityBlock !== null ? (
+          <p className="mt-4 text-2xl font-bold leading-snug md:text-3xl">
+            {personalityBlock.catchCopy}
+          </p>
+        ) : null}
+        <p className="mt-3 text-xs opacity-90">
+          {resultPageCopy.screenshotTagline}
+        </p>
+        <p className="mt-6 text-sm font-medium opacity-95">
+          {resultPageCopy.recommendedAi}
+        </p>
+        <p className="text-xl font-semibold md:text-2xl">
           {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
         </p>
-        {result.baseAI.note !== undefined &&
-        result.baseAI.note.trim() !== "" ? (
-          <p className="mx-auto mt-3 max-w-md text-left text-sm leading-relaxed opacity-90">
-            {result.baseAI.note}
-          </p>
-        ) : null}
-        <p className="mx-auto mt-6 max-w-md text-left text-sm leading-relaxed opacity-95">
-          {result.baseAI.reason}
-        </p>
-      </header>
-
-      <div className="mx-auto flex max-w-lg flex-col items-center gap-8 px-4 pt-10 text-center">
-        {personalityBlock !== null ? (
-          <section
-            className="w-full text-left text-zinc-800"
-            aria-labelledby="personality-heading"
-          >
-            <h2 id="personality-heading" className="sr-only">
-              性格特性
-            </h2>
-            <p className="text-4xl font-extrabold leading-tight tracking-tight">
-              {personalityBlock.catchCopy}
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-700">
-              {personalityBlock.supplement}
-            </p>
-            <blockquote className="mt-4 border-l-4 border-zinc-300 pl-3 text-sm italic text-zinc-700">
-              {personalityBlock.contraryCopy}
-            </blockquote>
-            <p className="mt-5 text-sm font-semibold text-zinc-900">強み</p>
-            <ul className="mt-2 list-disc space-y-2 pl-5 text-left text-sm leading-relaxed text-zinc-700">
-              {personalityBlock.strengths.map((t) => (
-                <li key={t}>{t}</li>
-              ))}
-            </ul>
-            <p className="mt-5 text-sm font-semibold text-zinc-900">弱み</p>
-            <ul className="mt-2 list-disc space-y-2 pl-5 text-left text-sm leading-relaxed text-zinc-700">
-              {personalityBlock.weaknesses.map((t) => (
-                <li key={t}>{t}</li>
-              ))}
-            </ul>
-            {result.layerCompleted === 1 ? (
-              <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-                <p className="text-sm font-semibold text-zinc-900">
-                  真逆のAIタイプ
-                </p>
-                <p className="mt-2 text-sm text-zinc-700">
-                  {personalityBlock.oppositeType.typeJa}（
-                  {personalityBlock.oppositeType.aiName}）
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-700">
-                  {personalityBlock.oppositeType.description}
-                </p>
-              </div>
-            ) : null}
-            {result.layerCompleted >= 2 ? (
-              <div className="mt-6 space-y-4">
-                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-                  <p className="text-sm font-semibold text-zinc-900">
-                    NGな使い方
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-700">
-                    {personalityBlock.ngUsage}
-                  </p>
-                </div>
-                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-                  <p className="text-sm font-semibold text-zinc-900">
-                    AIリテラシー分析
-                  </p>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-700">
-                    {personalityBlock.literacyAnalysis}
-                  </p>
-                </div>
-              </div>
-            ) : null}
-          </section>
-        ) : null}
-
-        <section
-          className="w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-5 text-left"
-          aria-labelledby="stats-heading"
-        >
-          <h2 id="stats-heading" className="sr-only">
-            タイプの割合
-          </h2>
-          <p className="text-sm font-medium text-zinc-800">{statsDisplay.line}</p>
-          {statsDisplay.badge !== null ? (
-            <p className="mt-3 inline-block rounded-full bg-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-800">
-              {statsDisplay.badge}
-            </p>
-          ) : null}
-        </section>
-
-        <section
-          className="w-full text-left text-sm leading-relaxed text-zinc-700"
-          aria-labelledby="layer-heading"
-        >
-          <h2 id="layer-heading" className="sr-only">
-            次の一歩
-          </h2>
-          {advanced ? (
-            <div className="space-y-4">
-              {result.subAI.map((entry, idx) => (
-                <div key={`sub-${idx}-${entry.name}`} className="space-y-2">
-                  <p>
-                    <span className="font-semibold text-zinc-900">
-                      サブAI（補助）
-                    </span>
-                    ：{entry.name}
-                  </p>
-                  {entry.usage !== "" ? <p>{entry.usage}</p> : null}
-                </div>
-              ))}
-              {result.expertView !== "" ? (
-                <p className="border-l-4 border-zinc-300 pl-3">
-                  {result.expertView}
-                </p>
-              ) : null}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="font-medium text-zinc-900">まずこれだけでOK</p>
-              <p>{result.baseAI.setup}</p>
-            </div>
-          )}
-        </section>
-
-        {personalityBlock !== null && result.layerCompleted === 1 ? (
-          <p className="w-full text-left text-xs text-zinc-500">
-            {personalityBlock.shareText}
-          </p>
-        ) : null}
-        <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
+        <div className="mt-8 flex justify-center">
           <a
             href={shareHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
+            className={cn(
+              buttonVariants({ variant: "secondary", size: "lg" }),
+              "rounded-full px-8"
+            )}
           >
-            Xでシェア
+            {resultPageCopy.shareOnX}
           </a>
+        </div>
+      </section>
+
+      {/* 下部ゾーン：スクロールで詳細 */}
+      <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-10">
+        {personalityBlock !== null ? (
+          <>
+            <Card className="text-left">
+              <CardHeader>
+                <CardTitle>{resultPageCopy.detailTitle}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {personalityBlock.supplement}
+                </p>
+                <p className="text-sm leading-relaxed">{result.baseAI.reason}</p>
+                {result.baseAI.note !== undefined &&
+                result.baseAI.note.trim() !== "" ? (
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {result.baseAI.note}
+                  </p>
+                ) : null}
+                <Separator />
+                <div>
+                  <p className="text-sm font-semibold">{resultPageCopy.strengths}</p>
+                  <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+                    {personalityBlock.strengths.map((t) => (
+                      <li key={t}>{t}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">{resultPageCopy.weaknesses}</p>
+                  <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+                    {personalityBlock.weaknesses.map((t) => (
+                      <li key={t}>{t}</li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="text-left">
+              <CardHeader>
+                <CardTitle>{resultPageCopy.contraryTitle}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <blockquote className="border-l-4 border-border pl-3 text-sm italic text-muted-foreground">
+                  {personalityBlock.contraryCopy}
+                </blockquote>
+              </CardContent>
+            </Card>
+
+            {result.layerCompleted >= 1 ? (
+              <Card className="text-left">
+                <CardHeader>
+                  <CardTitle>{resultPageCopy.oppositeTitle}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  <p className="font-medium text-foreground">
+                    {personalityBlock.oppositeType.typeJa}（
+                    {personalityBlock.oppositeType.aiName}）
+                  </p>
+                  <p>{personalityBlock.oppositeType.description}</p>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {result.layerCompleted >= 2 ? (
+              <>
+                <Card className="text-left">
+                  <CardHeader>
+                    <CardTitle>{resultPageCopy.ngTitle}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {personalityBlock.ngUsage}
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="text-left">
+                  <CardHeader>
+                    <CardTitle>{resultPageCopy.literacyTitle}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {personalityBlock.literacyAnalysis}
+                    </p>
+                  </CardContent>
+                </Card>
+              </>
+            ) : null}
+          </>
+        ) : (
+          <Card className="text-left">
+            <CardContent className="pt-6">
+              <p className="text-sm leading-relaxed">{result.baseAI.reason}</p>
+              {result.baseAI.note !== undefined &&
+              result.baseAI.note.trim() !== "" ? (
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {result.baseAI.note}
+                </p>
+              ) : null}
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="text-left">
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0">
+            <CardTitle className="text-base">{resultPageCopy.statsTitle}</CardTitle>
+            {statsDisplay.badge !== null ? (
+              <Badge variant="secondary">{statsDisplay.badge}</Badge>
+            ) : null}
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">{statsDisplay.line}</p>
+            <Progress value={userTypePercent} />
+          </CardContent>
+        </Card>
+
+        <Card className="text-left">
+          <CardHeader>
+            <CardTitle className="text-base">{resultPageCopy.nextStepTitle}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+            {advanced ? (
+              <>
+                {result.subAI.map((entry, idx) => (
+                  <div key={`sub-${idx}-${entry.name}`} className="space-y-2">
+                    <p>
+                      <span className="font-semibold text-foreground">
+                        {resultPageCopy.subAiLabel}
+                      </span>
+                      ：{entry.name}
+                    </p>
+                    {entry.usage !== "" ? <p>{entry.usage}</p> : null}
+                  </div>
+                ))}
+                <Separator />
+                {result.expertView !== "" ? (
+                  <p className="border-l-4 border-border pl-3 text-foreground">
+                    {result.expertView}
+                  </p>
+                ) : null}
+              </>
+            ) : (
+              <div className="space-y-3">
+                <p className="font-medium text-foreground">
+                  {resultPageCopy.setupOkTitle}
+                </p>
+                <p>{result.baseAI.setup}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {personalityBlock !== null && result.layerCompleted === 1 ? (
+          <p className="text-left text-xs text-muted-foreground">
+            {personalityBlock.shareText}
+          </p>
+        ) : null}
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             href={`/${locale}/diagnosis`}
-            className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "default" }),
+              "inline-flex rounded-full px-6"
+            )}
           >
-            もう一度診断する
+            {resultPageCopy.redoDiagnosis}
           </Link>
         </div>
+
         {continueLabel !== null ? (
-          <button
+          <Button
             type="button"
+            variant="outline"
+            className="w-full rounded-full"
             onClick={() => {
               const v = result.layerCompleted;
               if (v === 1 || v === 2) {
@@ -645,81 +750,77 @@ export default function DiagnosisResultPage() {
               }
               router.push(`/${locale}/diagnosis`);
             }}
-            className="inline-flex w-full items-center justify-center rounded-full border border-zinc-900 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
           >
             {continueLabel}
-          </button>
+          </Button>
         ) : null}
 
-        <section
-          className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-5 text-left shadow-sm"
-          aria-labelledby="mbti-heading"
-        >
-          <h2
-            id="mbti-heading"
-            className="text-sm font-semibold text-zinc-900"
-          >
-            MBTIを入力すると精度が上がります（任意）
-          </h2>
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-end">
-            <label className="block flex-1 text-left">
-              <span className="sr-only">MBTI 4文字</span>
-              <input
-                type="text"
-                name="mbti"
-                maxLength={4}
-                autoCapitalize="characters"
-                autoComplete="off"
-                value={mbtiInput}
-                onChange={(e) => {
-                  const v = e.target.value
-                    .toUpperCase()
-                    .replace(/[^A-Z]/g, "")
-                    .slice(0, 4);
-                  setMbtiInput(v);
-                  setMbtiFieldError(null);
-                  setMbtiApplied(null);
-                }}
-                placeholder="例: INFJ"
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium tracking-widest text-zinc-900 placeholder:font-normal placeholder:tracking-normal placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500"
-              />
-            </label>
-            <button
-              type="button"
-              onClick={() => handleMbtiApply()}
-              disabled={scoringSnapshot === null}
-              className="rounded-lg border border-zinc-900 bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              適用する
-            </button>
-          </div>
-          {mbtiFieldError !== null ? (
-            <p className="mt-2 text-sm text-red-600" role="alert">
-              {mbtiFieldError}
-            </p>
-          ) : null}
-          {scoringSnapshot === null ? (
-            <p className="mt-2 text-xs text-zinc-500">
-              スコア情報がないため MBTI 補正は使えません。最新の診断フローでもう一度お試しください。
-            </p>
-          ) : null}
-          {mbtiApplied !== null ? (
-            <div className="mt-4 space-y-2 text-sm leading-relaxed text-zinc-800">
-              <p>{mbtiApplied.changeMessage}</p>
-              <p className="text-zinc-700">{mbtiApplied.compatibilityComment}</p>
+        <Card className="text-left">
+          <CardHeader>
+            <CardTitle className="text-base">{resultPageCopy.mbtiCardTitle}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <label className="block min-w-0 flex-1">
+                <span className="sr-only">MBTI</span>
+                <input
+                  type="text"
+                  name="mbti"
+                  maxLength={4}
+                  autoCapitalize="characters"
+                  autoComplete="off"
+                  value={mbtiInput}
+                  onChange={(e) => {
+                    const v = e.target.value
+                      .toUpperCase()
+                      .replace(/[^A-Z]/g, "")
+                      .slice(0, 4);
+                    setMbtiInput(v);
+                    setMbtiFieldError(null);
+                    setMbtiApplied(null);
+                  }}
+                  placeholder={resultPageCopy.mbtiPlaceholder}
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
+                />
+              </label>
+              <Button
+                type="button"
+                onClick={() => handleMbtiApply()}
+                disabled={scoringSnapshot === null}
+              >
+                {resultPageCopy.mbtiApply}
+              </Button>
             </div>
-          ) : null}
-          <p className="mt-4 text-xs text-zinc-500">
-            <a
-              href="https://www.16personalities.com/ja"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-zinc-700 underline underline-offset-2 hover:text-zinc-900"
-            >
-              MBTIって何？
-            </a>
-          </p>
-        </section>
+            {mbtiFieldError !== null ? (
+              <p className="text-destructive text-sm" role="alert">
+                {mbtiFieldError}
+              </p>
+            ) : null}
+            {scoringSnapshot === null ? (
+              <p className="text-muted-foreground text-xs">
+                {resultPageCopy.mbtiNoScoresHint}
+              </p>
+            ) : null}
+            {mbtiApplied !== null ? (
+              <div className="space-y-2 text-sm leading-relaxed">
+                <p className="text-foreground">{mbtiApplied.changeMessage}</p>
+                <p className="text-muted-foreground">
+                  {mbtiApplied.compatibilityComment}
+                </p>
+              </div>
+            ) : null}
+            <p className="text-muted-foreground text-xs">
+              <a
+                href="https://www.16personalities.com/ja"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground font-medium underline underline-offset-2"
+              >
+                {resultPageCopy.mbtiWhatLink}
+              </a>
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </main>
   );

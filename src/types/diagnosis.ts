@@ -10,6 +10,8 @@ export type DiagnosisDisplayMode = "definitive" | "borderline" | "mixed";
 
 /** タイプ別の性格特性ブロック（結果画面・オプションの JSON 用） */
 export interface PersonalityDescription {
+  /** 結果画面上部に出すキャラ名（エンタメ寄せラベル） */
+  characterName: string;
   catchCopy: string;
   supplement: string;
   contraryCopy: string;

@@ -39,6 +39,31 @@ export interface DiagnosisResultPageCopy {
   rarityGeneral: string;
   rarityUnusual: string;
   rarityRare: string;
+  /** スクショ用ゾーンの小さな固定コピー */
+  screenshotTagline: string;
+  shareOnX: string;
+  redoDiagnosis: string;
+  recommendedAi: string;
+  detailTitle: string;
+  strengths: string;
+  weaknesses: string;
+  contraryTitle: string;
+  oppositeTitle: string;
+  ngTitle: string;
+  literacyTitle: string;
+  statsTitle: string;
+  nextStepTitle: string;
+  subAiLabel: string;
+  mbtiCardTitle: string;
+  mbtiApply: string;
+  mbtiPlaceholder: string;
+  mbtiInvalid: string;
+  mbtiNoScores: string;
+  mbtiNoScoresHint: string;
+  mbtiWhatLink: string;
+  continueLayer1: string;
+  continueLayer2: string;
+  setupOkTitle: string;
 }
 
 /** 診断フロー用の文言・設問一覧 */

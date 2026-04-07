@@ -3212,3 +3212,9 @@
 2896 http fetch GET 200 https://registry.npmjs.org/zod/-/zod-3.25.76.tgz 3859ms (cache miss)
 2897 info run msw@2.13.0 postinstall node_modules/msw node -e "import('./config/scripts/postinstall.js').catch(() => void 0)"
 2898 info run msw@2.13.0 postinstall { code: 0, signal: null }
+2899 verbose cwd /Users/maetashuki/Desktop/kompass
+2900 verbose os Darwin 25.3.0
+2901 verbose node v24.13.0
+2902 verbose npm  v11.6.2
+2903 verbose exit 0
+2904 info ok

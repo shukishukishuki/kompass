@@ -10,7 +10,31 @@
       "rarityOften": "よく見るタイプ",
       "rarityGeneral": "一般的なタイプ",
       "rarityUnusual": "少し珍しいタイプ",
-      "rarityRare": "レアタイプ"
+      "rarityRare": "レアタイプ",
+      "screenshotTagline": "当たりすぎてちょっと怖い",
+      "shareOnX": "Xでシェア",
+      "redoDiagnosis": "もう一度診断する",
+      "recommendedAi": "おすすめAI",
+      "detailTitle": "もうちょい深く",
+      "strengths": "強み",
+      "weaknesses": "弱み",
+      "contraryTitle": "逆張りコピー",
+      "oppositeTitle": "真逆のAIタイプ",
+      "ngTitle": "NGな使い方",
+      "literacyTitle": "AIリテラシー分析",
+      "statsTitle": "タイプの割合",
+      "nextStepTitle": "次の一歩",
+      "subAiLabel": "サブAI（補助）",
+      "mbtiCardTitle": "MBTIを入力すると精度が上がります（任意）",
+      "mbtiApply": "適用する",
+      "mbtiPlaceholder": "例: INFJ",
+      "mbtiInvalid": "有効なMBTIタイプを入力してください（例：INFJ）",
+      "mbtiNoScores": "スコア情報がありません。もう一度診断してください。",
+      "mbtiNoScoresHint": "スコア情報がないため MBTI 補正は使えません。最新の診断フローでもう一度お試しください。",
+      "mbtiWhatLink": "MBTIって何？",
+      "continueLayer1": "続きを診断する（残り20問）",
+      "continueLayer2": "続きを診断する（残り10問）",
+      "setupOkTitle": "まずこれだけでOK"
     },
     "flow": {
       "mbtiInvalid": "有効なMBTIタイプ（4文字）を入力するか、空のままにしてください",
@@ -28,82 +52,83 @@
     "questions": [
       {
         "id": 1,
-        "prompt": "週末、予定がまるっと空いた。何をする？",
+        "prompt": "何も予定ない日、だいたいこうなる",
         "options": [
-          { "value": "A", "label": "家でのんびり、好きなことをして過ごす" },
-          { "value": "B", "label": "友達に連絡して外に出かける" },
-          { "value": "C", "label": "気になっていた場所や体験を一人で試しに行く" },
-          { "value": "D", "label": "仕事や自分のプロジェクトを進めてしまう" }
+          { "value": "A", "label": "家でだらっと、好きなことして終わる" },
+          { "value": "B", "label": "誰かと予定入れて外に出る" },
+          { "value": "C", "label": "一人でどっか行くか、新しいこと試してる" },
+          { "value": "D", "label": "気づいたら何かの調査か作業をしてる（止まれない）" }
         ]
       },
       {
         "id": 2,
-        "prompt": "誰かに相談されたとき、自然にやってしまうのは？",
+        "prompt": "悩んだとき、最初にやる動きは？",
         "options": [
-          { "value": "A", "label": "まず「それは辛かったね」と共感する" },
-          { "value": "B", "label": "すぐ「こうすればいい」と解決策を出す" },
-          { "value": "C", "label": "「それって本当に正しい情報？」と確認したくなる" },
-          { "value": "D", "label": "「他の選択肢も整理してみよう」と一緒に考える" }
+          { "value": "A", "label": "とりあえず誰かに聞いてもらう" },
+          { "value": "B", "label": "まず調べる" },
+          { "value": "C", "label": "一回一人で考えて整理する" },
+          { "value": "D", "label": "考える前に、とりあえず動く" }
         ]
       },
       {
         "id": 3,
-        "prompt": "理想のパートナー、どんなタイプに惹かれる？",
+        "prompt": "こういう人、正直いちばん楽",
         "options": [
-          { "value": "A", "label": "何でも話を聞いてくれる、共感力が高い人" },
-          { "value": "B", "label": "何でもできる、頼れる万能な人" },
-          { "value": "C", "label": "知識が豊富で、いろんなことを教えてくれる人" },
-          { "value": "D", "label": "自分のペースを尊重して、干渉しすぎない人" }
+          { "value": "A", "label": "ちゃんと聞いてくれて、わかってくれる人" },
+          { "value": "B", "label": "何でもできて、普通に頼れる人" },
+          { "value": "C", "label": "物知りで、いろいろ教えてくれる人" },
+          { "value": "D", "label": "干渉してこないで、放っておいてくれる人" }
         ]
       },
       {
         "id": 4,
-        "prompt": "深夜1時、誰かに話を聞いてほしい気分。AIに話しかける？",
+        "prompt": "この1週間、AIに一番頼りたかったのは？",
         "options": [
-          { "value": "A", "label": "話しかける。気を遣わなくて楽だし" },
-          { "value": "B", "label": "話しかけるけど、解決策が欲しいから質問寄り" },
-          { "value": "C", "label": "話しかけない。AIは情報収集のためのもの" },
-          { "value": "D", "label": "気分による。その時次第" }
+          { "value": "A", "label": "文章とかメール、代わりにやってほしい" },
+          { "value": "B", "label": "調べたり、まとめたりを任せたい" },
+          { "value": "C", "label": "アイデア出しの相手になってほしい" },
+          { "value": "D", "label": "まだちゃんと使ってない" },
+          { "value": "E", "label": "ほとんど使っていない" }
         ]
       },
       {
         "id": 5,
-        "prompt": "仕事やタスクの進め方、自然なのはどっち？",
+        "prompt": "気づいたらこうなってるの、どっち？",
         "options": [
-          { "value": "A", "label": "一つを完全に終わらせてから次に進む" },
-          { "value": "B", "label": "複数を同時並行で進める" },
-          { "value": "C", "label": "内容による。どちらもやる" },
-          { "value": "D", "label": "一つに集中したいが、気づくと並行している" }
+          { "value": "A", "label": "一個終わるまで、次は触らない" },
+          { "value": "B", "label": "常に2〜3個は同時進行してる" },
+          { "value": "C", "label": "結局、その時のノリで変えてる" },
+          { "value": "D", "label": "集中したいのに、気づくと増えてる" }
         ]
       },
       {
         "id": 6,
-        "prompt": "AIに求めるアウトプット、どっちに近い？",
+        "prompt": "AIにこれ出されたら、一番しっくりくるのは？",
         "options": [
-          { "value": "A", "label": "唯一の正解を一つだけ出してほしい" },
-          { "value": "B", "label": "自分では出せない意外な視点を複数ほしい" },
-          { "value": "C", "label": "質の高い答えを丁寧に一つ" },
-          { "value": "D", "label": "とにかく量を出してもらって自分で選ぶ" }
+          { "value": "A", "label": "これが正解です、って一発で言ってほしい" },
+          { "value": "B", "label": "そんな発想あった？みたいなのをいくつも欲しい" },
+          { "value": "C", "label": "ちゃんと考え抜かれた一個がほしい" },
+          { "value": "D", "label": "とりあえず大量に出して、そこから選ぶ" }
         ]
       },
       {
         "id": 7,
-        "prompt": "AIとの会話で一番ストレスを感じるのは？",
+        "prompt": "AI使ってて、地味にイラッとするのどれ？",
         "options": [
-          { "value": "A", "label": "嘘をつく・間違える" },
-          { "value": "B", "label": "話の文脈が通じない・毎回リセットされる" },
-          { "value": "C", "label": "余計なことを言う・長すぎる" },
-          { "value": "D", "label": "答えが平凡で驚きがない" }
+          { "value": "A", "label": "それっぽく嘘ついてくる" },
+          { "value": "B", "label": "さっき言った「こだわり」を無視される" },
+          { "value": "C", "label": "頼んでない説明までしてくる" },
+          { "value": "D", "label": "全部「普通に正しい」で終わる" }
         ]
       },
       {
         "id": 8,
-        "prompt": "AIに過去のやり取りや背景を学習してほしい？",
+        "prompt": "AIとの関係、どこまで踏み込んでほしい？",
         "options": [
-          { "value": "A", "label": "全部覚えていてほしい。毎回説明したくない" },
-          { "value": "B", "label": "ある程度覚えてくれれば十分" },
-          { "value": "C", "label": "その場限りでいい。ドライでOK" },
-          { "value": "D", "label": "プロジェクト単位で管理できれば十分" }
+          { "value": "A", "label": "毎回説明とか無理。全部覚えててほしい" },
+          { "value": "B", "label": "大事なとこだけ覚えてくれればOK" },
+          { "value": "C", "label": "その場だけで完結すればいい" },
+          { "value": "D", "label": "案件ごとに覚えてくれればそれでいい" }
         ]
       },
       {

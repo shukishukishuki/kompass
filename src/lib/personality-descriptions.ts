@@ -9,6 +9,7 @@ export type { PersonalityDescription } from "@/types/diagnosis";
 
 const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
   相談相手タイプ: {
+    characterName: "共感ジャンキー",
     catchCopy: "正しいかより、わかってほしい。",
     supplement:
       "AIを「ツール」ではなく「対話相手」として扱える、かなり珍しいタイプです。",
@@ -35,6 +36,7 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
     shareText: "これ、あの人に見せたい。",
   },
   万能助手タイプ: {
+    characterName: "丸投げ屋",
     catchCopy: "考える前に、もう動いてる。",
     supplement:
       "考えながら動くより、動きながら最適解に近づいていくタイプです。",
@@ -61,6 +63,7 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
     shareText: "心当たりある人、いません？",
   },
   情報通タイプ: {
+    characterName: "情報スナイパー",
     catchCopy: "知らないままは、無理。",
     supplement:
       "「知らない状態」でいることに、強い違和感を持つタイプです。",
@@ -87,6 +90,7 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
     shareText: "情報収集が趣味の人、全員これ。",
   },
   研究者タイプ: {
+    characterName: "裏取りマニア",
     catchCopy: "\"なんとなく\"は、全部疑う。",
     supplement:
       "「なんとなく正しそう」を信用しない。根拠のない言葉には本能的に疑問を持つ。",
@@ -113,6 +117,7 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
     shareText: "うちの上司、絶対これ。",
   },
   秘書タイプ: {
+    characterName: "整理の鬼",
     catchCopy: "感情より、最短ルート。",
     supplement:
       "感情より構造。「やるべきことが整理されている状態」が、あなたにとっての安心です。",
@@ -139,6 +144,7 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
     shareText: "効率の鬼、集まれ。",
   },
   自由人タイプ: {
+    characterName: "AI遊牧民",
     catchCopy: "一つに決めるのが、一番ムダ。",
     supplement:
       "一つに絞れないのは、最適解を探し続ける思考が強いからです。",
