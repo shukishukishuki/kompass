@@ -1,6 +1,6 @@
-/**
- * 汎用ユーティリティ
- * 本文は後続で実装する
- */
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
-export {};
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
