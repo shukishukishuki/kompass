@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { BottomNav } from "@/components/layout/bottom-nav";
+import { Header } from "@/components/layout/header";
 
 /** 静的生成対象のロケール一覧 */
 const LOCALES = ["ja", "en"] as const;
@@ -15,8 +17,34 @@ export function generateStaticParams(): { locale: string }[] {
  */
 export default function LocaleLayout({
   children,
+  params,
 }: Readonly<{
   children: ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
-  return children;
+  return (
+    <LocaleLayoutBody params={params}>
+      {children}
+    </LocaleLayoutBody>
+  );
+}
+
+/**
+ * locale を解決して共通レイアウトを描画する
+ */
+async function LocaleLayoutBody({
+  children,
+  params,
+}: Readonly<{
+  children: ReactNode;
+  params: Promise<{ locale: string }>;
+}>) {
+  const { locale } = await params;
+  return (
+    <div className="min-h-screen">
+      <Header locale={locale} />
+      <main className="pb-16 md:pb-0">{children}</main>
+      <BottomNav locale={locale} />
+    </div>
+  );
 }

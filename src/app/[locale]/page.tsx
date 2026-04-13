@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { CharacterAvatar } from "@/components/lp/character-avatar";
 
 const CTA_HREF = "https://kompass-rosy.vercel.app/ja/diagnosis";
@@ -159,22 +158,8 @@ export default async function LocaleHomePage({
   const copy = COPY_BY_LOCALE[lc];
 
   return (
-    <main className="bg-white text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-zinc-200/80 bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <Link href={`/${locale}`} className="font-semibold tracking-tight">
-            {copy.logo}
-          </Link>
-          <a
-            href={CTA_HREF}
-            className="rounded-full bg-[#52B788] px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:brightness-95 sm:text-sm"
-          >
-            {copy.headerCta}
-          </a>
-        </div>
-      </header>
-
-      <section className="bg-[#f0faf4] px-4 py-20 text-center">
+    <main className="bg-[#f8f7ff] text-slate-900">
+      <section className="bg-[#f0f4ff] px-4 py-20 text-center">
         <div className="mx-auto max-w-3xl">
           <p className="inline-flex rounded-full border border-[#52B788]/20 bg-white px-3 py-1 text-xs font-medium text-[#2f6c56]">
             {copy.heroTag}
@@ -195,7 +180,7 @@ export default async function LocaleHomePage({
         </div>
       </section>
 
-      <section className="px-4 py-16">
+      <section className="bg-[#fff8f0] px-4 py-16">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-center text-3xl font-bold text-slate-900">
             {copy.empathyTitle}
@@ -216,7 +201,7 @@ export default async function LocaleHomePage({
         </div>
       </section>
 
-      <section className="bg-[#f8fafc] px-4 py-16">
+      <section className="bg-[#f0fff4] px-4 py-16">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-center text-3xl font-bold text-slate-900">
             {copy.typesTitle}
@@ -282,7 +267,7 @@ export default async function LocaleHomePage({
         </div>
       </section>
 
-      <section className="bg-[#f0faf4] px-4 py-20 text-center">
+      <section className="bg-[#f8f0ff] px-4 py-20 text-center">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">
             {copy.bottomCtaTitle}

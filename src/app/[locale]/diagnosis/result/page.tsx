@@ -11,7 +11,6 @@ import {
 } from "@/app/[locale]/diagnosis/page";
 import {
   getAiLabelJaForKind,
-  resolveAiKindFromDisplayName,
   getThemeColorForBaseAiName,
 } from "@/lib/ai-display";
 import {
@@ -24,6 +23,10 @@ import {
 } from "@/lib/mbti-correction";
 import { getPersonalityDescription } from "@/lib/personality-descriptions";
 import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
+import {
+  getTypeCircleBackgroundColor,
+  resolveTypeCharacter,
+} from "@/lib/type-characters";
 import {
   getDiagnosisStats,
   saveUserFollowupEmail,
@@ -98,26 +101,6 @@ interface MbtiAppliedView {
   /** 補正後のメイン推奨AIの表示名 */
   displayPrimaryLabel: string;
 }
-
-/** 診断タイプ（日本語）からキャラ画像を引く */
-const TYPE_TO_CHARACTER_IMAGE: Record<string, string> = {
-  相談相手タイプ: "/images/kompass_char_01_empath.png",
-  秘書タイプ: "/images/kompass_char_02_executor.png",
-  研究者タイプ: "/images/kompass_char_03_analyst.png",
-  万能助手タイプ: "/images/kompass_char_04_generalist.png",
-  情報通タイプ: "/images/kompass_char_05_scout.png",
-  自由人タイプ: "/images/kompass_char_06_nomad.png",
-};
-
-/** AI種別からキャラ画像を引く（タイプ未一致時の保険） */
-const AI_KIND_TO_CHARACTER_IMAGE: Record<AiKind, string> = {
-  claude: "/images/kompass_char_01_empath.png",
-  copilot: "/images/kompass_char_02_executor.png",
-  perplexity: "/images/kompass_char_03_analyst.png",
-  chatgpt: "/images/kompass_char_04_generalist.png",
-  gemini: "/images/kompass_char_05_scout.png",
-  jiyujin: "/images/kompass_char_06_nomad.png",
-};
 
 /**
  * sessionStorage のスコアリング結果が利用可能か
@@ -283,24 +266,6 @@ function isAdvancedPresentation(result: DiagnosisResult): boolean {
  */
 function buildShareText(typeJa: string): string {
   return `私のAIタイプは「${typeJa}」でした！ #Kompass #AI診断`;
-}
-
-/**
- * 診断タイプと表示AI名からキャラ画像パスを決める
- */
-function resolveCharacterImage(
-  typeJa: string,
-  displayAiName: string
-): string {
-  const byType = TYPE_TO_CHARACTER_IMAGE[typeJa];
-  if (byType !== undefined) {
-    return byType;
-  }
-  const kind = resolveAiKindFromDisplayName(displayAiName);
-  if (kind !== null) {
-    return AI_KIND_TO_CHARACTER_IMAGE[kind];
-  }
-  return AI_KIND_TO_CHARACTER_IMAGE.chatgpt;
 }
 
 /**
@@ -507,11 +472,11 @@ export default function DiagnosisResultPage() {
     return mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name;
   }, [result, mbtiApplied]);
 
-  const characterImageSrc = useMemo(() => {
+  const resolvedTypeCharacter = useMemo(() => {
     if (result === null) {
-      return AI_KIND_TO_CHARACTER_IMAGE.chatgpt;
+      return resolveTypeCharacter("万能助手タイプ", "ChatGPT");
     }
-    return resolveCharacterImage(displayPersonalityJa, displayPrimaryAiName);
+    return resolveTypeCharacter(displayPersonalityJa, displayPrimaryAiName);
   }, [result, displayPersonalityJa, displayPrimaryAiName]);
 
   const handleMbtiApply = useCallback(() => {
@@ -628,13 +593,22 @@ export default function DiagnosisResultPage() {
           <span className="sr-only">{heroCharacterName}</span>
         </h1>
         <div className="mt-4 flex items-center justify-center gap-4">
-          <Image
-            src={characterImageSrc}
-            alt={`${heroCharacterName} のキャラクター`}
-            width={120}
-            height={120}
-            className="h-[120px] w-[120px] object-contain"
-          />
+          <div
+            className="flex h-[140px] w-[140px] items-center justify-center rounded-full"
+            style={{
+              backgroundColor: getTypeCircleBackgroundColor(
+                resolvedTypeCharacter.aiKind
+              ),
+            }}
+          >
+            <Image
+              src={resolvedTypeCharacter.imageSrc}
+              alt={`${heroCharacterName} のキャラクター`}
+              width={120}
+              height={120}
+              className="h-[120px] w-[120px] object-contain"
+            />
+          </div>
           <p className="text-3xl font-extrabold leading-tight md:text-4xl">
             {heroCharacterName}
           </p>
