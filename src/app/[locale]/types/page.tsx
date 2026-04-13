@@ -1,11 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AI_THEME_COLORS } from "@/types/ai";
-import {
-  getTypeCircleBackgroundColor,
-  hexToRgba,
-  TYPE_CHARACTERS,
-} from "@/lib/type-characters";
+import { hexToRgba, TYPE_CHARACTERS } from "@/lib/type-characters";
 
 interface TypesPageCopy {
   title: string;
@@ -59,20 +55,13 @@ export default async function TypesPage({
                 backgroundColor: hexToRgba(AI_THEME_COLORS[character.aiKind], 0.12),
               }}
             >
-              <div
-                className="mx-auto flex h-[140px] w-[140px] items-center justify-center rounded-full"
-                style={{
-                  backgroundColor: getTypeCircleBackgroundColor(character.aiKind),
-                }}
-              >
-                <Image
-                  src={character.imageSrc}
-                  alt={character.characterName}
-                  width={120}
-                  height={120}
-                  className="h-[120px] w-[120px] object-contain"
-                />
-              </div>
+              <Image
+                src={character.imageSrc}
+                alt={character.characterName}
+                width={160}
+                height={160}
+                className="mx-auto h-[160px] w-[160px] object-contain"
+              />
               <p className="mt-4 text-lg font-bold text-slate-900">
                 {character.characterName}
               </p>

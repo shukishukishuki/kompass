@@ -11,7 +11,6 @@ import {
 } from "@/app/[locale]/diagnosis/page";
 import {
   getAiLabelJaForKind,
-  getThemeColorForBaseAiName,
 } from "@/lib/ai-display";
 import {
   AI_KIND_TO_PERSONALITY_EN,
@@ -24,7 +23,7 @@ import {
 import { getPersonalityDescription } from "@/lib/personality-descriptions";
 import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
 import {
-  getTypeCircleBackgroundColor,
+  hexToRgba,
   resolveTypeCharacter,
 } from "@/lib/type-characters";
 import {
@@ -38,7 +37,7 @@ import jaMessages from "@/messages/ja.json";
 import type { DiagnosisResult } from "@/types/diagnosis";
 import type { DiagnosisResultPageCopy } from "@/types/diagnosis-messages";
 import type { MessagesFile } from "@/types/diagnosis-messages";
-import { AI_KINDS, type AiKind } from "@/types/ai";
+import { AI_KINDS, AI_THEME_COLORS, type AiKind } from "@/types/ai";
 import type { ScoringResult } from "@/types/scoring";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -457,14 +456,6 @@ export default function DiagnosisResultPage() {
     return Math.round((count / total) * 100);
   }, [result, typeStats, mbtiApplied]);
 
-  const headerBg = useMemo(() => {
-    if (result === null) {
-      return "#52525b";
-    }
-    const name = mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name;
-    return getThemeColorForBaseAiName(name);
-  }, [result, mbtiApplied]);
-
   const displayPrimaryAiName = useMemo(() => {
     if (result === null) {
       return "";
@@ -478,6 +469,10 @@ export default function DiagnosisResultPage() {
     }
     return resolveTypeCharacter(displayPersonalityJa, displayPrimaryAiName);
   }, [result, displayPersonalityJa, displayPrimaryAiName]);
+
+  const resultHeroBackground = useMemo(() => {
+    return AI_THEME_COLORS[resolvedTypeCharacter.aiKind];
+  }, [resolvedTypeCharacter.aiKind]);
 
   const handleMbtiApply = useCallback(() => {
     if (result === null) {
@@ -579,42 +574,36 @@ export default function DiagnosisResultPage() {
     <main className="min-h-screen pb-16">
       {/* 上部ゾーン（スクショ用）：キャラ名・コピー・固定文・推奨AI・シェア */}
       <section
-        className="px-4 pb-10 pt-14 text-center text-white shadow-lg"
-        style={{ backgroundColor: headerBg }}
+        className="px-4 pb-12 pt-12 text-center text-white shadow-lg"
+        style={{ backgroundColor: resultHeroBackground }}
         aria-labelledby="hero-heading"
       >
-        <p className="text-xs font-medium uppercase tracking-wide opacity-90">
-          {mbtiApplied?.correctedTypeEn ?? result.typeEn}
-        </p>
-        <h1
-          id="hero-heading"
-          className="mt-2 text-3xl font-extrabold leading-tight md:text-4xl"
-        >
-          <span className="sr-only">{heroCharacterName}</span>
-        </h1>
-        <div className="mt-4 flex items-center justify-center gap-4">
-          <div
-            className="flex h-[140px] w-[140px] items-center justify-center rounded-full"
-            style={{
-              backgroundColor: getTypeCircleBackgroundColor(
-                resolvedTypeCharacter.aiKind
-              ),
-            }}
-          >
+        <div className="mx-auto max-w-5xl">
+          <p className="text-xs font-medium uppercase tracking-wide opacity-90">
+            {mbtiApplied?.correctedTypeEn ?? result.typeEn}
+          </p>
+          <div className="mt-4 flex justify-center">
             <Image
               src={resolvedTypeCharacter.imageSrc}
               alt={`${heroCharacterName} のキャラクター`}
-              width={120}
-              height={120}
-              className="h-[120px] w-[120px] object-contain"
+              width={280}
+              height={280}
+              className="h-[280px] w-[280px] object-contain"
+              priority
             />
           </div>
-          <p className="text-3xl font-extrabold leading-tight md:text-4xl">
+          <h1
+            id="hero-heading"
+            className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl"
+          >
             {heroCharacterName}
+          </h1>
+          <p className="mt-2 text-sm uppercase tracking-wide text-white/90 md:text-base">
+            {resolvedTypeCharacter.typeEn}
           </p>
         </div>
         {personalityBlock !== null ? (
-          <p className="mt-4 text-2xl font-bold leading-snug md:text-3xl">
+          <p className="mx-auto mt-6 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">
             {personalityBlock.catchCopy}
           </p>
         ) : null}
@@ -646,7 +635,15 @@ export default function DiagnosisResultPage() {
       <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-10">
         {personalityBlock !== null ? (
           <>
-            <Card className="text-left">
+            <Card
+              className="text-left"
+              style={{
+                backgroundColor: hexToRgba(
+                  AI_THEME_COLORS[resolvedTypeCharacter.aiKind],
+                  0.1
+                ),
+              }}
+            >
               <CardHeader>
                 <CardTitle>{resultPageCopy.detailTitle}</CardTitle>
               </CardHeader>

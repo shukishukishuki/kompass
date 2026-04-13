@@ -159,7 +159,7 @@ export default async function LocaleHomePage({
 
   return (
     <main className="bg-[#f8f7ff] text-slate-900">
-      <section className="bg-[#f0f4ff] px-4 py-20 text-center">
+      <section className="bg-[#fafafa] px-4 py-20 text-center">
         <div className="mx-auto max-w-3xl">
           <p className="inline-flex rounded-full border border-[#52B788]/20 bg-white px-3 py-1 text-xs font-medium text-[#2f6c56]">
             {copy.heroTag}
