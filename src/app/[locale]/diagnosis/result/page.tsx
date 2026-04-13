@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import {
@@ -10,6 +11,7 @@ import {
 } from "@/app/[locale]/diagnosis/page";
 import {
   getAiLabelJaForKind,
+  resolveAiKindFromDisplayName,
   getThemeColorForBaseAiName,
 } from "@/lib/ai-display";
 import {
@@ -22,7 +24,11 @@ import {
 } from "@/lib/mbti-correction";
 import { getPersonalityDescription } from "@/lib/personality-descriptions";
 import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
-import { getDiagnosisStats, type DiagnosisTypeStats } from "@/lib/supabase";
+import {
+  getDiagnosisStats,
+  saveUserFollowupEmail,
+  type DiagnosisTypeStats,
+} from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import enMessages from "@/messages/en.json";
 import jaMessages from "@/messages/ja.json";
@@ -92,6 +98,26 @@ interface MbtiAppliedView {
   /** 補正後のメイン推奨AIの表示名 */
   displayPrimaryLabel: string;
 }
+
+/** 診断タイプ（日本語）からキャラ画像を引く */
+const TYPE_TO_CHARACTER_IMAGE: Record<string, string> = {
+  相談相手タイプ: "/images/kompass_char_01_empath.png",
+  秘書タイプ: "/images/kompass_char_02_executor.png",
+  研究者タイプ: "/images/kompass_char_03_analyst.png",
+  万能助手タイプ: "/images/kompass_char_04_generalist.png",
+  情報通タイプ: "/images/kompass_char_05_scout.png",
+  自由人タイプ: "/images/kompass_char_06_nomad.png",
+};
+
+/** AI種別からキャラ画像を引く（タイプ未一致時の保険） */
+const AI_KIND_TO_CHARACTER_IMAGE: Record<AiKind, string> = {
+  claude: "/images/kompass_char_01_empath.png",
+  copilot: "/images/kompass_char_02_executor.png",
+  perplexity: "/images/kompass_char_03_analyst.png",
+  chatgpt: "/images/kompass_char_04_generalist.png",
+  gemini: "/images/kompass_char_05_scout.png",
+  jiyujin: "/images/kompass_char_06_nomad.png",
+};
 
 /**
  * sessionStorage のスコアリング結果が利用可能か
@@ -255,8 +281,33 @@ function isAdvancedPresentation(result: DiagnosisResult): boolean {
 /**
  * X シェア用のテキストを生成する
  */
-function buildShareText(result: DiagnosisResult): string {
-  return `私は${result.type}(${result.typeEn})でした！あなたのベースAIは？ #Kompass`;
+function buildShareText(typeJa: string): string {
+  return `私のAIタイプは「${typeJa}」でした！ #Kompass #AI診断`;
+}
+
+/**
+ * 診断タイプと表示AI名からキャラ画像パスを決める
+ */
+function resolveCharacterImage(
+  typeJa: string,
+  displayAiName: string
+): string {
+  const byType = TYPE_TO_CHARACTER_IMAGE[typeJa];
+  if (byType !== undefined) {
+    return byType;
+  }
+  const kind = resolveAiKindFromDisplayName(displayAiName);
+  if (kind !== null) {
+    return AI_KIND_TO_CHARACTER_IMAGE[kind];
+  }
+  return AI_KIND_TO_CHARACTER_IMAGE.chatgpt;
+}
+
+/**
+ * メール形式として最低限妥当かを判定する
+ */
+function isValidEmail(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 /**
@@ -342,6 +393,11 @@ export default function DiagnosisResultPage() {
   const [mbtiInput, setMbtiInput] = useState("");
   const [mbtiFieldError, setMbtiFieldError] = useState<string | null>(null);
   const [mbtiApplied, setMbtiApplied] = useState<MbtiAppliedView | null>(null);
+  const [followupEmail, setFollowupEmail] = useState("");
+  const [followupStatus, setFollowupStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+  const [followupError, setFollowupError] = useState<string | null>(null);
 
   useEffect(() => {
     const raw = sessionStorage.getItem(DIAGNOSIS_RESULT_STORAGE_KEY);
@@ -440,10 +496,23 @@ export default function DiagnosisResultPage() {
     if (result === null) {
       return "#52525b";
     }
-    const name =
-      mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name;
+    const name = mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name;
     return getThemeColorForBaseAiName(name);
   }, [result, mbtiApplied]);
+
+  const displayPrimaryAiName = useMemo(() => {
+    if (result === null) {
+      return "";
+    }
+    return mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name;
+  }, [result, mbtiApplied]);
+
+  const characterImageSrc = useMemo(() => {
+    if (result === null) {
+      return AI_KIND_TO_CHARACTER_IMAGE.chatgpt;
+    }
+    return resolveCharacterImage(displayPersonalityJa, displayPrimaryAiName);
+  }, [result, displayPersonalityJa, displayPrimaryAiName]);
 
   const handleMbtiApply = useCallback(() => {
     if (result === null) {
@@ -489,9 +558,10 @@ export default function DiagnosisResultPage() {
     if (result === null) {
       return "";
     }
-    const text = buildShareText(result);
-    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-  }, [result]);
+    const text = buildShareText(displayPersonalityJa);
+    const url = "https://kompass-rosy.vercel.app";
+    return `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  }, [result, displayPersonalityJa]);
 
   const continueLabel = useMemo(() => {
     if (result === null) {
@@ -505,6 +575,28 @@ export default function DiagnosisResultPage() {
     }
     return null;
   }, [result, resultPageCopy]);
+
+  const handleFollowupSubmit = useCallback(async () => {
+    if (result === null) {
+      return;
+    }
+    const email = followupEmail.trim();
+    if (!isValidEmail(email)) {
+      setFollowupError("有効なメールアドレスを入力してください。");
+      setFollowupStatus("error");
+      return;
+    }
+    setFollowupStatus("saving");
+    setFollowupError(null);
+    const saved = await saveUserFollowupEmail(email, displayPersonalityJa);
+    if (saved) {
+      setFollowupStatus("saved");
+      setFollowupEmail("");
+      return;
+    }
+    setFollowupStatus("error");
+    setFollowupError("現在は登録できません。時間をおいて再度お試しください。");
+  }, [result, followupEmail, displayPersonalityJa]);
 
   if (!hydrated || result === null) {
     return (
@@ -533,8 +625,20 @@ export default function DiagnosisResultPage() {
           id="hero-heading"
           className="mt-2 text-3xl font-extrabold leading-tight md:text-4xl"
         >
-          {heroCharacterName}
+          <span className="sr-only">{heroCharacterName}</span>
         </h1>
+        <div className="mt-4 flex items-center justify-center gap-4">
+          <Image
+            src={characterImageSrc}
+            alt={`${heroCharacterName} のキャラクター`}
+            width={120}
+            height={120}
+            className="h-[120px] w-[120px] object-contain"
+          />
+          <p className="text-3xl font-extrabold leading-tight md:text-4xl">
+            {heroCharacterName}
+          </p>
+        </div>
         {personalityBlock !== null ? (
           <p className="mt-4 text-2xl font-bold leading-snug md:text-3xl">
             {personalityBlock.catchCopy}
@@ -722,6 +826,52 @@ export default function DiagnosisResultPage() {
             {personalityBlock.shareText}
           </p>
         ) : null}
+
+        <Card className="text-left">
+          <CardContent className="space-y-3 pt-6">
+            <p className="text-sm font-semibold">3日後にどうだったか教えてください</p>
+            <p className="text-sm text-muted-foreground">
+              メールアドレスを登録すると、3日後にフォローアップをお送りします
+            </p>
+            <form
+              className="flex flex-col gap-3 sm:flex-row sm:items-center"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void handleFollowupSubmit();
+              }}
+            >
+              <input
+                type="email"
+                name="followup-email"
+                autoComplete="email"
+                value={followupEmail}
+                onChange={(e) => {
+                  setFollowupEmail(e.target.value);
+                  setFollowupError(null);
+                  if (followupStatus !== "idle") {
+                    setFollowupStatus("idle");
+                  }
+                }}
+                placeholder="you@example.com"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                required
+              />
+              <Button type="submit" disabled={followupStatus === "saving"}>
+                {followupStatus === "saving" ? "登録中..." : "登録する"}
+              </Button>
+            </form>
+            {followupStatus === "saved" ? (
+              <p className="text-sm text-emerald-600">
+                登録ありがとうございました。3日後にフォローアップをお送りします。
+              </p>
+            ) : null}
+            {followupError !== null ? (
+              <p className="text-sm text-destructive" role="alert">
+                {followupError}
+              </p>
+            ) : null}
+          </CardContent>
+        </Card>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link

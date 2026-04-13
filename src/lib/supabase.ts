@@ -1,6 +1,9 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { DiagnosisResult } from "@/types/diagnosis";
-import type { DiagnosisResultsInsertPayload } from "@/types/supabase-db";
+import type {
+  DiagnosisResultsInsertPayload,
+  UsersInsertPayload,
+} from "@/types/supabase-db";
 
 /** ブラウザ用シングルトン */
 let browserClient: SupabaseClient | null = null;
@@ -131,5 +134,66 @@ export async function getDiagnosisStats(): Promise<DiagnosisTypeStats> {
   } catch (e) {
     console.error("[Supabase] getDiagnosisStats で例外が発生しました:", e);
     return {};
+  }
+}
+
+/**
+ * users テーブル未作成エラーかを判定する
+ */
+function isUsersTableMissingError(value: unknown): boolean {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const o = value as Record<string, unknown>;
+  const code = o.code;
+  const message = o.message;
+  if (code === "42P01") {
+    return true;
+  }
+  if (typeof message !== "string") {
+    return false;
+  }
+  return message.includes('relation "users" does not exist');
+}
+
+/**
+ * フォローアップ用メールを users テーブルへ保存する
+ * テーブルが未作成の場合のみ warn で握りつぶす
+ */
+export async function saveUserFollowupEmail(
+  email: string,
+  diagnosisType: string
+): Promise<boolean> {
+  try {
+    const supabase = createSupabaseClient();
+    const payload: UsersInsertPayload = {
+      email,
+      diagnosis_type: diagnosisType,
+    };
+    const { error } = await supabase.from("users").insert(payload);
+    if (error !== null) {
+      if (isUsersTableMissingError(error)) {
+        console.warn(
+          "[Supabase] users テーブル未作成のため、メール登録をスキップしました。"
+        );
+        return false;
+      }
+      console.error(
+        "[Supabase] メール登録に失敗しました:",
+        error.message,
+        error
+      );
+      return false;
+    }
+    return true;
+  } catch (e) {
+    if (isUsersTableMissingError(e)) {
+      console.warn(
+        "[Supabase] users テーブル未作成のため、メール登録をスキップしました。"
+      );
+      return false;
+    }
+    console.error("[Supabase] saveUserFollowupEmail で例外が発生しました:", e);
+    return false;
   }
 }

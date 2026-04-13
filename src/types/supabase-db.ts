@@ -10,3 +10,9 @@ export interface DiagnosisResultsInsertPayload {
   base_ai_name: string;
   display_mode: string;
 }
+
+/** users への INSERT に使うカラム（created_at はDB任せ） */
+export interface UsersInsertPayload {
+  email: string;
+  diagnosis_type: string;
+}
