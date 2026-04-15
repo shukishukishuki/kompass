@@ -1,8 +1,18 @@
 import { resolveAiKindFromDisplayName } from "@/lib/ai-display";
 import { AI_THEME_COLORS, type AiKind, type PersonalityTypeEn, type PersonalityTypeJa } from "@/types/ai";
 
+/** ガイドURL用のタイプID */
+export type TypeId =
+  | "empath"
+  | "generalist"
+  | "scout"
+  | "analyst"
+  | "executive"
+  | "orchestrator";
+
 /** タイプ別キャラクター表示情報 */
 export interface TypeCharacter {
+  typeId: TypeId;
   typeJa: PersonalityTypeJa;
   typeEn: PersonalityTypeEn;
   characterName: string;
@@ -15,6 +25,7 @@ export interface TypeCharacter {
 /** タイプ一覧ページと結果画面で共通利用する6タイプ定義 */
 export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
   {
+    typeId: "empath",
     typeJa: "相談相手タイプ",
     typeEn: "The Confidant",
     characterName: "共感ジャンキー",
@@ -24,6 +35,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     imageSrc: "/images/kompass_char_01_empath.png",
   },
   {
+    typeId: "executive",
     typeJa: "秘書タイプ",
     typeEn: "The Executive",
     characterName: "整理の鬼",
@@ -33,6 +45,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     imageSrc: "/images/kompass_char_02_executor.png",
   },
   {
+    typeId: "analyst",
     typeJa: "研究者タイプ",
     typeEn: "The Analyst",
     characterName: "裏取りマニア",
@@ -42,6 +55,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     imageSrc: "/images/kompass_char_03_analyst.png",
   },
   {
+    typeId: "generalist",
     typeJa: "万能助手タイプ",
     typeEn: "The Generalist",
     characterName: "丸投げ屋",
@@ -51,6 +65,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     imageSrc: "/images/kompass_char_04_generalist.png",
   },
   {
+    typeId: "scout",
     typeJa: "情報通タイプ",
     typeEn: "The Scout",
     characterName: "情報スナイパー",
@@ -60,6 +75,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     imageSrc: "/images/kompass_char_05_scout.png",
   },
   {
+    typeId: "orchestrator",
     typeJa: "自由人タイプ",
     typeEn: "The Orchestrator",
     characterName: "AI遊牧民",
@@ -100,6 +116,13 @@ export function getTypeCharacterByAiDisplayName(aiDisplayName: string): TypeChar
     return null;
   }
   return TYPE_CHARACTERS.find((item) => item.aiKind === kind) ?? null;
+}
+
+/**
+ * タイプIDからキャラクター情報を取得する
+ */
+export function getTypeCharacterByTypeId(typeId: string): TypeCharacter | null {
+  return TYPE_CHARACTERS.find((item) => item.typeId === typeId) ?? null;
 }
 
 /**
