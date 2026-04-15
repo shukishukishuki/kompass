@@ -70,6 +70,17 @@ export function OneClickAIButton({ typeId }: OneClickAIButtonProps) {
   const config = AI_CONFIG[typeId];
   if (!config) return null;
 
+  /**
+   * モバイルブラウザのポップアップブロック回避のため a 要素で遷移する
+   */
+  const openUrlInNewTab = (url: string) => {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.rel = "noopener noreferrer";
+    anchor.click();
+  };
+
   // クリップボードコピー共通処理
   const copyPrompt = async () => {
     await navigator.clipboard.writeText(config.prompt);
@@ -80,7 +91,7 @@ export function OneClickAIButton({ typeId }: OneClickAIButtonProps) {
   if (typeId !== "jiyujin") {
     const handleClick = async () => {
       await copyPrompt();
-      window.open(config.url, "_blank", "noopener,noreferrer");
+      openUrlInNewTab(config.url);
     };
 
     return (
@@ -106,7 +117,7 @@ export function OneClickAIButton({ typeId }: OneClickAIButtonProps) {
             key={label}
             onClick={async () => {
               await copyPrompt();
-              window.open(url, "_blank", "noopener,noreferrer");
+              openUrlInNewTab(url);
             }}
             style={{ backgroundColor: config.color }}
             className="flex-1 rounded-xl px-3 py-3 text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all duration-150"
