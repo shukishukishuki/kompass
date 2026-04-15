@@ -42,6 +42,7 @@ import type { ScoringResult } from "@/types/scoring";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
+import { AxisGraph } from "@/components/diagnosis/AxisGraph";
 import {
   Card,
   CardContent,
@@ -334,6 +335,86 @@ function rarityLabelForPercent(
 }
 
 /**
+ * 左右2軸のスコアから左側(0-100)を算出する
+ */
+function resolveLeftPercent(leftScore: number, rightScore: number): number {
+  const total = leftScore + rightScore;
+  if (total <= 0) {
+    return 50;
+  }
+  return Math.max(0, Math.min(100, (leftScore / total) * 100));
+}
+
+/**
+ * AIスコアを4軸表示向けに変換する
+ */
+function buildAxisScoresFromAiScores(scoresByAi: Record<AiKind, number>): {
+  leftLabel: string;
+  rightLabel: string;
+  leftValue: number;
+}[] {
+  const empathy = scoresByAi.claude * 1.0 + scoresByAi.jiyujin * 0.4;
+  const solution =
+    scoresByAi.chatgpt * 1.0 +
+    scoresByAi.copilot * 1.0 +
+    scoresByAi.gemini * 0.6 +
+    scoresByAi.perplexity * 0.4;
+
+  const speed =
+    scoresByAi.chatgpt * 1.0 +
+    scoresByAi.gemini * 1.0 +
+    scoresByAi.copilot * 0.8 +
+    scoresByAi.jiyujin * 0.3;
+  const accuracy =
+    scoresByAi.perplexity * 1.0 +
+    scoresByAi.copilot * 0.8 +
+    scoresByAi.claude * 0.5 +
+    scoresByAi.gemini * 0.4;
+
+  const intuition =
+    scoresByAi.claude * 1.0 +
+    scoresByAi.chatgpt * 0.6 +
+    scoresByAi.jiyujin * 0.5;
+  const evidence =
+    scoresByAi.perplexity * 1.0 +
+    scoresByAi.gemini * 0.7 +
+    scoresByAi.copilot * 0.6;
+
+  const companion =
+    scoresByAi.claude * 1.0 +
+    scoresByAi.chatgpt * 0.4 +
+    scoresByAi.jiyujin * 0.7;
+  const tool =
+    scoresByAi.copilot * 1.0 +
+    scoresByAi.perplexity * 0.7 +
+    scoresByAi.gemini * 0.6 +
+    scoresByAi.chatgpt * 0.3;
+
+  return [
+    {
+      leftLabel: "共感",
+      rightLabel: "解決",
+      leftValue: resolveLeftPercent(empathy, solution),
+    },
+    {
+      leftLabel: "スピード",
+      rightLabel: "精度",
+      leftValue: resolveLeftPercent(speed, accuracy),
+    },
+    {
+      leftLabel: "直感",
+      rightLabel: "根拠",
+      leftValue: resolveLeftPercent(intuition, evidence),
+    },
+    {
+      leftLabel: "相棒",
+      rightLabel: "道具",
+      leftValue: resolveLeftPercent(companion, tool),
+    },
+  ];
+}
+
+/**
  * 診断結果の表示ページ
  */
 export default function DiagnosisResultPage() {
@@ -358,6 +439,9 @@ export default function DiagnosisResultPage() {
   const [mbtiInput, setMbtiInput] = useState("");
   const [mbtiFieldError, setMbtiFieldError] = useState<string | null>(null);
   const [mbtiApplied, setMbtiApplied] = useState<MbtiAppliedView | null>(null);
+  const [mbtiAppliedScores, setMbtiAppliedScores] = useState<
+    Record<AiKind, number> | null
+  >(null);
   const [followupEmail, setFollowupEmail] = useState("");
   const [followupStatus, setFollowupStatus] = useState<
     "idle" | "saving" | "saved" | "error"
@@ -471,6 +555,14 @@ export default function DiagnosisResultPage() {
     return resolveTypeCharacter(displayPersonalityJa, displayPrimaryAiName);
   }, [result, displayPersonalityJa, displayPrimaryAiName]);
 
+  const axisScores = useMemo(() => {
+    const baseScores = mbtiAppliedScores ?? scoringSnapshot?.scoresByAi ?? null;
+    if (baseScores === null) {
+      return null;
+    }
+    return buildAxisScoresFromAiScores(baseScores);
+  }, [mbtiAppliedScores, scoringSnapshot]);
+
   const resultHeroBackground = useMemo(() => {
     return AI_THEME_COLORS[resolvedTypeCharacter.aiKind];
   }, [resolvedTypeCharacter.aiKind]);
@@ -506,6 +598,7 @@ export default function DiagnosisResultPage() {
     );
 
     setMbtiFieldError(null);
+    setMbtiAppliedScores(correctedScores);
     setMbtiApplied({
       changeMessage,
       compatibilityComment,
@@ -679,6 +772,15 @@ export default function DiagnosisResultPage() {
                     ))}
                   </ul>
                 </div>
+                {axisScores !== null ? (
+                  <>
+                    <Separator />
+                    <AxisGraph
+                      typeId={resolvedTypeCharacter.aiKind}
+                      axes={axisScores}
+                    />
+                  </>
+                ) : null}
               </CardContent>
             </Card>
 
@@ -903,6 +1005,7 @@ export default function DiagnosisResultPage() {
                     setMbtiInput(v);
                     setMbtiFieldError(null);
                     setMbtiApplied(null);
+                    setMbtiAppliedScores(null);
                   }}
                   placeholder={resultPageCopy.mbtiPlaceholder}
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"

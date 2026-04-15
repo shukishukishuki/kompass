@@ -86,6 +86,9 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
   },
 ] as const;
 
+/** AiKind をキーにした表示色（UIコンポーネント向け） */
+export const typeColors: Record<AiKind, string> = AI_THEME_COLORS;
+
 /**
  * 16進カラーを透過付きrgba文字列に変換する
  */
