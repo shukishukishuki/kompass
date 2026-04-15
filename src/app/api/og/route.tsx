@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
         style={{
           width: "1200px",
           height: "630px",
-          backgroundColor: config.color,
+          background: `linear-gradient(135deg, ${config.color} 0%, ${config.color}CC 60%, #1a1a2e 100%)`,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -69,16 +69,16 @@ export async function GET(req: NextRequest) {
           position: "relative",
         }}
       >
-        {/* 背景装飾 */}
+        {/* 背景の白い光 */}
         <div
           style={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background:
-              "radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 60%)",
+            top: "-100px",
+            right: "-100px",
+            width: "500px",
+            height: "500px",
+            borderRadius: "50%",
+            background: "rgba(255,255,255,0.08)",
             display: "flex",
           }}
         />
@@ -86,31 +86,36 @@ export async function GET(req: NextRequest) {
         {/* ロゴ */}
         <div
           style={{
-            color: "rgba(255,255,255,0.7)",
-            fontSize: 28,
-            marginBottom: 32,
+            color: "rgba(255,255,255,0.6)",
+            fontSize: 24,
+            letterSpacing: "0.2em",
+            marginBottom: 40,
             display: "flex",
           }}
         >
-          Kompass | AI診断
+          KOMPASS
         </div>
 
-        {/* メインテキスト */}
+        {/* タイプ名 */}
         <div
           style={{
             color: "white",
-            fontSize: 72,
+            fontSize: 80,
             fontWeight: "bold",
-            marginBottom: 16,
+            marginBottom: 12,
             display: "flex",
+            textShadow: "0 4px 24px rgba(0,0,0,0.3)",
           }}
         >
           {config.name}
         </div>
+
+        {/* 英語名 */}
         <div
           style={{
-            color: "rgba(255,255,255,0.8)",
-            fontSize: 32,
+            color: "rgba(255,255,255,0.7)",
+            fontSize: 28,
+            letterSpacing: "0.15em",
             marginBottom: 48,
             display: "flex",
           }}
@@ -121,11 +126,11 @@ export async function GET(req: NextRequest) {
         {/* キャッチコピー */}
         <div
           style={{
-            backgroundColor: "rgba(255,255,255,0.2)",
-            borderRadius: 16,
-            padding: "16px 40px",
-            color: "white",
-            fontSize: 28,
+            border: "1px solid rgba(255,255,255,0.4)",
+            borderRadius: "100px",
+            padding: "14px 44px",
+            color: "rgba(255,255,255,0.9)",
+            fontSize: 26,
             display: "flex",
           }}
         >
@@ -136,9 +141,10 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             position: "absolute",
-            bottom: 40,
-            color: "rgba(255,255,255,0.6)",
-            fontSize: 22,
+            bottom: 36,
+            right: 48,
+            color: "rgba(255,255,255,0.4)",
+            fontSize: 20,
             display: "flex",
           }}
         >
