@@ -558,7 +558,13 @@ export default function DiagnosisResultPage() {
   const axisScores = useMemo(() => {
     const baseScores = mbtiAppliedScores ?? scoringSnapshot?.scoresByAi ?? null;
     if (baseScores === null) {
-      return null;
+      // スコアがない場合はデフォルト値で表示（グラフを常に表示する）
+      return [
+        { leftLabel: "共感", rightLabel: "解決", leftValue: 50 },
+        { leftLabel: "スピード", rightLabel: "精度", leftValue: 50 },
+        { leftLabel: "直感", rightLabel: "根拠", leftValue: 50 },
+        { leftLabel: "相棒", rightLabel: "道具", leftValue: 50 },
+      ];
     }
     return buildAxisScoresFromAiScores(baseScores);
   }, [mbtiAppliedScores, scoringSnapshot]);
@@ -772,15 +778,13 @@ export default function DiagnosisResultPage() {
                     ))}
                   </ul>
                 </div>
-                {axisScores !== null ? (
-                  <>
-                    <Separator />
-                    <AxisGraph
-                      typeId={resolvedTypeCharacter.aiKind}
-                      axes={axisScores}
-                    />
-                  </>
-                ) : null}
+                <>
+                  <Separator />
+                  <AxisGraph
+                    typeId={resolvedTypeCharacter.aiKind}
+                    axes={axisScores}
+                  />
+                </>
               </CardContent>
             </Card>
 
