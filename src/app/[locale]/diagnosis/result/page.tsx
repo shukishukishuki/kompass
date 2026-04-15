@@ -41,6 +41,7 @@ import { AI_KINDS, AI_THEME_COLORS, type AiKind } from "@/types/ai";
 import type { ScoringResult } from "@/types/scoring";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
 import {
   Card,
   CardContent,
@@ -601,6 +602,9 @@ export default function DiagnosisResultPage() {
           <p className="mt-2 text-sm uppercase tracking-wide text-white/90 md:text-base">
             {resolvedTypeCharacter.typeEn}
           </p>
+        </div>
+        <div className="mx-auto mt-6 max-w-md">
+          <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
         </div>
         {personalityBlock !== null ? (
           <p className="mx-auto mt-6 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">

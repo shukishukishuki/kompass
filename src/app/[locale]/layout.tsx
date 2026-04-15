@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Header } from "@/components/layout/header";
+import { Toaster } from "@/components/ui/sonner";
 
 /** 静的生成対象のロケール一覧 */
 const LOCALES = ["ja", "en"] as const;
@@ -45,6 +46,7 @@ async function LocaleLayoutBody({
       <Header locale={locale} />
       <main className="pb-16 md:pb-0">{children}</main>
       <BottomNav locale={locale} />
+      <Toaster position="bottom-center" />
     </div>
   );
 }
