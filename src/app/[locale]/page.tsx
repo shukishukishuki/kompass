@@ -218,9 +218,19 @@ export default async function LocaleHomePage({
           <h1 className="mt-6 text-4xl leading-tight font-extrabold whitespace-pre-line text-slate-900 md:text-6xl">
             {copy.heroTitle}
           </h1>
+          <p className="mt-3 mb-6 text-center text-sm leading-relaxed text-gray-500">
+            ChatGPT・Claude・Gemini・Perplexity・Copilot——
+            <br />
+            あなたの思考スタイルに合うAIを、診断で見つける。
+          </p>
           <p className="mx-auto mt-6 max-w-2xl text-base text-slate-700 md:text-xl">
             {copy.heroSub}
           </p>
+          <div className="mb-4 flex items-center justify-center gap-4 text-xs text-gray-400">
+            <span>✦ 全30〜40問</span>
+            <span>✦ 約3〜5分</span>
+            <span>✦ 登録不要</span>
+          </div>
           <a
             href={CTA_HREF}
             className="mt-8 inline-flex rounded-full bg-[#52B788] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#52B788]/30 transition hover:brightness-95 md:text-base"
