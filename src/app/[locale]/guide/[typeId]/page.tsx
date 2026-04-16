@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
 import { PromptList } from "@/components/guide/prompt-list";
+import { GUIDE_TO_AI_KIND } from "@/lib/type-id-map";
 import {
   getTypeCharacterByTypeId,
   hexToRgba,
@@ -10,15 +11,6 @@ import {
   type TypeId,
 } from "@/lib/type-characters";
 import { AI_THEME_COLORS, type AiKind } from "@/types/ai";
-
-const GUIDE_TO_AI_KIND: Record<string, string> = {
-  empath: "claude",
-  generalist: "chatgpt",
-  scout: "gemini",
-  analyst: "perplexity",
-  executive: "copilot",
-  orchestrator: "jiyujin",
-};
 
 interface GuideDetailContent {
   oneShotCopy: string;

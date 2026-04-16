@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AI_KIND_TO_GUIDE } from "@/lib/type-id-map";
 import { TYPE_CHARACTERS } from "@/lib/type-characters";
 import { AI_THEME_COLORS } from "@/types/ai";
 
@@ -46,6 +47,7 @@ export default async function TypeResultPage({
   }
 
   const color = AI_THEME_COLORS[character.aiKind] ?? "#7C3AED";
+  const guideTypeId = AI_KIND_TO_GUIDE[typeId] ?? typeId;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -104,7 +106,7 @@ export default async function TypeResultPage({
         </div>
         <div className="text-center mt-2">
           <a
-            href={`/${locale}/guide/${typeId}`}
+            href={`/${locale}/guide/${guideTypeId}`}
             className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
           >
             {character.characterName}のAI活用ガイドを見る →

@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { CharacterAvatar } from "@/components/lp/character-avatar";
+import { AI_KIND_TO_GUIDE } from "@/lib/type-id-map";
 
 const CTA_HREF = "https://kompass-rosy.vercel.app/ja/diagnosis";
 
@@ -445,9 +447,10 @@ export default async function LocaleHomePage({
 
         <div className="grid grid-cols-2 gap-3">
           {TYPE_PREVIEWS.map((type) => (
-            <div
+            <Link
               key={type.id}
-              className="flex items-center gap-3 rounded-xl p-4"
+              href={`/${locale}/guide/${AI_KIND_TO_GUIDE[type.id] ?? type.id}`}
+              className="block rounded-xl p-4 flex items-center gap-3 hover:opacity-90 transition-opacity"
               style={{
                 backgroundColor: `${type.color}15`,
                 border: `1px solid ${type.color}33`,
@@ -470,7 +473,7 @@ export default async function LocaleHomePage({
                   {type.catch}
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

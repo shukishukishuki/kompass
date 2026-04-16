@@ -26,6 +26,7 @@ import {
   PERSONALITY_DESCRIPTIONS,
 } from "@/lib/personality-descriptions";
 import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
+import { AI_KIND_TO_GUIDE } from "@/lib/type-id-map";
 import {
   hexToRgba,
   resolveTypeCharacter,
@@ -151,42 +152,42 @@ const TYPE_NEXT_ACTIONS: Record<
   claude: {
     actions: [
       { label: "Claudeを無料で試す", url: "https://claude.ai" },
-      { label: "共感ジャンキーのガイドを見る", url: "/ja/guide/empath" },
+      { label: "共感ジャンキーのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.claude}` },
       { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   chatgpt: {
     actions: [
       { label: "ChatGPTを無料で試す", url: "https://chatgpt.com" },
-      { label: "丸投げ屋のガイドを見る", url: "/ja/guide/generalist" },
+      { label: "丸投げ屋のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.chatgpt}` },
       { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   gemini: {
     actions: [
       { label: "Geminiを無料で試す", url: "https://gemini.google.com" },
-      { label: "情報スナイパーのガイドを見る", url: "/ja/guide/scout" },
+      { label: "情報スナイパーのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.gemini}` },
       { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   perplexity: {
     actions: [
       { label: "Perplexityを無料で試す", url: "https://perplexity.ai" },
-      { label: "裏取りマニアのガイドを見る", url: "/ja/guide/analyst" },
+      { label: "裏取りマニアのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.perplexity}` },
       { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   copilot: {
     actions: [
       { label: "Copilotを無料で試す", url: "https://copilot.microsoft.com" },
-      { label: "整理の鬼のガイドを見る", url: "/ja/guide/executive" },
+      { label: "整理の鬼のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.copilot}` },
       { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   jiyujin: {
     actions: [
       { label: "まずClaudeを試す", url: "https://claude.ai" },
-      { label: "AI遊牧民のガイドを見る", url: "/ja/guide/orchestrator" },
+      { label: "AI遊牧民のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.jiyujin}` },
       { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
@@ -1043,17 +1044,6 @@ export default function DiagnosisResultPage() {
             </svg>
             LINE
           </a>
-          <a
-            href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-            Facebook
-          </a>
           <button
             type="button"
             onClick={async () => {
@@ -1077,6 +1067,17 @@ export default function DiagnosisResultPage() {
             </svg>
             コピー
           </button>
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+            Facebook
+          </a>
           <button
             type="button"
             onClick={() => {
@@ -1170,6 +1171,12 @@ export default function DiagnosisResultPage() {
                               {goodChar.characterName}
                             </p>
                             <p className="text-xs text-gray-400">{goodChar.aiName}</p>
+                            <a
+                              href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.good] ?? compat.good}`}
+                              className="text-xs underline underline-offset-2 text-green-600 hover:text-green-800 mt-1 block"
+                            >
+                              使い方を見る →
+                            </a>
                           </div>
                           <div className="rounded-xl border border-red-100 bg-red-50 p-3 text-center">
                             <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
@@ -1177,6 +1184,12 @@ export default function DiagnosisResultPage() {
                               {badChar.characterName}
                             </p>
                             <p className="text-xs text-gray-400">{badChar.aiName}</p>
+                            <a
+                              href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.bad] ?? compat.bad}`}
+                              className="text-xs underline underline-offset-2 text-red-400 hover:text-red-600 mt-1 block"
+                            >
+                              使い方を見る →
+                            </a>
                           </div>
                         </div>
                       </div>
@@ -1246,7 +1259,11 @@ export default function DiagnosisResultPage() {
                           {nextActions.actions.map((action, i) => (
                             <a
                               key={i}
-                              href={action.url}
+                              href={
+                                action.url.startsWith("/guide/")
+                                  ? `/${locale}${action.url}`
+                                  : action.url
+                              }
                               target={action.url.startsWith("http") ? "_blank" : undefined}
                               rel={
                                 action.url.startsWith("http")
