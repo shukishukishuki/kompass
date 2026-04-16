@@ -431,6 +431,7 @@ export default function DiagnosisResultPage() {
     copy.diagnosis.resultPage ?? FALLBACK_RESULT_COPY;
 
   const [result, setResult] = useState<DiagnosisResult | null>(null);
+  const [isDiagnosed, setIsDiagnosed] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   /** null = 未取得、取得後はオブジェクト（空もあり得る） */
   const [typeStats, setTypeStats] = useState<DiagnosisTypeStats | null>(null);
@@ -452,16 +453,21 @@ export default function DiagnosisResultPage() {
   useEffect(() => {
     const raw = sessionStorage.getItem(DIAGNOSIS_RESULT_STORAGE_KEY);
     if (raw === null || raw === "") {
-      router.replace(`/${locale}/diagnosis`);
+      setResult(null);
+      setIsDiagnosed(false);
+      setHydrated(true);
       return;
     }
     try {
       const parsed: unknown = JSON.parse(raw);
       if (!isDiagnosisResult(parsed)) {
-        router.replace(`/${locale}/diagnosis`);
+        setResult(null);
+        setIsDiagnosed(false);
+        setHydrated(true);
         return;
       }
       setResult(parsed);
+      setIsDiagnosed(true);
 
       const scoringRaw = sessionStorage.getItem(DIAGNOSIS_SCORING_STORAGE_KEY);
       if (scoringRaw !== null && scoringRaw !== "") {
@@ -475,8 +481,8 @@ export default function DiagnosisResultPage() {
         }
       }
     } catch {
-      router.replace(`/${locale}/diagnosis`);
-      return;
+      setResult(null);
+      setIsDiagnosed(false);
     }
     setHydrated(true);
   }, [locale, router]);
@@ -659,10 +665,77 @@ export default function DiagnosisResultPage() {
     setFollowupError("現在は登録できません。時間をおいて再度お試しください。");
   }, [result, followupEmail, displayPersonalityJa]);
 
-  if (!hydrated || result === null) {
+  if (!hydrated) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4">
         <p className="text-sm text-muted-foreground">{copy.diagnosis.loadingLabel}</p>
+      </main>
+    );
+  }
+
+  if (result === null) {
+    const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
+    return (
+      <main className="min-h-screen pb-16">
+        <section
+          className="px-4 pb-12 pt-12 text-center text-white shadow-lg"
+          style={{ backgroundColor: resultHeroBackground }}
+          aria-labelledby="hero-heading"
+        >
+          <div className="mx-auto max-w-5xl">
+            <p className="text-xs font-medium uppercase tracking-wide opacity-90">
+              {resolvedTypeCharacter.typeEn}
+            </p>
+            <div className="mt-4 flex justify-center">
+              <Image
+                src={resolvedTypeCharacter.imageSrc}
+                alt="診断前キャラクターのプレビュー"
+                width={280}
+                height={280}
+                className="h-[280px] w-[280px] object-contain"
+                priority
+              />
+            </div>
+            <h1
+              id="hero-heading"
+              className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl"
+            >
+              診断であなたのタイプを表示
+            </h1>
+          </div>
+          <div className="relative mx-auto mt-6 max-w-md">
+            <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
+              <div className="mx-auto mt-6 max-w-md">
+                <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
+              </div>
+              {link !== undefined ? (
+                <div className="mx-auto mt-3 max-w-md text-center">
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-600"
+                  >
+                    {link.label} →
+                  </a>
+                </div>
+              ) : null}
+            </div>
+            {!isDiagnosed ? (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <p className="px-4 text-center text-sm font-medium text-white">
+                  診断を完了するとプロンプトが解放されます
+                </p>
+                <Link
+                  href={`/${locale}/diagnosis`}
+                  className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+                >
+                  診断する →
+                </Link>
+              </div>
+            ) : null}
+          </div>
+        </section>
       </main>
     );
   }
@@ -703,27 +776,44 @@ export default function DiagnosisResultPage() {
             {resolvedTypeCharacter.typeEn}
           </p>
         </div>
-        <div className="mx-auto mt-6 max-w-md">
-          <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
-        </div>
-        {(() => {
-          const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
-          if (!link) {
-            return null;
-          }
-          return (
-            <div className="mx-auto mt-3 max-w-md text-center">
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-600"
-              >
-                {link.label} →
-              </a>
+        <div className="relative">
+          <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
+            <div className="mx-auto mt-6 max-w-md">
+              <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
             </div>
-          );
-        })()}
+            {(() => {
+              const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
+              if (!link) {
+                return null;
+              }
+              return (
+                <div className="mx-auto mt-3 max-w-md text-center">
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-600"
+                  >
+                    {link.label} →
+                  </a>
+                </div>
+              );
+            })()}
+          </div>
+          {!isDiagnosed ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <p className="px-4 text-center text-sm font-medium text-white">
+                診断を完了するとプロンプトが解放されます
+              </p>
+              <Link
+                href={`/${locale}/diagnosis`}
+                className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+              >
+                診断する →
+              </Link>
+            </div>
+          ) : null}
+        </div>
         {personalityBlock !== null ? (
           <p className="mx-auto mt-6 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">
             {personalityBlock.catchCopy}
