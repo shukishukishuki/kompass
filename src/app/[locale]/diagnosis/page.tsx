@@ -77,6 +77,7 @@ const FALLBACK_FLOW: DiagnosisFlowCopy = {
 };
 
 type Phase =
+  | "intro"
   | "quiz"
   | "layer1-break"
   | "layer2-break"
@@ -99,7 +100,7 @@ export default function DiagnosisPage() {
   const total = questions.length;
   const flow = copy.diagnosis.flow ?? FALLBACK_FLOW;
 
-  const [phase, setPhase] = useState<Phase>("quiz");
+  const [phase, setPhase] = useState<Phase>("intro");
   const [layer1MbtiDraft, setLayer1MbtiDraft] = useState("");
   const [layer1MbtiError, setLayer1MbtiError] = useState<string | null>(null);
   const [layer1MbtiNotice, setLayer1MbtiNotice] = useState<string | null>(null);
@@ -375,6 +376,79 @@ export default function DiagnosisPage() {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4">
         <p className="text-sm text-zinc-500">読み込み中…</p>
+      </main>
+    );
+  }
+
+  if (phase === "intro") {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
+        <div className="w-full max-w-md space-y-6 text-center">
+          <div className="flex justify-center gap-2 mb-4">
+            {[
+              { src: "/images/kompass_char_01_empath.png", color: "#CC785C" },
+              { src: "/images/kompass_char_02_executor.png", color: "#0078D4" },
+              { src: "/images/kompass_char_03_analyst.png", color: "#20B2AA" },
+              { src: "/images/kompass_char_04_generalist.png", color: "#10A37F" },
+              { src: "/images/kompass_char_05_scout.png", color: "#4285F4" },
+              { src: "/images/kompass_char_06_nomad.png", color: "#7C3AED" },
+            ].map((char, i) => (
+              <div
+                key={i}
+                className="w-10 h-10 rounded-full overflow-hidden"
+                style={{ backgroundColor: `${char.color}33` }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={char.src}
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-2">
+            <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+              AI TYPE DIAGNOSIS
+            </p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              あなたのベースAIを
+              <br />
+              見つけよう
+            </h1>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              思考スタイルに合ったAIを使うと、
+              <br />
+              仕事も思考も驚くほどラクになる。
+            </p>
+          </div>
+
+          <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 space-y-2 text-left">
+            <p className="text-xs font-bold text-gray-700">診断について</p>
+            <ul className="space-y-1.5 text-xs text-gray-500">
+              <li>✦ まず10問、深く知りたい人は最大40問</li>
+              <li>✦ 登録不要・完全無料</li>
+              <li>
+                ✦ ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案
+              </li>
+            </ul>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setPhase("quiz")}
+            className="w-full rounded-full bg-gray-900 py-4 text-sm font-bold text-white hover:bg-gray-700 transition-colors"
+          >
+            診断をはじめる →
+          </button>
+
+          <p className="text-xs text-gray-400">
+            約1分〜 / 途中で結果を見ることもできます
+          </p>
+        </div>
       </main>
     );
   }
