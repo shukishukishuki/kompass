@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://kompass-rosy.vercel.app"),
   title: "Kompass",
   description: "あなたのベースAIを決める、AI意思決定サービス",
 };

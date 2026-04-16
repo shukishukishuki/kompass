@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
     // 画像取得失敗時は円だけ表示
   }
 
-  return new ImageResponse(
+  const response = new ImageResponse(
     (
       <div
         style={{
@@ -227,4 +227,7 @@ export async function GET(req: NextRequest) {
     ),
     { width: 1200, height: 630 }
   );
+  response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+  response.headers.set("Content-Type", "image/png");
+  return response;
 }

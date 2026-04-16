@@ -17,6 +17,7 @@ export async function generateMetadata({
   const { typeId } = await params;
   const ogUrl = `https://kompass-rosy.vercel.app/api/og?type=${typeId}&lang=ja`;
   return {
+    metadataBase: new URL("https://kompass-rosy.vercel.app"),
     openGraph: {
       images: [{ url: ogUrl, width: 1200, height: 630 }],
     },
