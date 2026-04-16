@@ -40,6 +40,10 @@ const FALLBACK_FLOW: DiagnosisFlowCopy = {
   layer2Sub: "残り10問で、より詳しい診断になります。",
   layer2Continue: "続ける",
   layer2ResultNow: "ここで結果を見る",
+  layer3Heading: "さらに精度を上げますか？",
+  layer3Sub: "あと10問で、AI活用ワークフローまで提案できます。",
+  layer3Continue: "続ける",
+  layer3ResultNow: "ここで結果を見る",
   backQuit: "診断をやめる",
   backPrevious: "前の問題に戻る",
 };
@@ -48,6 +52,7 @@ type Phase =
   | "quiz"
   | "layer1-break"
   | "layer2-break"
+  | "layer3-break"
   | "loading";
 
 /**
@@ -99,8 +104,14 @@ export default function DiagnosisPage() {
     }
 
     const resume = sessionStorage.getItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
-    if (resume === "1" || resume === "2") {
-      const defaultsCount = resume === "1" ? 10 : 20;
+    if (resume === "1" || resume === "2" || resume === "3") {
+      const defaultsCount =
+        resume === "1" ? 10 : resume === "2" ? 20 : 30;
+      if (defaultsCount >= questions.length) {
+        sessionStorage.removeItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
+        setBootstrapped(true);
+        return;
+      }
       const defaultAnswers: QuestionAnswer[] = [];
       for (let i = 0; i < defaultsCount; i += 1) {
         const q = questions[i];
@@ -219,6 +230,11 @@ export default function DiagnosisPage() {
         setPhase("layer2-break");
         return;
       }
+      if (answeredCount === 30 && total > 30) {
+        setAnswers(nextAnswers);
+        setPhase("layer3-break");
+        return;
+      }
 
       if (step + 1 < total) {
         setAnswers(nextAnswers);
@@ -235,7 +251,8 @@ export default function DiagnosisPage() {
       setPhase("loading");
 
       try {
-        await submitAnswers(nextAnswers, 3);
+        const fullLayerDone: LayerCompleted = total > 30 ? 4 : 3;
+        await submitAnswers(nextAnswers, fullLayerDone);
       } catch (e) {
         console.error("[診断] API 連携に失敗しました:", e);
         finalSubmitLockRef.current = false;
@@ -259,7 +276,13 @@ export default function DiagnosisPage() {
       } catch (e) {
         console.error("[診断] API 連携に失敗しました:", e);
         finalSubmitLockRef.current = false;
-        setPhase(layerDone === 1 ? "layer1-break" : "layer2-break");
+        if (layerDone === 1) {
+          setPhase("layer1-break");
+        } else if (layerDone === 2) {
+          setPhase("layer2-break");
+        } else {
+          setPhase("layer3-break");
+        }
         setErrorMessage(copy.diagnosis.errorSubmit);
       }
     },
@@ -455,6 +478,46 @@ export default function DiagnosisPage() {
               className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
             >
               {flow.layer2ResultNow}
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (phase === "layer3-break") {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
+        <div className="w-full max-w-lg space-y-8 text-center">
+          <h2 className="text-xl font-semibold text-zinc-900">
+            {flow.layer3Heading}
+          </h2>
+          <p className="text-base leading-relaxed text-zinc-800">
+            {flow.layer3Sub}
+          </p>
+          {errorMessage !== null ? (
+            <p className="text-sm text-red-600" role="alert">
+              {errorMessage}
+            </p>
+          ) : null}
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <button
+              type="button"
+              onClick={() => {
+                setErrorMessage(null);
+                setPhase("quiz");
+                setStep(30);
+              }}
+              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+            >
+              {flow.layer3Continue}
+            </button>
+            <button
+              type="button"
+              onClick={() => void runEarlyExit(3)}
+              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
+            >
+              {flow.layer3ResultNow}
             </button>
           </div>
         </div>

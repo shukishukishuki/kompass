@@ -90,6 +90,7 @@ const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   mbtiWhatLink: "MBTIって何？",
   continueLayer1: "続きを診断する（残り20問）",
   continueLayer2: "続きを診断する（残り10問）",
+  continueLayer3: "続きを診断する（残り10問）",
   setupOkTitle: "まずこれだけでOK",
 };
 
@@ -128,7 +129,12 @@ function isScoringSnapshot(value: unknown): value is ScoringResult {
   if (!isAiKindString(o.first) || !isAiKindString(o.displayPrimaryAi)) {
     return false;
   }
-  if (o.layerCompleted !== 1 && o.layerCompleted !== 2 && o.layerCompleted !== 3) {
+  if (
+    o.layerCompleted !== 1 &&
+    o.layerCompleted !== 2 &&
+    o.layerCompleted !== 3 &&
+    o.layerCompleted !== 4
+  ) {
     return false;
   }
   return true;
@@ -162,7 +168,12 @@ function isDiagnosisResult(value: unknown): value is DiagnosisResult {
   if (typeof o.expertView !== "string") {
     return false;
   }
-  if (o.layerCompleted !== 1 && o.layerCompleted !== 2 && o.layerCompleted !== 3) {
+  if (
+    o.layerCompleted !== 1 &&
+    o.layerCompleted !== 2 &&
+    o.layerCompleted !== 3 &&
+    o.layerCompleted !== 4
+  ) {
     return false;
   }
   const base = o.baseAI;
@@ -640,8 +651,11 @@ export default function DiagnosisResultPage() {
     if (result.layerCompleted === 2) {
       return resultPageCopy.continueLayer2;
     }
+    if (result.layerCompleted === 3 && locale === "ja") {
+      return resultPageCopy.continueLayer3;
+    }
     return null;
-  }, [result, resultPageCopy]);
+  }, [locale, result, resultPageCopy]);
 
   const handleFollowupSubmit = useCallback(async () => {
     if (result === null) {
@@ -1082,7 +1096,7 @@ export default function DiagnosisResultPage() {
             className="w-full rounded-full"
             onClick={() => {
               const v = result.layerCompleted;
-              if (v === 1 || v === 2) {
+              if (v === 1 || v === 2 || v === 3) {
                 sessionStorage.setItem(
                   DIAGNOSIS_RESUME_FROM_LAYER_KEY,
                   String(v)

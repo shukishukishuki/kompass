@@ -34,6 +34,7 @@
       "mbtiWhatLink": "MBTIって何？",
       "continueLayer1": "続きを診断する（残り20問）",
       "continueLayer2": "続きを診断する（残り10問）",
+      "continueLayer3": "続きを診断する（残り10問）",
       "setupOkTitle": "まずこれだけでOK"
     },
     "flow": {
@@ -46,6 +47,10 @@
       "layer2Sub": "残り10問で、より詳しい診断になります。",
       "layer2Continue": "続ける",
       "layer2ResultNow": "ここで結果を見る",
+      "layer3Heading": "さらに精度を上げますか？",
+      "layer3Sub": "あと10問で、AI活用ワークフローまで提案できます。",
+      "layer3Continue": "続ける",
+      "layer3ResultNow": "ここで結果を見る",
       "backQuit": "診断をやめる",
       "backPrevious": "前の問題に戻る"
     },
@@ -350,6 +355,108 @@
           { "value": "B", "label": "内容次第では使いたい" },
           { "value": "C", "label": "自分でできるので不要" },
           { "value": "D", "label": "まだそのレベルではない" }
+        ]
+      },
+      {
+        "id": 31,
+        "prompt": "主な仕事・活動ジャンルは？",
+        "options": [
+          { "value": "A", "label": "クリエイティブ（デザイン・音楽・映像・文筆など）" },
+          { "value": "B", "label": "ビジネス・企画（営業・マーケ・経営など）" },
+          { "value": "C", "label": "エンジニア・技術（開発・データ・インフラなど）" },
+          { "value": "D", "label": "研究・分析（学術・調査・コンサルなど）" },
+          { "value": "E", "label": "その他・複数にまたがる" }
+        ]
+      },
+      {
+        "id": 32,
+        "prompt": "AIを一番使いたい場面は？",
+        "options": [
+          { "value": "A", "label": "文章を書く・編集する" },
+          { "value": "B", "label": "アイデア出し・ブレスト" },
+          { "value": "C", "label": "情報収集・リサーチ" },
+          { "value": "D", "label": "コード・数値・データ処理" },
+          { "value": "E", "label": "相談・壁打ち・思考整理" }
+        ]
+      },
+      {
+        "id": 33,
+        "prompt": "1日のAI利用頻度は？",
+        "options": [
+          { "value": "A", "label": "まだほとんど使っていない" },
+          { "value": "B", "label": "週に数回程度" },
+          { "value": "C", "label": "毎日少し使う" },
+          { "value": "D", "label": "毎日ガッツリ使う" }
+        ]
+      },
+      {
+        "id": 34,
+        "prompt": "仕事のアウトプットは主に？",
+        "options": [
+          { "value": "A", "label": "テキスト・文章・資料" },
+          { "value": "B", "label": "画像・映像・音声などのメディア" },
+          { "value": "C", "label": "コード・データ・数値" },
+          { "value": "D", "label": "対人・コミュニケーション・提案" }
+        ]
+      },
+      {
+        "id": 35,
+        "prompt": "AIはチームで使う？個人で使う？",
+        "options": [
+          { "value": "A", "label": "完全に個人利用" },
+          { "value": "B", "label": "主に個人、たまに共有" },
+          { "value": "C", "label": "チームで共有して使う" },
+          { "value": "D", "label": "組織全体で活用したい" }
+        ]
+      },
+      {
+        "id": 36,
+        "prompt": "AIへの指示スタイルは？",
+        "options": [
+          { "value": "A", "label": "短く端的に投げる" },
+          { "value": "B", "label": "背景から丁寧に説明する" },
+          { "value": "C", "label": "テンプレやプロンプトを使い回す" },
+          { "value": "D", "label": "その都度スタイルを変える" }
+        ]
+      },
+      {
+        "id": 37,
+        "prompt": "今、AIで一番解決したい悩みは？",
+        "options": [
+          { "value": "A", "label": "とにかく時間が足りない" },
+          { "value": "B", "label": "アイデアや発想が出てこない" },
+          { "value": "C", "label": "情報が多すぎて整理できない" },
+          { "value": "D", "label": "判断・意思決定に迷う" }
+        ]
+      },
+      {
+        "id": 38,
+        "prompt": "AIに期待する役割は？",
+        "options": [
+          { "value": "A", "label": "指示したことを実行してほしい" },
+          { "value": "B", "label": "次の手を提案してほしい" },
+          { "value": "C", "label": "自分の考えを確認・壁打ちしてほしい" },
+          { "value": "D", "label": "一緒にゼロから考えてほしい" }
+        ]
+      },
+      {
+        "id": 39,
+        "prompt": "有料AIプランを使っているか？",
+        "options": [
+          { "value": "A", "label": "全部無料で使っている" },
+          { "value": "B", "label": "1つだけ有料プランを使っている" },
+          { "value": "C", "label": "複数のAIで有料プランを使っている" },
+          { "value": "D", "label": "課金は考えていない" }
+        ]
+      },
+      {
+        "id": 40,
+        "prompt": "AIで実現したい最大の目標は？",
+        "options": [
+          { "value": "A", "label": "作業時間を大幅に減らす" },
+          { "value": "B", "label": "アウトプットの質を上げる" },
+          { "value": "C", "label": "今までできなかった新しいことを始める" },
+          { "value": "D", "label": "今の仕事・生活のクオリティを守る" }
         ]
       }
     ]

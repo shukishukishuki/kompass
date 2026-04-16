@@ -26,6 +26,10 @@ export interface DiagnosisFlowCopy {
   layer2Sub: string;
   layer2Continue: string;
   layer2ResultNow: string;
+  layer3Heading: string;
+  layer3Sub: string;
+  layer3Continue: string;
+  layer3ResultNow: string;
   backQuit: string;
   backPrevious: string;
 }
@@ -63,6 +67,7 @@ export interface DiagnosisResultPageCopy {
   mbtiWhatLink: string;
   continueLayer1: string;
   continueLayer2: string;
+  continueLayer3: string;
   setupOkTitle: string;
 }
 

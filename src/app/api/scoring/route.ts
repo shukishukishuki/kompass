@@ -15,7 +15,7 @@ function isQuestionAnswer(value: unknown): value is QuestionAnswer {
 }
 
 function isLayerCompletedValue(value: unknown): value is LayerCompleted {
-  return value === 1 || value === 2 || value === 3;
+  return value === 1 || value === 2 || value === 3 || value === 4;
 }
 
 function isAnswersPayload(
@@ -42,7 +42,7 @@ function isAnswersPayload(
 }
 
 /**
- * POST: 30問相当の回答配列を受け取り、スコアリング結果を返す
+ * POST: 回答配列を受け取り、スコアリング結果を返す
  */
 export async function POST(request: Request): Promise<NextResponse> {
   let parsed: unknown;

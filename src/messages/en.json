@@ -34,6 +34,7 @@
       "mbtiWhatLink": "What is MBTI?",
       "continueLayer1": "Continue quiz (20 questions left)",
       "continueLayer2": "Continue quiz (10 questions left)",
+      "continueLayer3": "Continue quiz (10 questions left)",
       "setupOkTitle": "Start here — that’s enough"
     },
     "flow": {
@@ -46,6 +47,10 @@
       "layer2Sub": "Ten more questions unlock a more detailed profile.",
       "layer2Continue": "Continue",
       "layer2ResultNow": "See my result now",
+      "layer3Heading": "Want one more refinement?",
+      "layer3Sub": "Answer 10 more questions to unlock workflow-level guidance.",
+      "layer3Continue": "Continue",
+      "layer3ResultNow": "See my result now",
       "backQuit": "Exit diagnosis",
       "backPrevious": "Previous question"
     },

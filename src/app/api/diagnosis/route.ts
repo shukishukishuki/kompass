@@ -105,7 +105,7 @@ function isUserLayer(value: unknown): value is UserLayer {
 }
 
 function isLayerCompletedValue(value: unknown): value is LayerCompleted {
-  return value === 1 || value === 2 || value === 3;
+  return value === 1 || value === 2 || value === 3 || value === 4;
 }
 
 /**
