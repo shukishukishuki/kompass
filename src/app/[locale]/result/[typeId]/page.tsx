@@ -14,9 +14,8 @@ export async function generateMetadata({
 }: {
   params: Promise<{ typeId: string; locale: string }>;
 }): Promise<Metadata> {
-  const { typeId, locale } = await params;
-  const lang = locale === "en" ? "en" : "ja";
-  const ogUrl = `https://kompass-rosy.vercel.app/api/og?type=${encodeURIComponent(typeId)}&lang=${lang}`;
+  const { typeId } = await params;
+  const ogUrl = `https://kompass-rosy.vercel.app/api/og?type=${typeId}&lang=ja`;
   return {
     openGraph: {
       images: [{ url: ogUrl, width: 1200, height: 630 }],

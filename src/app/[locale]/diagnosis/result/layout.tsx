@@ -17,7 +17,7 @@ export async function generateMetadata({
 }: MetadataParams): Promise<Metadata> {
   const resolvedSearchParams = await searchParams;
   const typeId = resolvedSearchParams?.type ?? "claude";
-  const ogUrl = `https://kompass-rosy.vercel.app/api/og?type=${typeId}`;
+  const ogUrl = `https://kompass-rosy.vercel.app/api/og?type=${typeId}&lang=ja`;
 
   return {
     openGraph: {
