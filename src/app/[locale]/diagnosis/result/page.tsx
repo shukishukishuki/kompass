@@ -7,7 +7,6 @@ import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
   DIAGNOSIS_RESULT_STORAGE_KEY,
-  DIAGNOSIS_RESUME_FROM_LAYER_KEY,
   DIAGNOSIS_SCORING_STORAGE_KEY,
 } from "@/app/[locale]/diagnosis/page";
 import {
@@ -68,6 +67,33 @@ const TYPE_COMPATIBILITY: Record<string, { good: string; bad: string }> = {
   perplexity: { good: "claude", bad: "chatgpt" },
   copilot: { good: "chatgpt", bad: "jiyujin" },
   jiyujin: { good: "gemini", bad: "copilot" },
+};
+
+const TYPE_FAMOUS: Record<string, { names: string[]; reason: string }> = {
+  claude: {
+    names: ["村上春樹", "糸井重里", "ほぼ日刊イトイ新聞"],
+    reason: "感情と言語を丁寧に扱う思考スタイル",
+  },
+  chatgpt: {
+    names: ["堀江貴文", "イーロン・マスク", "孫正義"],
+    reason: "速度と結果を最優先する実行型",
+  },
+  gemini: {
+    names: ["池上彰", "佐々木俊尚", "ニュースピックス"],
+    reason: "情報収集と発信を軸にした知識探求型",
+  },
+  perplexity: {
+    names: ["成田悠輔", "ひろゆき", "養老孟司"],
+    reason: "根拠と論理を徹底的に追求する分析型",
+  },
+  copilot: {
+    names: ["トヨタ生産方式", "無印良品", "山本五十六"],
+    reason: "構造化・整理・実行を得意とする管理型",
+  },
+  jiyujin: {
+    names: ["千利休", "スティーブ・ジョブズ", "岡本太郎"],
+    reason: "既存の枠にとらわれない独自路線型",
+  },
 };
 
 /** resultPage 未定義時のフォールバック（ja） */
@@ -669,21 +695,15 @@ export default function DiagnosisResultPage() {
   );
   const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
 
-  const continueLabel = useMemo(() => {
-    if (result === null) {
-      return null;
-    }
-    if (result.layerCompleted === 1) {
-      return resultPageCopy.continueLayer1;
-    }
-    if (result.layerCompleted === 2) {
-      return resultPageCopy.continueLayer2;
-    }
-    if (result.layerCompleted === 3 && locale === "ja") {
-      return resultPageCopy.continueLayer3;
-    }
-    return null;
-  }, [locale, result, resultPageCopy]);
+  const remainingQuestions = result
+    ? result.layerCompleted === 1
+      ? 30
+      : result.layerCompleted === 2
+        ? 20
+        : result.layerCompleted === 3
+          ? 10
+          : 0
+    : 0;
 
   const handleFollowupSubmit = useCallback(async () => {
     if (result === null) {
@@ -1022,6 +1042,30 @@ export default function DiagnosisResultPage() {
                       </div>
                     );
                   })()}
+                  {(() => {
+                    const famous = TYPE_FAMOUS[resolvedTypeCharacter.aiKind];
+                    if (!famous) return null;
+                    return (
+                      <div className="mx-auto mt-6 max-w-md space-y-3">
+                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                          同じタイプの有名人
+                        </p>
+                        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+                          <div className="flex flex-wrap gap-2">
+                            {famous.names.map((name) => (
+                              <span
+                                key={name}
+                                className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                              >
+                                {name}
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-xs text-gray-400">{famous.reason}</p>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </>
               </CardContent>
             </Card>
@@ -1251,24 +1295,20 @@ export default function DiagnosisResultPage() {
           </Link>
         </div>
 
-        {continueLabel !== null ? (
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full rounded-full"
-            onClick={() => {
-              const v = result.layerCompleted;
-              if (v === 1 || v === 2 || v === 3) {
-                sessionStorage.setItem(
-                  DIAGNOSIS_RESUME_FROM_LAYER_KEY,
-                  String(v)
-                );
-              }
-              router.push(`/${locale}/diagnosis`);
-            }}
-          >
-            {continueLabel}
-          </Button>
+        {result.layerCompleted < 4 && remainingQuestions > 0 ? (
+          <div className="mx-auto mt-4 max-w-md">
+            <div className="rounded-xl border-2 border-dashed border-gray-300 p-4 text-center space-y-2">
+              <p className="text-xs text-gray-500 font-medium">
+                もっと詳しく診断できます
+              </p>
+              <a
+                href={`/${locale}/diagnosis?resume=true`}
+                className="inline-block rounded-full bg-gray-800 px-6 py-2.5 text-sm font-bold text-white hover:bg-gray-600 transition-colors"
+              >
+                続きを診断する（残り{remainingQuestions}問）→
+              </a>
+            </div>
+          </div>
         ) : null}
 
         <Card className="text-left">

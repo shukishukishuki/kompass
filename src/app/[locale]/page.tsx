@@ -397,15 +397,20 @@ export default async function LocaleHomePage({
           <p className="text-2xl font-bold text-gray-900">6</p>
           <p className="text-xs text-gray-400">AIタイプ</p>
         </div>
-        <div className="h-8 w-px bg-gray-200" />
+        <div className="w-px h-8 bg-gray-200" />
         <div>
           <p className="text-2xl font-bold text-gray-900">40</p>
           <p className="text-xs text-gray-400">診断問題数</p>
         </div>
-        <div className="h-8 w-px bg-gray-200" />
+        <div className="w-px h-8 bg-gray-200" />
         <div>
           <p className="text-2xl font-bold text-gray-900">無料</p>
           <p className="text-xs text-gray-400">完全無料</p>
+        </div>
+        <div className="w-px h-8 bg-gray-200" />
+        <div>
+          <p className="text-2xl font-bold text-gray-900">1分</p>
+          <p className="text-xs text-gray-400">で診断完了</p>
         </div>
       </div>
 
