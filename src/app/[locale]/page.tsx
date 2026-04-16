@@ -269,12 +269,15 @@ export default async function LocaleHomePage({
             <br />
             あなたの思考スタイルに合うAIを、診断で見つける。
           </p>
+          <p className="text-xs text-gray-400 text-center mt-2">
+            深く知りたい人は最大40問まで
+          </p>
           <p className="mx-auto mt-6 max-w-2xl text-base text-slate-700 md:text-xl">
             {copy.heroSub}
           </p>
-          <div className="mb-4 flex items-center justify-center gap-4 text-xs text-gray-400">
-            <span>✦ 全30〜40問</span>
-            <span>✦ 約3〜5分</span>
+          <div className="flex items-center justify-center gap-4 mb-4 text-xs text-gray-400">
+            <span>✦ まず10問から</span>
+            <span>✦ 約1分〜</span>
             <span>✦ 登録不要</span>
           </div>
           <a
