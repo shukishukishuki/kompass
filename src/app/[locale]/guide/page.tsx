@@ -148,6 +148,35 @@ export default async function GuidePage({
         ))}
       </div>
 
+      <div className="mx-auto max-w-2xl px-6 pb-6">
+        <p className="mb-4 text-xs font-bold tracking-widest text-gray-400 uppercase">
+          TYPE GUIDE
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { id: "claude", name: "共感ジャンキー", color: "#CC785C" },
+            { id: "copilot", name: "整理の鬼", color: "#0078D4" },
+            { id: "perplexity", name: "裏取りマニア", color: "#20B2AA" },
+            { id: "chatgpt", name: "丸投げ屋", color: "#10A37F" },
+            { id: "gemini", name: "情報スナイパー", color: "#4285F4" },
+            { id: "jiyujin", name: "AI遊牧民", color: "#7C3AED" },
+          ].map((type) => (
+            <a
+              key={type.id}
+              href={`/${locale}/guide/${type.id}`}
+              className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:bg-gray-50"
+            >
+              <div
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ backgroundColor: type.color }}
+              />
+              <span className="text-sm font-medium text-gray-800">{type.name}</span>
+              <span className="ml-auto text-xs text-gray-400">→</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
       <div className="mx-auto max-w-2xl px-6 pb-10">
         <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-gray-50 p-5">
           <div>

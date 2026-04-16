@@ -215,6 +215,30 @@ export default async function LocaleHomePage({
           <p className="inline-flex rounded-full border border-[#52B788]/20 bg-white px-3 py-1 text-xs font-medium text-[#2f6c56]">
             {copy.heroTag}
           </p>
+          <div className="mb-8 flex justify-center gap-2">
+            {[
+              { src: "/images/kompass_char_01_empath.png", color: "#CC785C" },
+              { src: "/images/kompass_char_02_executor.png", color: "#0078D4" },
+              { src: "/images/kompass_char_03_analyst.png", color: "#20B2AA" },
+              { src: "/images/kompass_char_04_generalist.png", color: "#10A37F" },
+              { src: "/images/kompass_char_05_scout.png", color: "#4285F4" },
+              { src: "/images/kompass_char_06_nomad.png", color: "#7C3AED" },
+            ].map((char, i) => (
+              <div
+                key={i}
+                className="h-12 w-12 overflow-hidden rounded-full"
+                style={{ backgroundColor: `${char.color}33` }}
+              >
+                <img
+                  src={char.src}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            ))}
+          </div>
           <h1 className="mt-6 text-4xl leading-tight font-extrabold whitespace-pre-line text-slate-900 md:text-6xl">
             {copy.heroTitle}
           </h1>
@@ -342,6 +366,23 @@ export default async function LocaleHomePage({
           </a>
         </div>
       </section>
+
+      <div className="flex items-center justify-center gap-6 py-6 text-center">
+        <div>
+          <p className="text-2xl font-bold text-gray-900">6</p>
+          <p className="text-xs text-gray-400">AIタイプ</p>
+        </div>
+        <div className="h-8 w-px bg-gray-200" />
+        <div>
+          <p className="text-2xl font-bold text-gray-900">40</p>
+          <p className="text-xs text-gray-400">診断問題数</p>
+        </div>
+        <div className="h-8 w-px bg-gray-200" />
+        <div>
+          <p className="text-2xl font-bold text-gray-900">無料</p>
+          <p className="text-xs text-gray-400">完全無料</p>
+        </div>
+      </div>
 
       {/* タイプ紹介セクション */}
       <section className="mx-auto w-full max-w-2xl px-6 py-12">
