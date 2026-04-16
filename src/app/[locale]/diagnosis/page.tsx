@@ -105,6 +105,7 @@ export default function DiagnosisPage() {
   const [layer1MbtiError, setLayer1MbtiError] = useState<string | null>(null);
   const [layer1MbtiNotice, setLayer1MbtiNotice] = useState<string | null>(null);
   const [hasStoredMbti, setHasStoredMbti] = useState(false);
+  const [hasPrevResult, setHasPrevResult] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
   /** 診断開始後に保持（未入力・スキップは null） */
   const [mbtiValue, setMbtiValue] = useState<MBTIType | null>(null);
@@ -120,6 +121,12 @@ export default function DiagnosisPage() {
   const progressRatio = total > 0 ? (step + 1) / total : 0;
 
   const title = useMemo(() => copy.diagnosis.title, [copy.diagnosis.title]);
+
+  useEffect(() => {
+    setHasPrevResult(
+      !!sessionStorage.getItem(DIAGNOSIS_RESULT_STORAGE_KEY)
+    );
+  }, []);
 
   useEffect(() => {
     const storedMbtiRaw = sessionStorage.getItem(DIAGNOSIS_MBTI_STORAGE_KEY);
@@ -444,6 +451,14 @@ export default function DiagnosisPage() {
           >
             診断をはじめる →
           </button>
+          {hasPrevResult ? (
+            <a
+              href={`/${locale}/diagnosis/result`}
+              className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
+            >
+              前回の結果を見る →
+            </a>
+          ) : null}
 
           <p className="text-xs text-gray-400">
             約1分〜 / 途中で結果を見ることもできます
@@ -460,6 +475,7 @@ export default function DiagnosisPage() {
           <h2 className="text-xl font-semibold text-zinc-900">
             {flow.layer1Heading}
           </h2>
+          <p className="text-xs text-gray-400">思考スタイルの基本パターンがわかりました</p>
           <p className="text-base leading-relaxed text-zinc-800">
             {flow.layer1Sub}
           </p>
@@ -555,6 +571,7 @@ export default function DiagnosisPage() {
           <h2 className="text-xl font-semibold text-zinc-900">
             {flow.layer2Heading}
           </h2>
+          <p className="text-xs text-gray-400">AIとの相性パターンが明確になりました</p>
           <p className="text-base leading-relaxed text-zinc-800">
             {flow.layer2Sub}
           </p>
@@ -595,6 +612,7 @@ export default function DiagnosisPage() {
           <h2 className="text-xl font-semibold text-zinc-900">
             {flow.layer3Heading}
           </h2>
+          <p className="text-xs text-gray-400">あなたの詳細な活用スタイルが見えてきました</p>
           <p className="text-base leading-relaxed text-zinc-800">
             {flow.layer3Sub}
           </p>
@@ -639,8 +657,9 @@ export default function DiagnosisPage() {
           {title}
         </h1>
 
-        <div className="mb-2 text-center text-sm text-zinc-500">
-          {step + 1} / {total}
+        <div className="flex justify-between text-xs text-gray-400 mb-1">
+          <span>Q{step + 1}</span>
+          <span>残り {total - step - 1} 問</span>
         </div>
         <div
           className="mb-2 h-2 w-full overflow-hidden rounded-full bg-zinc-200"

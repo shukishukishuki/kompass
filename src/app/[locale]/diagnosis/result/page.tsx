@@ -788,25 +788,33 @@ export default function DiagnosisResultPage() {
           <p className="text-xs font-medium uppercase tracking-wide opacity-90">
             {mbtiApplied?.correctedTypeEn ?? result.typeEn}
           </p>
-          <div className="mt-4 flex justify-center">
-            <Image
-              src={resolvedTypeCharacter.imageSrc}
-              alt={`${heroCharacterName} のキャラクター`}
-              width={280}
-              height={280}
-              className="h-[280px] w-[280px] object-contain"
-              priority
-            />
-          </div>
-          <h1
-            id="hero-heading"
-            className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl"
-          >
-            {heroCharacterName}
-          </h1>
-          <p className="mt-2 text-sm uppercase tracking-wide text-white/90 md:text-base">
-            {resolvedTypeCharacter.typeEn}
+          <p className="text-center text-xs text-gray-400 mb-4">
+            診断完了 ✦ あなたのAIタイプが決まりました
           </p>
+          <div
+            className="mx-auto w-full max-w-md rounded-2xl p-8 text-center"
+            style={{ backgroundColor: `${AI_THEME_COLORS[resolvedTypeCharacter.aiKind]}15` }}
+          >
+            <div className="mt-4 flex justify-center">
+              <Image
+                src={resolvedTypeCharacter.imageSrc}
+                alt={`${heroCharacterName} のキャラクター`}
+                width={280}
+                height={280}
+                className="h-[280px] w-[280px] object-contain"
+                priority
+              />
+            </div>
+            <h1
+              id="hero-heading"
+              className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl"
+            >
+              {heroCharacterName}
+            </h1>
+            <p className="mt-2 text-sm uppercase tracking-wide text-white/90 md:text-base">
+              {resolvedTypeCharacter.typeEn}
+            </p>
+          </div>
         </div>
         <div className="relative">
           <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>

@@ -48,10 +48,20 @@ export function PersonalizedPrompts({
 
   if (loading) {
     return (
-      <div className="mx-auto mt-8 max-w-md">
-        <p className="animate-pulse text-center text-sm text-gray-400">
-          あなた専用のプロンプトを生成中...
+      <div className="mx-auto mt-8 max-w-md space-y-3">
+        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+          あなた専用プロンプト
         </p>
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="rounded-xl border border-gray-100 bg-gray-50 p-4 space-y-2 animate-pulse"
+          >
+            <div className="h-3 w-24 rounded bg-gray-200" />
+            <div className="h-3 w-full rounded bg-gray-200" />
+            <div className="h-3 w-3/4 rounded bg-gray-200" />
+          </div>
+        ))}
       </div>
     );
   }

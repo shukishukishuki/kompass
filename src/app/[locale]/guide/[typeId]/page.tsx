@@ -250,7 +250,7 @@ export default async function GuideTypeDetailPage({
           href={`/${locale}/guide`}
           className="inline-flex text-sm font-medium text-slate-600 underline underline-offset-2"
         >
-          ← ガイド一覧に戻る
+          ← AI活用ガイドに戻る
         </Link>
 
         <section
