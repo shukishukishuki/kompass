@@ -347,9 +347,13 @@ export default async function GuideTypeDetailPage({
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900">NGな使い方</h2>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-700">
-            <li>{content.ngUsages[0]}</li>
-            <li>{content.ngUsages[1]}</li>
+          <ul className="mt-3 space-y-2">
+            {content.ngUsages.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                <span className="shrink-0 text-red-400 mt-0.5">✕</span>
+                {item}
+              </li>
+            ))}
           </ul>
         </section>
 

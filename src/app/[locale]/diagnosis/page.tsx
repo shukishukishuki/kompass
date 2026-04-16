@@ -687,7 +687,7 @@ export default function DiagnosisPage() {
           </button>
         </div>
 
-        <p className="mb-8 text-center text-base leading-relaxed text-zinc-800">
+        <p className="mb-8 text-center text-lg font-bold leading-relaxed text-zinc-800">
           {currentQuestion.prompt}
         </p>
 

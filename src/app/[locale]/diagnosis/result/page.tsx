@@ -955,6 +955,9 @@ export default function DiagnosisResultPage() {
         <p className="text-xl font-semibold md:text-2xl">
           {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
         </p>
+        <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
+          SHARE YOUR TYPE
+        </p>
         <div className="mt-8 flex flex-wrap justify-center gap-2">
           <a
             href={twitterUrl}
