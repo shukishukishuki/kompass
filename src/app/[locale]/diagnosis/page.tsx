@@ -124,6 +124,20 @@ export default function DiagnosisPage() {
   const title = useMemo(() => copy.diagnosis.title, [copy.diagnosis.title]);
 
   useEffect(() => {
+    if (phase === "intro") {
+      document.title = "AI診断をはじめる | Kompass";
+    } else if (phase === "quiz") {
+      document.title = `Q${step + 1} | AI診断 | Kompass`;
+    } else if (phase === "layer1-break") {
+      document.title = "Layer 1 完了 | AI診断 | Kompass";
+    } else if (phase === "layer2-break") {
+      document.title = "Layer 2 完了 | AI診断 | Kompass";
+    } else if (phase === "layer3-break") {
+      document.title = "Layer 3 完了 | AI診断 | Kompass";
+    }
+  }, [phase, step]);
+
+  useEffect(() => {
     setHasPrevResult(
       !!sessionStorage.getItem(DIAGNOSIS_RESULT_STORAGE_KEY)
     );

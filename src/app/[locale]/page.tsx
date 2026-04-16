@@ -585,6 +585,58 @@ export default async function LocaleHomePage({
         </div>
       </section>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "診断は無料ですか？",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "はい、完全無料です。登録も不要でそのまま診断できます。",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "何問ありますか？",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "まず10問で診断できます。深く知りたい方は最大40問まで回答できます。",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "診断結果は保存されますか？",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "診断結果はブラウザのセッションに保存されます。ブラウザを閉じると消えるため、結果はスクリーンショットやシェア機能でお手元に保存してください。",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "どのAIが一番いいですか？",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "「一番良いAI」は人によって違います。Kompassはあなたの思考スタイルに合ったAIを提案します。",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "診断結果が気に入らない場合は？",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "何度でも診断し直せます。また、結果はあくまで参考です。気になる別のAIを試してみることも大切です。",
+                },
+              },
+            ],
+          }),
+        }}
+      />
+
     </main>
   );
 }

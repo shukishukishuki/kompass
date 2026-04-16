@@ -21,6 +21,12 @@ export default function NotFound() {
         >
           診断してみる →
         </Link>
+        <Link
+          href="/ja/types"
+          className="rounded-full border border-gray-200 px-6 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          タイプ一覧を見る
+        </Link>
       </div>
     </main>
   );

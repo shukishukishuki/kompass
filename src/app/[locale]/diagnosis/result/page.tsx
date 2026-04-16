@@ -922,6 +922,16 @@ export default function DiagnosisResultPage() {
   const advanced = isAdvancedPresentation(result);
   const heroCharacterName =
     personalityBlock?.characterName ?? displayPersonalityJa;
+  const oppositeTypeId = personalityBlock?.oppositeType.typeJa;
+  const oppositeCharacter = TYPE_CHARACTERS.find(
+    (character) => character.typeJa === oppositeTypeId
+  );
+  const oppositeGuideTypeId =
+    (oppositeCharacter !== undefined
+      ? AI_KIND_TO_GUIDE[oppositeCharacter.aiKind]
+      : undefined) ??
+    oppositeCharacter?.typeId ??
+    "empath";
 
   return (
     <main className="min-h-screen pb-16">
@@ -964,9 +974,10 @@ export default function DiagnosisResultPage() {
                   .sort(([, a], [, b]) => b - a)
                   .slice(0, 3)
                   .map(([aiKind, score]) => (
-                    <span
+                    <a
                       key={aiKind}
-                      className="text-xs rounded-full px-3 py-1 font-medium text-white"
+                      href={`/${locale}/guide/${AI_KIND_TO_GUIDE[aiKind as string] ?? aiKind}`}
+                      className="text-xs rounded-full px-3 py-1 font-medium text-white hover:opacity-80 transition-opacity"
                       style={{
                         backgroundColor:
                           AI_THEME_COLORS[
@@ -974,8 +985,9 @@ export default function DiagnosisResultPage() {
                           ] ?? "#7C3AED",
                       }}
                     >
-                      {AI_LABEL_JA[aiKind] ?? aiKind} {Math.round(score)}pt
-                    </span>
+                      {AI_LABEL_JA[aiKind as string] ?? (aiKind as string)}{" "}
+                      {Math.round(score as number)}pt
+                    </a>
                   ))}
               </div>
             )}
@@ -1333,6 +1345,12 @@ export default function DiagnosisResultPage() {
                     {personalityBlock.oppositeType.aiName}）
                   </p>
                   <p>{personalityBlock.oppositeType.description}</p>
+                  <a
+                    href={`/${locale}/guide/${oppositeGuideTypeId}`}
+                    className="text-xs underline underline-offset-2 text-gray-400 hover:text-gray-600 mt-1 block"
+                  >
+                    使い方を見る →
+                  </a>
                 </CardContent>
               </Card>
             ) : null}
@@ -1346,6 +1364,11 @@ export default function DiagnosisResultPage() {
 
             {result.layerCompleted >= 2 ? (
               <>
+                <div className="mx-auto mt-4 max-w-md">
+                  <p className="text-center text-xs text-gray-400 mb-2">
+                    ✦ Layer {result.layerCompleted} 解放済み
+                  </p>
+                </div>
                 <Card className="text-left">
                   <CardHeader>
                     <CardTitle>{resultPageCopy.ngTitle}</CardTitle>
