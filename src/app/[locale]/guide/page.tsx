@@ -1,14 +1,87 @@
 import Link from "next/link";
-import { getTypeCharacterByTypeId, type TypeId } from "@/lib/type-characters";
 
-const GUIDE_CARD_ORDER: readonly TypeId[] = [
-  "empath",
-  "generalist",
-  "scout",
-  "analyst",
-  "executive",
-  "orchestrator",
-] as const;
+interface AiGuide {
+  id: string;
+  name: string;
+  color: string;
+  tagline: string;
+  description: string;
+  bestFor: string[];
+  url: string;
+}
+
+const AI_GUIDES: AiGuide[] = [
+  {
+    id: "chatgpt",
+    name: "ChatGPT",
+    color: "#10A37F",
+    tagline: "なんでも屋の万能選手",
+    description:
+      "文章・コード・翻訳・アイデア出しまで幅広く対応。迷ったらまずここ。無料枠が最も充実している。",
+    bestFor: [
+      "とにかく速く答えがほしい",
+      "作業を丸投げしたい",
+      "AIを使い始めたばかり",
+    ],
+    url: "https://chatgpt.com",
+  },
+  {
+    id: "claude",
+    name: "Claude",
+    color: "#CC785C",
+    tagline: "思考の深さで選ぶなら",
+    description:
+      "長文の読解・複雑な思考整理・感情に寄り添った対話が得意。答えより過程を大事にしたい人向け。",
+    bestFor: [
+      "考えを整理・言語化したい",
+      "長い文章を読み解きたい",
+      "じっくり壁打ちしたい",
+    ],
+    url: "https://claude.ai",
+  },
+  {
+    id: "gemini",
+    name: "Gemini",
+    color: "#4285F4",
+    tagline: "最新情報を即座に",
+    description:
+      "Googleの検索力と連携。リアルタイム情報・画像理解・Googleサービスとの連携が強み。",
+    bestFor: [
+      "今起きていることを知りたい",
+      "Googleと連携したい",
+      "画像と一緒に使いたい",
+    ],
+    url: "https://gemini.google.com",
+  },
+  {
+    id: "perplexity",
+    name: "Perplexity",
+    color: "#20B2AA",
+    tagline: "根拠付きで調べるなら",
+    description:
+      "回答に出典・ソースが明示される。「それ本当に正しいの？」が気になる人に最適。",
+    bestFor: [
+      "情報の裏取りをしたい",
+      "出典・ソースを確認したい",
+      "リサーチ・調査が多い",
+    ],
+    url: "https://perplexity.ai",
+  },
+  {
+    id: "copilot",
+    name: "Copilot",
+    color: "#0078D4",
+    tagline: "仕事の整理・構造化に",
+    description:
+      "Microsoft Officeとの連携が強力。Word・Excel・Teamsで使えば業務効率が大幅アップ。",
+    bestFor: [
+      "Office系ツールをよく使う",
+      "情報を整理・構造化したい",
+      "職場で使いたい",
+    ],
+    url: "https://copilot.microsoft.com",
+  },
+];
 
 /**
  * AI活用ガイド一覧ページ
@@ -19,19 +92,6 @@ export default async function GuidePage({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
-  const title =
-    locale === "en"
-      ? "Are you really using AI well?"
-      : "あなたのAI、ちゃんと使えてますか？";
-  const subtitle =
-    locale === "en"
-      ? "Knowing type-based usage patterns changes AI answers."
-      : "タイプ別の使い方を知ると、AIの答えが変わります";
-  const commonTips = [
-    "AIは1回で使い切るな（3往復して初めて価値が出る）",
-    "最初に「役割と目的」を伝える",
-    "「なぜそう思う？」で深掘りする",
-  ] as const;
 
   return (
     <main className="bg-[#f8f7ff] px-4 py-10">
@@ -40,66 +100,52 @@ export default async function GuidePage({
           AI USAGE GUIDE
         </p>
         <h1 className="mb-3 text-2xl font-bold text-gray-900">
-          あなたのタイプに合った
-          <br />
-          AIの使い方
+          主要AIの特徴と使い分け
         </h1>
         <p className="text-sm leading-relaxed text-gray-500">
-          診断結果をもとに、あなたの思考スタイルに最適なAI活用法を紹介します。毎週アップデートされる使い方のヒントで、AIをもっと自分らしく使いこなしましょう。
+          ChatGPT・Claude・Gemini・Perplexity・Copilot——それぞれ得意なことが違います。あなたに合ったAIを知るには、まず診断してみてください。
         </p>
       </div>
-      <div className="mx-auto max-w-5xl">
-        <h1 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">
-          {title}
-        </h1>
-        <p className="mt-3 text-center text-sm text-slate-600 md:text-base">
-          {subtitle}
-        </p>
-
-        <section className="mt-10">
-          <div className="grid grid-cols-2 gap-4">
-            {GUIDE_CARD_ORDER.map((typeId) => {
-              const character = getTypeCharacterByTypeId(typeId);
-              if (character === null) {
-                return null;
-              }
-              return (
-                <Link
-                  key={typeId}
-                  href={`/${locale}/guide/${typeId}`}
-                  className="rounded-2xl border border-zinc-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <p className="text-sm font-semibold text-slate-900">
-                    {character.characterName}
-                  </p>
-                  <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
-                    {character.typeEn}
-                  </p>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="mt-10 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">共通Tips</h2>
-          <ol className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700">
-            {commonTips.map((tip, idx) => (
-              <li key={tip}>
-                {idx + 1}. {tip}
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <div className="mt-10 text-center">
-          <Link
-            href={`/${locale}/diagnosis`}
-            className="inline-flex rounded-full bg-[#52B788] px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+      <div className="mx-auto max-w-2xl space-y-4 px-6 pb-6">
+        {AI_GUIDES.map((ai) => (
+          <div
+            key={ai.id}
+            className="space-y-3 rounded-xl border border-gray-200 bg-white p-5"
           >
-            まだ診断していない人はこちら →
-          </Link>
-        </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div
+                  className="h-3 w-3 rounded-full"
+                  style={{ backgroundColor: ai.color }}
+                />
+                <span className="font-bold text-gray-900">{ai.name}</span>
+                <span className="text-xs text-gray-400">{ai.tagline}</span>
+              </div>
+              <a
+                href={ai.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-gray-400 underline underline-offset-2 transition-colors hover:text-gray-600"
+              >
+                試す →
+              </a>
+            </div>
+            <p className="text-sm leading-relaxed text-gray-600">
+              {ai.description}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ai.bestFor.map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full px-3 py-1 text-xs font-medium text-white"
+                  style={{ backgroundColor: `${ai.color}CC` }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="mx-auto max-w-2xl px-6 pb-10">

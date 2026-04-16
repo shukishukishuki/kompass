@@ -67,7 +67,7 @@ const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   rarityGeneral: "一般的なタイプ",
   rarityUnusual: "少し珍しいタイプ",
   rarityRare: "レアタイプ",
-  screenshotTagline: "当たりすぎてちょっと怖い",
+  screenshotTagline: "",
   shareOnX: "Xでシェア",
   redoDiagnosis: "もう一度診断する",
   recommendedAi: "おすすめAI",
