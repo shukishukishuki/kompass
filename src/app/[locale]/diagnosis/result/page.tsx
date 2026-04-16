@@ -1389,6 +1389,15 @@ export default function DiagnosisResultPage() {
           </p>
         </div>
 
+        <p className="text-center text-xs text-gray-300 mt-4">
+          診断日：
+          {new Date().toLocaleDateString("ja-JP", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
+
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             href={`/${locale}/diagnosis`}

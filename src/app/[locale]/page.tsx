@@ -232,7 +232,7 @@ export default async function LocaleHomePage({
 
   return (
     <main className="bg-[#f8f7ff] text-slate-900">
-      <section className="bg-[#fafafa] px-4 py-20 text-center">
+      <section className="bg-[#fafafa] px-4 py-20 text-center opacity-0 animate-[fadeIn_0.5s_ease-in_forwards]">
         <div className="mx-auto max-w-3xl">
           <p className="inline-flex rounded-full border border-[#52B788]/20 bg-white px-3 py-1 text-xs font-medium text-[#2f6c56]">
             {copy.heroTag}
@@ -565,31 +565,6 @@ export default async function LocaleHomePage({
         </div>
       </section>
 
-      <footer className="border-t border-zinc-200 px-4 py-8 text-center text-sm text-slate-600">
-        <div className="flex justify-center gap-4 text-xs text-gray-400">
-          <a
-            href="/ja/terms"
-            className="transition-colors hover:text-gray-600"
-          >
-            利用規約
-          </a>
-          <a
-            href="/ja/privacy"
-            className="transition-colors hover:text-gray-600"
-          >
-            プライバシーポリシー
-          </a>
-          <a
-            href="https://twitter.com/intent/tweet?text=AIタイプ診断やってみた！%20%23Kompass&url=https://kompass-rosy.vercel.app/ja"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-gray-600 transition-colors"
-          >
-            X（旧Twitter）
-          </a>
-        </div>
-        <p className="mt-3">Kompass © 2026</p>
-      </footer>
     </main>
   );
 }
