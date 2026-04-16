@@ -31,7 +31,7 @@ export function Header({ locale }: Readonly<HeaderProps>) {
   const navItems: NavItem[] = [
     { label: "診断", href: `/${locale}/diagnosis` },
     { label: "タイプ", href: `/${locale}/types` },
-    { label: "AIガイド", href: `/${locale}/guide` },
+    { label: "AI活用ガイド", href: `/${locale}/guide` },
     { label: "マイ結果", href: `/${locale}/diagnosis/result` },
   ];
 

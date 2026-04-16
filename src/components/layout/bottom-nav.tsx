@@ -34,7 +34,7 @@ export function BottomNav({ locale }: Readonly<BottomNavProps>) {
   const items: BottomNavItem[] = [
     { label: "診断", href: `/${locale}/diagnosis`, icon: Compass },
     { label: "タイプ", href: `/${locale}/types`, icon: Users },
-    { label: "AIガイド", href: `/${locale}/guide`, icon: BookOpen },
+    { label: "AI活用ガイド", href: `/${locale}/guide`, icon: BookOpen },
     { label: "マイ結果", href: `/${locale}/diagnosis/result`, icon: BarChart2 },
   ];
 

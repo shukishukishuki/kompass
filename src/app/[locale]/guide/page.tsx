@@ -11,7 +11,7 @@ const GUIDE_CARD_ORDER: readonly TypeId[] = [
 ] as const;
 
 /**
- * AIガイド一覧ページ
+ * AI活用ガイド一覧ページ
  */
 export default async function GuidePage({
   params,
@@ -35,6 +35,19 @@ export default async function GuidePage({
 
   return (
     <main className="bg-[#f8f7ff] px-4 py-10">
+      <div className="mx-auto max-w-2xl px-6 py-10">
+        <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">
+          AI USAGE GUIDE
+        </p>
+        <h1 className="mb-3 text-2xl font-bold text-gray-900">
+          あなたのタイプに合った
+          <br />
+          AIの使い方
+        </h1>
+        <p className="text-sm leading-relaxed text-gray-500">
+          診断結果をもとに、あなたの思考スタイルに最適なAI活用法を紹介します。毎週アップデートされる使い方のヒントで、AIをもっと自分らしく使いこなしましょう。
+        </p>
+      </div>
       <div className="mx-auto max-w-5xl">
         <h1 className="text-center text-3xl font-bold text-slate-900 md:text-4xl">
           {title}
@@ -85,6 +98,25 @@ export default async function GuidePage({
             className="inline-flex rounded-full bg-[#52B788] px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"
           >
             まだ診断していない人はこちら →
+          </Link>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-2xl px-6 pb-10">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <div>
+            <p className="mb-1 text-sm font-bold text-gray-800">
+              まだ診断していない方へ
+            </p>
+            <p className="text-xs text-gray-500">
+              診断するとあなた専用のガイドが解放されます
+            </p>
+          </div>
+          <Link
+            href={`/${locale}/diagnosis`}
+            className="shrink-0 rounded-full bg-gray-900 px-5 py-2 text-xs font-bold text-white transition-colors hover:bg-gray-700"
+          >
+            診断する →
           </Link>
         </div>
       </div>
