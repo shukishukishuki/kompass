@@ -490,6 +490,44 @@ export default async function LocaleHomePage({
       </section>
 
       <section className="w-full max-w-2xl mx-auto px-6 py-10">
+        <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">
+          VOICES
+        </p>
+        <h2 className="text-center text-xl font-bold text-gray-900 mb-6">
+          診断した人の声
+        </h2>
+        <div className="space-y-3">
+          {[
+            {
+              type: "丸投げ屋",
+              text: "ChatGPTをなんとなく使ってたけど、診断して使い方が変わった。作業が半分になった気がする。",
+              role: "フリーランス / 30代",
+            },
+            {
+              type: "裏取りマニア",
+              text: "Perplexityは知ってたけど「自分向け」だとわかって初めてちゃんと使い始めた。",
+              role: "マーケター / 20代",
+            },
+            {
+              type: "共感ジャンキー",
+              text: "Claudeって感情的な相談が得意なんですね。転職悩みを整理するのに使ってます。",
+              role: "会社員 / 30代",
+            },
+          ].map((v, i) => (
+            <div key={i} className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+              <p className="text-sm text-gray-700 leading-relaxed">「{v.text}」</p>
+              <div className="flex items-center gap-2">
+                <span className="text-xs rounded-full bg-gray-100 px-2 py-0.5 text-gray-600">
+                  {v.type}
+                </span>
+                <span className="text-xs text-gray-400">{v.role}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="w-full max-w-2xl mx-auto px-6 py-10">
         <h2 className="text-center text-xl font-bold text-gray-900 mb-6">よくある質問</h2>
         <div className="space-y-3">
           {[

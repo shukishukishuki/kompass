@@ -96,6 +96,51 @@ const TYPE_FAMOUS: Record<string, { names: string[]; reason: string }> = {
   },
 };
 
+const TYPE_ROADMAP: Record<string, { steps: string[] }> = {
+  claude: {
+    steps: [
+      "まず日記や悩みをClaudeに話しかけてみる",
+      "週1回の振り返りをClaudeと一緒に行う",
+      "長文ドキュメントの要約・分析に使う",
+    ],
+  },
+  chatgpt: {
+    steps: [
+      "作業の丸投げから始める（メール・資料作成）",
+      "プロンプトテンプレートを作って使い回す",
+      "GPTsで自分専用のAIを作る",
+    ],
+  },
+  gemini: {
+    steps: [
+      "Googleアカウントと連携して使い始める",
+      "最新ニュースの要約を毎朝頼む",
+      "Google WorkspaceのAI機能を全部オンにする",
+    ],
+  },
+  perplexity: {
+    steps: [
+      "気になるニュースの裏取りに使う",
+      "レポート・論文の参考文献収集に使う",
+      "競合調査・市場分析のメインツールにする",
+    ],
+  },
+  copilot: {
+    steps: [
+      "Microsoft 365と連携して議事録自動化",
+      "ExcelデータをAIで分析する",
+      "Teamsの会議サマリーを自動生成する",
+    ],
+  },
+  jiyujin: {
+    steps: [
+      "用途別にAIを使い分けるルールを作る",
+      "新しいAIが出たら即試してみる",
+      "複数AIの回答を比較して最善策を選ぶ",
+    ],
+  },
+};
+
 /** resultPage 未定義時のフォールバック（ja） */
 const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   statsAggregating: "集計中",
@@ -1062,6 +1107,34 @@ export default function DiagnosisResultPage() {
                             ))}
                           </div>
                           <p className="text-xs text-gray-400">{famous.reason}</p>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  {(() => {
+                    const roadmap = TYPE_ROADMAP[resolvedTypeCharacter.aiKind];
+                    if (!roadmap) return null;
+                    return (
+                      <div className="mx-auto mt-6 max-w-md space-y-3">
+                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                          活用ロードマップ
+                        </p>
+                        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+                          {roadmap.steps.map((step, i) => (
+                            <div key={i} className="flex items-start gap-3">
+                              <span
+                                className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                                style={{
+                                  backgroundColor:
+                                    AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ??
+                                    "#7C3AED",
+                                }}
+                              >
+                                {i + 1}
+                              </span>
+                              <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     );
