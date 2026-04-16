@@ -4,6 +4,7 @@
  */
 
 import type { PersonalityDescription } from "@/types/diagnosis";
+import type { AiKind } from "@/types/ai";
 
 export type { PersonalityDescription } from "@/types/diagnosis";
 
@@ -170,6 +171,16 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "あなたは特定のAIへの依存を避ける、メタ的なAI活用スタイルを持っています。最適化思考が強い上級者タイプです。",
     shareText: "一つに決められない仲間を探してる。",
   },
+};
+
+/** aiKind から結果画面用の説明を引けるマップ */
+export const PERSONALITY_DESCRIPTIONS: Record<AiKind, PersonalityDescription> = {
+  claude: PERSONALITY_DESCRIPTIONS_JA["相談相手タイプ"],
+  chatgpt: PERSONALITY_DESCRIPTIONS_JA["万能助手タイプ"],
+  gemini: PERSONALITY_DESCRIPTIONS_JA["情報通タイプ"],
+  perplexity: PERSONALITY_DESCRIPTIONS_JA["研究者タイプ"],
+  copilot: PERSONALITY_DESCRIPTIONS_JA["秘書タイプ"],
+  jiyujin: PERSONALITY_DESCRIPTIONS_JA["自由人タイプ"],
 };
 
 /**

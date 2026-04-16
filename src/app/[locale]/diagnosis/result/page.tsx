@@ -21,7 +21,10 @@ import {
   getMBTICompatibilityComment,
   normalizeMBTI,
 } from "@/lib/mbti-correction";
-import { getPersonalityDescription } from "@/lib/personality-descriptions";
+import {
+  getPersonalityDescription,
+  PERSONALITY_DESCRIPTIONS,
+} from "@/lib/personality-descriptions";
 import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
 import {
   hexToRgba,
@@ -782,9 +785,11 @@ export default function DiagnosisResultPage() {
     });
   }, [mbtiInput, result, scoringSnapshot, resultPageCopy]);
 
-  const shareCatchCopy = personalityBlock?.catchCopy ?? resolvedTypeCharacter.oneLiner;
+  const personalityDesc = PERSONALITY_DESCRIPTIONS[resolvedTypeCharacter.aiKind];
   const shareText = encodeURIComponent(
-    `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした！\n\n${shareCatchCopy}\n\nあなたのベースAIは？ #Kompass #AI診断`
+    personalityDesc?.shareText
+      ? `${personalityDesc.shareText} #Kompass #AI診断`
+      : `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした！\n\nあなたのベースAIは？ #Kompass #AI診断`
   );
   const shareUrl = encodeURIComponent(
     `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
@@ -1307,6 +1312,13 @@ export default function DiagnosisResultPage() {
                 </CardContent>
               </Card>
             ) : null}
+            {result.layerCompleted === 1 ? (
+              <div className="mx-auto mt-4 max-w-md rounded-xl bg-gray-50 border border-gray-200 p-4 text-center space-y-2">
+                <p className="text-xs text-gray-500">
+                  続けて診断すると「NGな使い方」「AIリテラシー分析」が解放されます
+                </p>
+              </div>
+            ) : null}
 
             {result.layerCompleted >= 2 ? (
               <>
@@ -1315,9 +1327,14 @@ export default function DiagnosisResultPage() {
                     <CardTitle>{resultPageCopy.ngTitle}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {personalityBlock.ngUsage}
-                    </p>
+                    <ul className="space-y-2">
+                      {[personalityBlock.ngUsage].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                          <span className="shrink-0 text-red-400 mt-0.5">✕</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
                   </CardContent>
                 </Card>
                 <Card className="text-left">

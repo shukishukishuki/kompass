@@ -174,12 +174,21 @@ export default async function GuidePage({
       </div>
 
       <div className="mx-auto max-w-2xl px-6 pb-6">
-        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5 text-center space-y-2">
-          <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-            WEEKLY TOPICS
-          </p>
+        <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+              WEEKLY TOPICS
+            </p>
+            <span className="text-xs rounded-full bg-yellow-100 text-yellow-700 px-2 py-0.5 font-medium">
+              coming soon
+            </span>
+          </div>
           <p className="text-sm font-bold text-gray-700">今週のAI最新トピック</p>
-          <p className="text-xs text-gray-400">1,000ユーザー達成後に自動配信開始予定</p>
+          <p className="text-xs text-gray-400 leading-relaxed">
+            毎週月曜日に更新予定。ChatGPT・Claude・Geminiなど主要AIの最新情報を
+            あなたのタイプ別視点でお届けします。1,000ユーザー達成後に開始。
+          </p>
+          <p className="text-xs text-gray-300">メール登録で更新通知を受け取れます →</p>
         </div>
       </div>
 
