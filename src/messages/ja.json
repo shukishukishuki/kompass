@@ -5,7 +5,7 @@
     "errorNoQuestions": "設問データが読み込めませんでした。",
     "errorSubmit": "送信に失敗しました。通信状況を確認のうえ、もう一度選択してください。",
     "resultPage": {
-      "statsAggregating": "集計中",
+      "statsAggregating": "まだ集計中（診断者募集中！）",
       "statsPercentTemplate": "全診断ユーザーの {percent}% がこのタイプ",
       "rarityOften": "よく見るタイプ",
       "rarityGeneral": "一般的なタイプ",

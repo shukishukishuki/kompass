@@ -107,6 +107,7 @@ export default function DiagnosisPage() {
   const [hasStoredMbti, setHasStoredMbti] = useState(false);
   const [hasPrevResult, setHasPrevResult] = useState(false);
   const [bootstrapped, setBootstrapped] = useState(false);
+  const [starting, setStarting] = useState(false);
   /** 診断開始後に保持（未入力・スキップは null） */
   const [mbtiValue, setMbtiValue] = useState<MBTIType | null>(null);
 
@@ -446,10 +447,14 @@ export default function DiagnosisPage() {
 
           <button
             type="button"
-            onClick={() => setPhase("quiz")}
-            className="w-full rounded-full bg-gray-900 py-4 text-sm font-bold text-white hover:bg-gray-700 transition-colors"
+            onClick={() => {
+              setStarting(true);
+              setTimeout(() => setPhase("quiz"), 300);
+            }}
+            disabled={starting}
+            className="w-full rounded-full bg-gray-900 py-4 text-sm font-bold text-white hover:bg-gray-700 transition-colors disabled:opacity-70"
           >
-            診断をはじめる →
+            {starting ? "読み込み中..." : "診断をはじめる →"}
           </button>
           {hasPrevResult ? (
             <a

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
 import { PromptList } from "@/components/guide/prompt-list";
 import {
   getTypeCharacterByTypeId,
@@ -9,6 +10,15 @@ import {
   type TypeId,
 } from "@/lib/type-characters";
 import { AI_THEME_COLORS, type AiKind } from "@/types/ai";
+
+const GUIDE_TO_AI_KIND: Record<string, string> = {
+  empath: "claude",
+  generalist: "chatgpt",
+  scout: "gemini",
+  analyst: "perplexity",
+  executive: "copilot",
+  orchestrator: "jiyujin",
+};
 
 interface GuideDetailContent {
   oneShotCopy: string;
@@ -256,6 +266,7 @@ export default async function GuideTypeDetailPage({
     notFound();
   }
   const accentColor = AI_THEME_COLORS[character.aiKind];
+  const aiKind = GUIDE_TO_AI_KIND[typeId] ?? typeId;
 
   return (
     <main className="bg-[#f8f7ff] px-4 py-8">
@@ -372,20 +383,9 @@ export default async function GuideTypeDetailPage({
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">今すぐ使う</h2>
-          <div className="mt-4 flex flex-wrap gap-3">
-            {content.quickUseButtons.map((button) => (
-              <a
-                key={button.label}
-                href={button.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex rounded-full px-5 py-2 text-sm font-semibold text-white transition hover:brightness-95"
-                style={{ backgroundColor: accentColor }}
-              >
-                {button.label}
-              </a>
-            ))}
+          <div className="space-y-2">
+            <h2 className="text-sm font-bold text-gray-700">今すぐ使う</h2>
+            <OneClickAIButton typeId={aiKind} />
           </div>
         </section>
 

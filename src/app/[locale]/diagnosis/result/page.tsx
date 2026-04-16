@@ -203,7 +203,7 @@ const AI_LABEL_JA: Record<string, string> = {
 
 /** resultPage 未定義時のフォールバック（ja） */
 const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
-  statsAggregating: "集計中",
+  statsAggregating: "まだ集計中（診断者募集中！）",
   statsPercentTemplate: "全診断ユーザーの {percent}% がこのタイプ",
   rarityOften: "よく見るタイプ",
   rarityGeneral: "一般的なタイプ",
@@ -665,6 +665,13 @@ export default function DiagnosisResultPage() {
       cancelled = true;
     };
   }, [result]);
+
+  useEffect(() => {
+    if (!hydrated) {
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+  }, [hydrated]);
 
   const displayPersonalityJa = useMemo(() => {
     if (result === null) {
