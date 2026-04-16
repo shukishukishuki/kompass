@@ -283,7 +283,21 @@ export default async function LocaleHomePage({
       </section>
 
       <footer className="border-t border-zinc-200 px-4 py-8 text-center text-sm text-slate-600">
-        Kompass © 2026
+        <div className="flex justify-center gap-4 text-xs text-gray-400">
+          <a
+            href="/ja/terms"
+            className="transition-colors hover:text-gray-600"
+          >
+            利用規約
+          </a>
+          <a
+            href="/ja/privacy"
+            className="transition-colors hover:text-gray-600"
+          >
+            プライバシーポリシー
+          </a>
+        </div>
+        <p className="mt-3">Kompass © 2026</p>
       </footer>
     </main>
   );
