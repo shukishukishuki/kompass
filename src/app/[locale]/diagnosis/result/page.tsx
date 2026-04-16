@@ -27,6 +27,7 @@ import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
 import {
   hexToRgba,
   resolveTypeCharacter,
+  TYPE_CHARACTERS,
 } from "@/lib/type-characters";
 import {
   getDiagnosisStats,
@@ -58,6 +59,15 @@ import { Separator } from "@/components/ui/separator";
 const messagesByLocale: Record<string, MessagesFile> = {
   ja: jaMessages as MessagesFile,
   en: enMessages as MessagesFile,
+};
+
+const TYPE_COMPATIBILITY: Record<string, { good: string; bad: string }> = {
+  claude: { good: "perplexity", bad: "chatgpt" },
+  chatgpt: { good: "copilot", bad: "claude" },
+  gemini: { good: "perplexity", bad: "copilot" },
+  perplexity: { good: "claude", bad: "chatgpt" },
+  copilot: { good: "chatgpt", bad: "jiyujin" },
+  jiyujin: { good: "gemini", bad: "copilot" },
 };
 
 /** resultPage 未定義時のフォールバック（ja） */
@@ -979,6 +989,39 @@ export default function DiagnosisResultPage() {
                     typeId={resolvedTypeCharacter.aiKind}
                     axes={axisScores}
                   />
+                  {(() => {
+                    const compat = TYPE_COMPATIBILITY[resolvedTypeCharacter.aiKind];
+                    const goodChar = TYPE_CHARACTERS.find(
+                      (c) => c.aiKind === compat?.good
+                    );
+                    const badChar = TYPE_CHARACTERS.find(
+                      (c) => c.aiKind === compat?.bad
+                    );
+                    if (!compat || !goodChar || !badChar) return null;
+                    return (
+                      <div className="mx-auto mt-6 max-w-md space-y-3">
+                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                          タイプ相性
+                        </p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="rounded-xl border border-green-100 bg-green-50 p-3 text-center">
+                            <p className="text-xs text-green-600 font-bold mb-1">相性◎</p>
+                            <p className="text-sm font-bold text-gray-800">
+                              {goodChar.characterName}
+                            </p>
+                            <p className="text-xs text-gray-400">{goodChar.aiName}</p>
+                          </div>
+                          <div className="rounded-xl border border-red-100 bg-red-50 p-3 text-center">
+                            <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
+                            <p className="text-sm font-bold text-gray-800">
+                              {badChar.characterName}
+                            </p>
+                            <p className="text-xs text-gray-400">{badChar.aiName}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </>
               </CardContent>
             </Card>
@@ -1180,6 +1223,21 @@ export default function DiagnosisResultPage() {
             ) : null}
           </CardContent>
         </Card>
+
+        <div className="mx-auto mt-4 max-w-md text-center">
+          <p className="text-xs text-gray-400">
+            最新のAI活用情報は
+            <a
+              href="https://twitter.com/intent/follow?screen_name=kompass_ai"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 hover:text-gray-600 transition-colors mx-1"
+            >
+              X（@kompass_ai）
+            </a>
+            で発信中
+          </p>
+        </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link

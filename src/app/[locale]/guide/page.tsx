@@ -15,6 +15,7 @@ interface AiGuide {
   tagline: string;
   description: string;
   bestFor: string[];
+  free: boolean;
   url: string;
 }
 
@@ -31,6 +32,7 @@ const AI_GUIDES: AiGuide[] = [
       "作業を丸投げしたい",
       "AIを使い始めたばかり",
     ],
+    free: true,
     url: "https://chatgpt.com",
   },
   {
@@ -45,6 +47,7 @@ const AI_GUIDES: AiGuide[] = [
       "長い文章を読み解きたい",
       "じっくり壁打ちしたい",
     ],
+    free: true,
     url: "https://claude.ai",
   },
   {
@@ -59,6 +62,7 @@ const AI_GUIDES: AiGuide[] = [
       "Googleと連携したい",
       "画像と一緒に使いたい",
     ],
+    free: true,
     url: "https://gemini.google.com",
   },
   {
@@ -73,6 +77,7 @@ const AI_GUIDES: AiGuide[] = [
       "出典・ソースを確認したい",
       "リサーチ・調査が多い",
     ],
+    free: true,
     url: "https://perplexity.ai",
   },
   {
@@ -87,6 +92,7 @@ const AI_GUIDES: AiGuide[] = [
       "情報を整理・構造化したい",
       "職場で使いたい",
     ],
+    free: true,
     url: "https://copilot.microsoft.com",
   },
 ];
@@ -129,14 +135,21 @@ export default async function GuidePage({
                 <span className="font-bold text-gray-900">{ai.name}</span>
                 <span className="text-xs text-gray-400">{ai.tagline}</span>
               </div>
-              <a
-                href={ai.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-gray-400 underline underline-offset-2 transition-colors hover:text-gray-600"
-              >
-                試す →
-              </a>
+              <div className="flex items-center gap-2">
+                {ai.free ? (
+                  <span className="text-xs rounded-full px-2 py-0.5 bg-green-100 text-green-700 font-medium">
+                    無料あり
+                  </span>
+                ) : null}
+                <a
+                  href={ai.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-gray-400 underline underline-offset-2 transition-colors hover:text-gray-600"
+                >
+                  試す →
+                </a>
+              </div>
             </div>
             <p className="text-sm leading-relaxed text-gray-600">
               {ai.description}

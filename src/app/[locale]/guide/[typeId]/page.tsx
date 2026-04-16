@@ -365,6 +365,32 @@ export default async function GuideTypeDetailPage({
           </div>
         </section>
 
+        <div className="mx-auto max-w-2xl px-6 pb-4">
+          <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
+            OTHER TYPES
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {Object.entries({
+              empath: "共感ジャンキー",
+              generalist: "丸投げ屋",
+              scout: "情報スナイパー",
+              analyst: "裏取りマニア",
+              executive: "整理の鬼",
+              orchestrator: "AI遊牧民",
+            })
+              .filter(([id]) => id !== typeId)
+              .map(([id, name]) => (
+                <a
+                  key={id}
+                  href={`/${locale}/guide/${id}`}
+                  className="rounded-full border border-gray-200 px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  {name}
+                </a>
+              ))}
+          </div>
+        </div>
+
         <div className="mx-auto max-w-2xl px-6 py-10">
           <div className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
             <p className="text-sm font-bold text-gray-800">

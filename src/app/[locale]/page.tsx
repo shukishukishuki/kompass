@@ -463,6 +463,28 @@ export default async function LocaleHomePage({
       </section>
 
       <section className="w-full max-w-2xl mx-auto px-6 py-10">
+        <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">
+          HOW IT WORKS
+        </p>
+        <h2 className="text-center text-xl font-bold text-gray-900 mb-8">
+          3ステップで完了
+        </h2>
+        <div className="grid grid-cols-3 gap-4 text-center">
+          {[
+            { step: "01", title: "診断する", desc: "10問に答えるだけ。約1分で完了。" },
+            { step: "02", title: "タイプを知る", desc: "あなたの思考スタイルに合うAIが判明。" },
+            { step: "03", title: "使い始める", desc: "専用プロンプトですぐにAIを活用。" },
+          ].map((item) => (
+            <div key={item.step} className="space-y-2">
+              <p className="text-2xl font-bold text-gray-200">{item.step}</p>
+              <p className="text-sm font-bold text-gray-900">{item.title}</p>
+              <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="w-full max-w-2xl mx-auto px-6 py-10">
         <h2 className="text-center text-xl font-bold text-gray-900 mb-6">よくある質問</h2>
         <div className="space-y-3">
           {[
