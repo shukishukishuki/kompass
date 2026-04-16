@@ -3,56 +3,103 @@ import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
-interface TypeOgConfig {
-  name: string;
-  enName: string;
-  color: string;
-  catch: string;
-}
+const TYPE_DATA = {
+  empath: {
+    ja: { label: "共感ジャンキー", catch: "答えじゃなくて、わかってほしかっただけ。" },
+    en: { label: "The Confidant", catch: "I don't need answers. I need to be heard." },
+    ai: "Claude",
+    percent: 24,
+    bg: "#FDF3E3",
+    accent: "#E8952A",
+    charImg: "/images/kompass_char_01_empath.png",
+    darkText: true,
+  },
+  executor: {
+    ja: { label: "整理の鬼", catch: "整理されてないと、息ができない。" },
+    en: { label: "The Executive", catch: "Chaos isn't a vibe. It's a problem." },
+    ai: "Copilot",
+    percent: 19,
+    bg: "#F0F4F8",
+    accent: "#0078D4",
+    charImg: "/images/kompass_char_02_executor.png",
+    darkText: true,
+  },
+  analyst: {
+    ja: { label: "裏取りマニア", catch: "「たぶん」で動くの、無理なんだよな。" },
+    en: { label: "The Analyst", catch: "I don't do 'probably'." },
+    ai: "Perplexity",
+    percent: 13,
+    bg: "#0F1629",
+    accent: "#20B2AA",
+    charImg: "/images/kompass_char_03_analyst.png",
+    darkText: false,
+  },
+  generalist: {
+    ja: { label: "丸投げ屋", catch: "考えるより、投げた方が早い。" },
+    en: { label: "The Generalist", catch: "Why think when you can delegate?" },
+    ai: "ChatGPT",
+    percent: 28,
+    bg: "#111111",
+    accent: "#10A37F",
+    charImg: "/images/kompass_char_04_generalist.png",
+    darkText: false,
+  },
+  scout: {
+    ja: { label: "情報スナイパー", catch: "いらない情報、本当にいらない。" },
+    en: { label: "The Scout", catch: "Just give me what I need. Nothing else." },
+    ai: "Gemini",
+    percent: 9,
+    bg: "#FAFBFF",
+    accent: "#4285F4",
+    charImg: "/images/kompass_char_05_scout.png",
+    darkText: true,
+  },
+  nomad: {
+    ja: { label: "AI遊牧民", catch: "1つのAIで満足できたことが、ない。" },
+    en: { label: "The Orchestrator", catch: "One AI was never going to be enough." },
+    ai: "Multi-AI",
+    percent: 7,
+    bg: "#150828",
+    accent: "#C9A84C",
+    charImg: "/images/kompass_char_06_nomad.png",
+    darkText: false,
+  },
+};
 
-const TYPE_CONFIG: Record<string, TypeOgConfig> = {
-  claude: {
-    name: "共感ジャンキー",
-    enName: "The Confidant",
-    color: "#CC785C",
-    catch: "感情を言語化する天才",
-  },
-  chatgpt: {
-    name: "丸投げ屋",
-    enName: "The Generalist",
-    color: "#10A37F",
-    catch: "とにかく早く答えを出す",
-  },
-  gemini: {
-    name: "情報スナイパー",
-    enName: "The Scout",
-    color: "#4285F4",
-    catch: "最新情報を即座に狙い撃つ",
-  },
-  perplexity: {
-    name: "裏取りマニア",
-    enName: "The Analyst",
-    color: "#20B2AA",
-    catch: "根拠なき情報は信じない",
-  },
-  copilot: {
-    name: "整理の鬼",
-    enName: "The Executive",
-    color: "#0078D4",
-    catch: "混沌を秩序に変える",
-  },
-  jiyujin: {
-    name: "AI遊牧民",
-    enName: "The Orchestrator",
-    color: "#7C3AED",
-    catch: "複数AIを使いこなす異端者",
-  },
+// claudeタイプIDとの互換マップ（既存コードが claude/chatgpt 等を渡す場合）
+const TYPE_ID_MAP: Record<string, string> = {
+  claude: "empath",
+  chatgpt: "generalist",
+  gemini: "scout",
+  perplexity: "analyst",
+  copilot: "executor",
+  jiyujin: "nomad",
 };
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const typeId = searchParams.get("type") ?? "claude";
-  const config = TYPE_CONFIG[typeId] ?? TYPE_CONFIG.claude;
+  const rawType = searchParams.get("type") ?? "empath";
+  const lang = searchParams.get("lang") === "en" ? "en" : "ja";
+
+  // 旧IDと新IDの両方に対応
+  const typeKey = TYPE_ID_MAP[rawType] ?? rawType;
+  const data = TYPE_DATA[typeKey as keyof typeof TYPE_DATA] ?? TYPE_DATA.empath;
+
+  const text = data[lang];
+  const textColor = data.darkText ? "#1a1a2e" : "#ffffff";
+  const subColor = data.darkText ? "rgba(26,26,46,0.6)" : "rgba(255,255,255,0.6)";
+
+  // キャラ画像をfetch（base64変換）
+  const baseUrl = req.nextUrl.origin;
+  let charImgSrc = "";
+  try {
+    const imgRes = await fetch(`${baseUrl}${data.charImg}`);
+    const imgBuf = await imgRes.arrayBuffer();
+    const base64 = Buffer.from(imgBuf).toString("base64");
+    charImgSrc = `data:image/png;base64,${base64}`;
+  } catch {
+    // 画像取得失敗時は円だけ表示
+  }
 
   return new ImageResponse(
     (
@@ -60,94 +107,120 @@ export async function GET(req: NextRequest) {
         style={{
           width: "1200px",
           height: "630px",
-          background: `linear-gradient(135deg, ${config.color} 0%, ${config.color}CC 60%, #1a1a2e 100%)`,
+          backgroundColor: data.bg,
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
           fontFamily: "sans-serif",
           position: "relative",
+          overflow: "hidden",
         }}
       >
-        {/* 背景の白い光 */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-100px",
-            right: "-100px",
-            width: "500px",
-            height: "500px",
+        {/* ヘッダー */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "32px 48px",
+        }}>
+          <span style={{ color: data.accent, fontSize: 22, fontWeight: "bold", display: "flex", letterSpacing: "0.15em" }}>
+            Kompass
+          </span>
+          <span style={{ color: subColor, fontSize: 18, display: "flex", letterSpacing: "0.2em" }}>
+            AI TYPE DIAGNOSIS
+          </span>
+          <span style={{ color: subColor, fontSize: 18, display: "flex" }}>
+            全体の {data.percent}%
+          </span>
+        </div>
+
+        {/* メインコンテンツ */}
+        <div style={{
+          display: "flex",
+          flex: 1,
+          alignItems: "center",
+          padding: "0 48px 48px",
+          gap: "48px",
+        }}>
+          {/* 左：キャラ */}
+          <div style={{
+            width: "220px",
+            height: "220px",
             borderRadius: "50%",
-            background: "rgba(255,255,255,0.08)",
+            backgroundColor: data.accent + "33",
+            border: `4px solid ${data.accent}`,
             display: "flex",
-          }}
-        />
+            alignItems: "center",
+            justifyContent: "center",
+            overflow: "hidden",
+            flexShrink: 0,
+          }}>
+            {charImgSrc ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={charImgSrc} width={200} height={200} style={{ objectFit: "contain" }} alt="" />
+            ) : (
+              <div style={{ width: "200px", height: "200px", display: "flex" }} />
+            )}
+          </div>
 
-        {/* ロゴ */}
-        <div
-          style={{
-            color: "rgba(255,255,255,0.6)",
-            fontSize: 24,
-            letterSpacing: "0.2em",
-            marginBottom: 40,
+          {/* 中：テキスト */}
+          <div style={{
             display: "flex",
-          }}
-        >
-          KOMPASS
-        </div>
+            flexDirection: "column",
+            flex: 1,
+            gap: "12px",
+          }}>
+            <div style={{ color: textColor, fontSize: 72, fontWeight: "bold", display: "flex", lineHeight: 1.1 }}>
+              {text.label}
+            </div>
+            <div style={{ color: subColor, fontSize: 26, display: "flex", letterSpacing: "0.1em" }}>
+              {TYPE_DATA[typeKey as keyof typeof TYPE_DATA]?.ja.label !== text.label
+                ? TYPE_DATA[typeKey as keyof typeof TYPE_DATA]?.ja.label
+                : data.ai}
+            </div>
+            <div style={{
+              color: textColor,
+              fontSize: 24,
+              display: "flex",
+              marginTop: "8px",
+              opacity: 0.85,
+            }}>
+              {text.catch}
+            </div>
+          </div>
 
-        {/* タイプ名 */}
-        <div
-          style={{
-            color: "white",
-            fontSize: 80,
-            fontWeight: "bold",
-            marginBottom: 12,
+          {/* 右：推奨AI */}
+          <div style={{
             display: "flex",
-            textShadow: "0 4px 24px rgba(0,0,0,0.3)",
-          }}
-        >
-          {config.name}
-        </div>
-
-        {/* 英語名 */}
-        <div
-          style={{
-            color: "rgba(255,255,255,0.7)",
-            fontSize: 28,
-            letterSpacing: "0.15em",
-            marginBottom: 48,
-            display: "flex",
-          }}
-        >
-          {config.enName}
-        </div>
-
-        {/* キャッチコピー */}
-        <div
-          style={{
-            border: "1px solid rgba(255,255,255,0.4)",
-            borderRadius: "100px",
-            padding: "14px 44px",
-            color: "rgba(255,255,255,0.9)",
-            fontSize: 26,
-            display: "flex",
-          }}
-        >
-          {config.catch}
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "8px",
+            flexShrink: 0,
+          }}>
+            <div style={{ color: subColor, fontSize: 16, display: "flex", letterSpacing: "0.15em" }}>
+              RECOMMENDED AI
+            </div>
+            <div style={{
+              width: "64px",
+              height: "6px",
+              backgroundColor: data.accent,
+              borderRadius: "3px",
+              display: "flex",
+            }} />
+            <div style={{ color: data.accent, fontSize: 48, fontWeight: "bold", display: "flex" }}>
+              {data.ai}
+            </div>
+          </div>
         </div>
 
         {/* URL */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 36,
-            right: 48,
-            color: "rgba(255,255,255,0.4)",
-            fontSize: 20,
-            display: "flex",
-          }}
-        >
+        <div style={{
+          position: "absolute",
+          bottom: 28,
+          right: 48,
+          color: subColor,
+          fontSize: 18,
+          display: "flex",
+        }}>
           kompass-rosy.vercel.app
         </div>
       </div>
