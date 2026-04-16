@@ -12,6 +12,7 @@ import {
 import {
   getAiLabelJaForKind,
 } from "@/lib/ai-display";
+import { AFFILIATE_LINKS } from "@/lib/affiliate-links";
 import {
   AI_KIND_TO_PERSONALITY_EN,
   AI_KIND_TO_PERSONALITY_JA,
@@ -705,6 +706,24 @@ export default function DiagnosisResultPage() {
         <div className="mx-auto mt-6 max-w-md">
           <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
         </div>
+        {(() => {
+          const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
+          if (!link) {
+            return null;
+          }
+          return (
+            <div className="mx-auto mt-3 max-w-md text-center">
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-600"
+              >
+                {link.label} →
+              </a>
+            </div>
+          );
+        })()}
         {personalityBlock !== null ? (
           <p className="mx-auto mt-6 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">
             {personalityBlock.catchCopy}
