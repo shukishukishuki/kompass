@@ -48,39 +48,45 @@ export default async function TypesPage({
         </p>
         <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TYPE_CHARACTERS.map((character) => (
-            <article
-              key={character.typeJa}
-              className="rounded-2xl border border-zinc-200 p-5 shadow-sm"
-              style={{
-                backgroundColor: hexToRgba(AI_THEME_COLORS[character.aiKind], 0.12),
-              }}
+            <Link
+              key={character.typeId}
+              href={`/${locale}/guide/${character.typeId}`}
+              className="block transition-opacity hover:opacity-90"
             >
-              <Image
-                src={character.imageSrc}
-                alt={character.characterName}
-                width={160}
-                height={160}
-                className="mx-auto h-[160px] w-[160px] object-contain"
-              />
-              <p className="mt-4 text-lg font-bold text-slate-900">
-                {character.characterName}
-              </p>
-              <p className="text-xs uppercase tracking-wide text-slate-500">
-                {character.typeEn}
-              </p>
-              <p className="mt-3 text-sm text-slate-700">{character.oneLiner}</p>
-              <p className="mt-4 rounded-lg bg-white/75 px-3 py-2 text-sm font-medium text-slate-800">
-                {copy.aiLabel}: {character.aiName}
-              </p>
-            </article>
+              <article
+                className="rounded-2xl border border-zinc-200 p-5 shadow-sm"
+                style={{
+                  backgroundColor: hexToRgba(AI_THEME_COLORS[character.aiKind], 0.12),
+                }}
+              >
+                <Image
+                  src={character.imageSrc}
+                  alt={character.characterName}
+                  width={160}
+                  height={160}
+                  className="mx-auto h-[160px] w-[160px] object-contain"
+                />
+                <p className="mt-4 text-lg font-bold text-slate-900">
+                  {character.characterName}
+                </p>
+                <p className="text-xs uppercase tracking-wide text-slate-500">
+                  {character.typeEn}
+                </p>
+                <p className="mt-3 text-sm text-slate-700">{character.oneLiner}</p>
+                <p className="mt-4 rounded-lg bg-white/75 px-3 py-2 text-sm font-medium text-slate-800">
+                  {copy.aiLabel}: {character.aiName}
+                </p>
+              </article>
+            </Link>
           ))}
         </div>
-        <div className="mt-10 text-center">
+        <div className="mt-10 space-y-2 text-center">
+          <p className="text-sm text-gray-500">自分がどのタイプか気になったら</p>
           <Link
             href={`/${locale}/diagnosis`}
-            className="inline-flex rounded-full bg-[#52B788] px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+            className="inline-block rounded-full bg-gray-900 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-gray-700"
           >
-            {copy.cta}
+            診断してタイプを知る →
           </Link>
         </div>
       </div>

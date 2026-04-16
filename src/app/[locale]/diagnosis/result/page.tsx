@@ -654,7 +654,7 @@ export default function DiagnosisResultPage() {
     `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした！\n\nあなたのベースAIは何？ #Kompass #AI診断`
   );
   const shareUrl = encodeURIComponent(
-    "https://kompass-rosy.vercel.app/ja/diagnosis"
+    `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
   );
   const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
 

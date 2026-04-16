@@ -264,6 +264,23 @@ export default async function GuideTypeDetailPage({
             ))}
           </div>
         </section>
+
+        <div className="mx-auto max-w-2xl px-6 py-10">
+          <div className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
+            <p className="text-sm font-bold text-gray-800">
+              自分のタイプを知っていますか？
+            </p>
+            <p className="text-xs text-gray-500">
+              診断するとあなた専用のプロンプトが生成されます
+            </p>
+            <Link
+              href={`/${locale}/diagnosis`}
+              className="inline-block rounded-full bg-gray-900 px-7 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+            >
+              診断してみる →
+            </Link>
+          </div>
+        </div>
       </div>
     </main>
   );
