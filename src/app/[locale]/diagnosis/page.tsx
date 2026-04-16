@@ -512,9 +512,12 @@ export default function DiagnosisPage() {
                   setLayer1MbtiDraft(v);
                   setLayer1MbtiError(null);
                 }}
-                placeholder="INFJ"
+                placeholder="例：INFJ、ENTP..."
                 className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-center text-sm font-medium tracking-widest text-zinc-900 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
               />
+              <p className="text-xs text-gray-400 mt-1">
+                わからない場合はスキップしてOK。入力すると診断精度が上がります。
+              </p>
               {layer1MbtiError !== null ? (
                 <p className="text-sm text-red-600" role="alert">
                   {layer1MbtiError}

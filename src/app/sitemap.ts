@@ -2,7 +2,22 @@ import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://kompass-rosy.vercel.app";
-  const typeIds = ["claude", "chatgpt", "gemini", "perplexity", "copilot", "jiyujin"];
+  const resultTypeIds = [
+    "claude",
+    "chatgpt",
+    "gemini",
+    "perplexity",
+    "copilot",
+    "jiyujin",
+  ];
+  const guideTypeIds = [
+    "empath",
+    "generalist",
+    "scout",
+    "analyst",
+    "executive",
+    "orchestrator",
+  ];
 
   const staticPages = [
     { url: `${baseUrl}/ja`, priority: 1.0 },
@@ -13,12 +28,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/ja/privacy`, priority: 0.3 },
   ];
 
-  const typePages = typeIds.map((id) => ({
+  const typePages = resultTypeIds.map((id) => ({
     url: `${baseUrl}/ja/result/${id}`,
     priority: 0.7,
   }));
 
-  const guidePages = typeIds.map((id) => ({
+  const guidePages = guideTypeIds.map((id) => ({
     url: `${baseUrl}/ja/guide/${id}`,
     priority: 0.6,
   }));

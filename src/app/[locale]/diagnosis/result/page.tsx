@@ -432,13 +432,6 @@ function buildShareText(typeJa: string): string {
 }
 
 /**
- * メール形式として最低限妥当かを判定する
- */
-function isValidEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
-
-/**
  * タイプ別件数マップの合計件数
  */
 function sumTypeStats(stats: DiagnosisTypeStats): number {
@@ -789,8 +782,9 @@ export default function DiagnosisResultPage() {
     });
   }, [mbtiInput, result, scoringSnapshot, resultPageCopy]);
 
+  const shareCatchCopy = personalityBlock?.catchCopy ?? resolvedTypeCharacter.oneLiner;
   const shareText = encodeURIComponent(
-    `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした！\n\nあなたのベースAIは何？ #Kompass #AI診断`
+    `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした！\n\n${shareCatchCopy}\n\nあなたのベースAIは？ #Kompass #AI診断`
   );
   const shareUrl = encodeURIComponent(
     `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
@@ -812,7 +806,9 @@ export default function DiagnosisResultPage() {
       return;
     }
     const email = followupEmail.trim();
-    if (!isValidEmail(email)) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("正しいメールアドレスを入力してください");
       setFollowupError("有効なメールアドレスを入力してください。");
       setFollowupStatus("error");
       return;
@@ -831,9 +827,15 @@ export default function DiagnosisResultPage() {
 
   if (!hydrated) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4">
-        <p className="text-sm text-muted-foreground">{copy.diagnosis.loadingLabel}</p>
-      </main>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-full max-w-md px-6 space-y-4 animate-pulse">
+          <div className="h-6 w-32 bg-gray-200 rounded-full mx-auto" />
+          <div className="h-32 w-32 bg-gray-200 rounded-full mx-auto" />
+          <div className="h-8 w-48 bg-gray-200 rounded-full mx-auto" />
+          <div className="h-4 w-64 bg-gray-200 rounded mx-auto" />
+          <div className="h-4 w-56 bg-gray-200 rounded mx-auto" />
+        </div>
+      </div>
     );
   }
 

@@ -2,7 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PromptList } from "@/components/guide/prompt-list";
-import { getTypeCharacterByTypeId, hexToRgba, type TypeId } from "@/lib/type-characters";
+import {
+  getTypeCharacterByTypeId,
+  hexToRgba,
+  TYPE_CHARACTERS,
+  type TypeId,
+} from "@/lib/type-characters";
 import { AI_THEME_COLORS, type AiKind } from "@/types/ai";
 
 interface GuideDetailContent {
@@ -220,10 +225,19 @@ export async function generateMetadata({
 }) {
   const { typeId } = await params;
   const detail = GUIDE_DETAILS[typeId as keyof typeof GUIDE_DETAILS];
-  if (!detail) return {};
+  const character = TYPE_CHARACTERS.find((item) => item.typeId === typeId);
+  if (detail === undefined || character === undefined) {
+    return {};
+  }
+
+  const descriptionSegments = [detail.whenToUse];
+  if (Array.isArray(detail.bestFor) && detail.bestFor.length > 0) {
+    descriptionSegments.push(`${detail.bestFor.join("・")}に向いています。`);
+  }
+
   return {
-    title: `${detail.oneShotCopy}｜AIタイプ別ガイド`,
-    description: detail.whenToUse,
+    title: `${character.characterName}（${character.aiName}）の使い方ガイド`,
+    description: descriptionSegments.join(" "),
   };
 }
 

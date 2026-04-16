@@ -354,6 +354,108 @@
           { "value": "C", "label": "I can manage without it" },
           { "value": "D", "label": "Not at that level yet" }
         ]
+      },
+      {
+        "id": 31,
+        "prompt": "What is your main field of work or activity?",
+        "options": [
+          { "value": "A", "label": "Creative (design, music, video, writing, etc.)" },
+          { "value": "B", "label": "Business / planning (sales, marketing, management, etc.)" },
+          { "value": "C", "label": "Engineering / technical (development, data, infrastructure, etc.)" },
+          { "value": "D", "label": "Research / analysis (academia, consulting, etc.)" },
+          { "value": "E", "label": "Other / spans multiple fields" }
+        ]
+      },
+      {
+        "id": 32,
+        "prompt": "When do you most want to use AI?",
+        "options": [
+          { "value": "A", "label": "Writing and editing text" },
+          { "value": "B", "label": "Brainstorming and ideation" },
+          { "value": "C", "label": "Information gathering and research" },
+          { "value": "D", "label": "Code, data, and number processing" },
+          { "value": "E", "label": "Consultation, thinking out loud, organizing thoughts" }
+        ]
+      },
+      {
+        "id": 33,
+        "prompt": "How often do you use AI per day?",
+        "options": [
+          { "value": "A", "label": "Rarely use it yet" },
+          { "value": "B", "label": "A few times a week" },
+          { "value": "C", "label": "A little every day" },
+          { "value": "D", "label": "Heavily every day" }
+        ]
+      },
+      {
+        "id": 34,
+        "prompt": "What is your main work output?",
+        "options": [
+          { "value": "A", "label": "Text, documents, presentations" },
+          { "value": "B", "label": "Images, video, audio and other media" },
+          { "value": "C", "label": "Code, data, numbers" },
+          { "value": "D", "label": "Interpersonal communication and proposals" }
+        ]
+      },
+      {
+        "id": 35,
+        "prompt": "Do you use AI as a team or individually?",
+        "options": [
+          { "value": "A", "label": "Completely individual use" },
+          { "value": "B", "label": "Mainly individual, occasionally shared" },
+          { "value": "C", "label": "Shared use within a team" },
+          { "value": "D", "label": "Want to use it across the entire organization" }
+        ]
+      },
+      {
+        "id": 36,
+        "prompt": "What is your style when giving instructions to AI?",
+        "options": [
+          { "value": "A", "label": "Short and direct" },
+          { "value": "B", "label": "Explain thoroughly from background context" },
+          { "value": "C", "label": "Reuse templates and prompts" },
+          { "value": "D", "label": "Change style each time" }
+        ]
+      },
+      {
+        "id": 37,
+        "prompt": "What is the biggest problem you want to solve with AI right now?",
+        "options": [
+          { "value": "A", "label": "Not enough time" },
+          { "value": "B", "label": "Can't come up with ideas or inspiration" },
+          { "value": "C", "label": "Too much information to organize" },
+          { "value": "D", "label": "Struggling with decisions and judgment" }
+        ]
+      },
+      {
+        "id": 38,
+        "prompt": "What role do you expect AI to play?",
+        "options": [
+          { "value": "A", "label": "Execute what I instruct" },
+          { "value": "B", "label": "Suggest the next steps" },
+          { "value": "C", "label": "Confirm and challenge my thinking" },
+          { "value": "D", "label": "Think from scratch together with me" }
+        ]
+      },
+      {
+        "id": 39,
+        "prompt": "Are you using any paid AI plans?",
+        "options": [
+          { "value": "A", "label": "Using everything for free" },
+          { "value": "B", "label": "Using one paid plan" },
+          { "value": "C", "label": "Using paid plans for multiple AIs" },
+          { "value": "D", "label": "Not considering paid plans" }
+        ]
+      },
+      {
+        "id": 40,
+        "prompt": "What is your biggest goal to achieve with AI?",
+        "options": [
+          { "value": "A", "label": "Drastically reduce working time" },
+          { "value": "B", "label": "Improve the quality of output" },
+          { "value": "C", "label": "Start new things I couldn't do before" },
+          { "value": "D", "label": "Maintain the quality of current work and life" }
+        ]
       }
     ]
   }
