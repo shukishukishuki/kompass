@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import confetti from "canvas-confetti";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -97,6 +98,33 @@ const TYPE_FAMOUS: Record<string, { names: string[]; reason: string }> = {
   jiyujin: {
     names: ["千利休", "スティーブ・ジョブズ", "岡本太郎"],
     reason: "既存の枠にとらわれない独自路線型",
+  },
+};
+
+const TYPE_COMPANIES: Record<string, { companies: string[]; reason: string }> = {
+  claude: {
+    companies: ["note", "ほぼ日", "文藝春秋"],
+    reason: "言葉と感情を大切にするサービス・メディア",
+  },
+  chatgpt: {
+    companies: ["DeNA", "サイバーエージェント", "メルカリ"],
+    reason: "スピードと実行力で成長したスタートアップ",
+  },
+  gemini: {
+    companies: ["Google", "Yahoo!ニュース", "SmartNews"],
+    reason: "情報収集・配信を軸にしたサービス",
+  },
+  perplexity: {
+    companies: ["McKinsey", "野村総研", "東大松尾研"],
+    reason: "根拠と分析を武器にするプロ集団",
+  },
+  copilot: {
+    companies: ["トヨタ", "三菱商事", "NTT"],
+    reason: "構造化・管理・実行を強みとする大企業",
+  },
+  jiyujin: {
+    companies: ["GAFA全部使う人", "フリーランス", "スタートアップCTO"],
+    reason: "特定ツールに縛られない自由人",
   },
 };
 
@@ -674,6 +702,17 @@ export default function DiagnosisResultPage() {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [hydrated]);
 
+  useEffect(() => {
+    if (hydrated && result?.layerCompleted === 4) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#CC785C", "#10A37F", "#4285F4", "#20B2AA", "#0078D4", "#7C3AED"],
+      });
+    }
+  }, [hydrated, result?.layerCompleted]);
+
   const displayPersonalityJa = useMemo(() => {
     if (result === null) {
       return "";
@@ -996,6 +1035,34 @@ export default function DiagnosisResultPage() {
             </p>
           </div>
         </div>
+        {personalityBlock !== null ? (
+          <p className="mx-auto mt-6 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">
+            {personalityBlock.catchCopy}
+          </p>
+        ) : null}
+        <p className="mt-3 text-xs opacity-90">
+          {resultPageCopy.screenshotTagline}
+        </p>
+        <p className="mt-6 text-sm font-medium opacity-95">
+          {resultPageCopy.recommendedAi}
+        </p>
+        <p className="text-xl font-semibold md:text-2xl">
+          {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
+        </p>
+        <div className="mx-auto mt-6 w-full max-w-md">
+          <Card className="text-left bg-white/95 text-gray-900">
+            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 pb-3">
+              <CardTitle className="text-base">{resultPageCopy.statsTitle}</CardTitle>
+              {statsDisplay.badge !== null ? (
+                <Badge variant="secondary">{statsDisplay.badge}</Badge>
+              ) : null}
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">{statsDisplay.line}</p>
+              <Progress value={userTypePercent} />
+            </CardContent>
+          </Card>
+        </div>
         <div className="relative">
           <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
             <div className="mx-auto mt-6 max-w-md">
@@ -1016,100 +1083,24 @@ export default function DiagnosisResultPage() {
             </div>
           ) : null}
         </div>
-        {personalityBlock !== null ? (
-          <p className="mx-auto mt-6 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">
-            {personalityBlock.catchCopy}
-          </p>
-        ) : null}
-        <p className="mt-3 text-xs opacity-90">
-          {resultPageCopy.screenshotTagline}
-        </p>
-        <p className="mt-6 text-sm font-medium opacity-95">
-          {resultPageCopy.recommendedAi}
-        </p>
-        <p className="text-xl font-semibold md:text-2xl">
-          {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
-        </p>
-        <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
-          SHARE YOUR TYPE
-        </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-2">
-          <a
-            href={twitterUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-            </svg>
-            Xでシェアする
-          </a>
-          <a
-            href={`https://social-plugins.line.me/lineit/share?url=${shareUrl}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z" />
-            </svg>
-            LINE
-          </a>
-          <button
-            type="button"
-            onClick={async () => {
-              await navigator.clipboard.writeText(
-                `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
-              );
-              toast.success("リンクをコピーしました ✓");
-            }}
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-            </svg>
-            コピー
-          </button>
-          <a
-            href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-            </svg>
-            Facebook
-          </a>
-          <button
-            type="button"
-            onClick={() => {
-              const imageUrl = `https://kompass-rosy.vercel.app/api/og?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
-              const link = document.createElement("a");
-              link.href = imageUrl;
-              link.download = `kompass_${resolvedTypeCharacter.aiKind}.png`;
-              link.click();
-              toast.success(
-                "画像をダウンロードしました。Instagramストーリーに使えます ✓"
-              );
-            }}
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-            </svg>
-            Instagram
-          </button>
-        </div>
+        {(() => {
+          const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
+          if (!link) {
+            return null;
+          }
+          return (
+            <div className="mx-auto mt-4 max-w-md text-center">
+              <a
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-white underline underline-offset-4 transition-colors hover:text-white/80"
+              >
+                {link.label} →
+              </a>
+            </div>
+          );
+        })()}
       </section>
 
       {/* 下部ゾーン：スクロールで詳細 */}
@@ -1156,146 +1147,124 @@ export default function DiagnosisResultPage() {
                     ))}
                   </ul>
                 </div>
-                <>
-                  <Separator />
-                  <AxisGraph
-                    typeId={resolvedTypeCharacter.aiKind}
-                    axes={axisScores}
-                  />
-                  {(() => {
-                    const compat = TYPE_COMPATIBILITY[resolvedTypeCharacter.aiKind];
-                    const goodChar = TYPE_CHARACTERS.find(
-                      (c) => c.aiKind === compat?.good
-                    );
-                    const badChar = TYPE_CHARACTERS.find(
-                      (c) => c.aiKind === compat?.bad
-                    );
-                    if (!compat || !goodChar || !badChar) return null;
-                    return (
-                      <div className="mx-auto mt-6 max-w-md space-y-3">
-                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                          タイプ相性
-                        </p>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="rounded-xl border border-green-100 bg-green-50 p-3 text-center">
-                            <p className="text-xs text-green-600 font-bold mb-1">相性◎</p>
-                            <p className="text-sm font-bold text-gray-800">
-                              {goodChar.characterName}
-                            </p>
-                            <p className="text-xs text-gray-400">{goodChar.aiName}</p>
-                            <a
-                              href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.good] ?? compat.good}`}
-                              className="text-xs underline underline-offset-2 text-green-600 hover:text-green-800 mt-1 block"
-                            >
-                              使い方を見る →
-                            </a>
-                          </div>
-                          <div className="rounded-xl border border-red-100 bg-red-50 p-3 text-center">
-                            <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
-                            <p className="text-sm font-bold text-gray-800">
-                              {badChar.characterName}
-                            </p>
-                            <p className="text-xs text-gray-400">{badChar.aiName}</p>
-                            <a
-                              href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.bad] ?? compat.bad}`}
-                              className="text-xs underline underline-offset-2 text-red-400 hover:text-red-600 mt-1 block"
-                            >
-                              使い方を見る →
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                  {(() => {
-                    const famous = TYPE_FAMOUS[resolvedTypeCharacter.aiKind];
-                    if (!famous) return null;
-                    return (
-                      <div className="mx-auto mt-6 max-w-md space-y-3">
-                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                          同じタイプの有名人
-                        </p>
-                        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
-                          <div className="flex flex-wrap gap-2">
-                            {famous.names.map((name) => (
-                              <span
-                                key={name}
-                                className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
-                              >
-                                {name}
-                              </span>
-                            ))}
-                          </div>
-                          <p className="text-xs text-gray-400">{famous.reason}</p>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                  {(() => {
-                    const roadmap = TYPE_ROADMAP[resolvedTypeCharacter.aiKind];
-                    if (!roadmap) return null;
-                    return (
-                      <div className="mx-auto mt-6 max-w-md space-y-3">
-                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                          活用ロードマップ
-                        </p>
-                        <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
-                          {roadmap.steps.map((step, i) => (
-                            <div key={i} className="flex items-start gap-3">
-                              <span
-                                className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                                style={{
-                                  backgroundColor:
-                                    AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ??
-                                    "#7C3AED",
-                                }}
-                              >
-                                {i + 1}
-                              </span>
-                              <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })()}
-                  {(() => {
-                    const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
-                    if (!nextActions) return null;
-                    return (
-                      <div className="mx-auto mt-6 max-w-md space-y-3">
-                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                          次のアクション
-                        </p>
-                        <div className="space-y-2">
-                          {nextActions.actions.map((action, i) => (
-                            <a
-                              key={i}
-                              href={
-                                action.url.startsWith("/guide/")
-                                  ? `/${locale}${action.url}`
-                                  : action.url
-                              }
-                              target={action.url.startsWith("http") ? "_blank" : undefined}
-                              rel={
-                                action.url.startsWith("http")
-                                  ? "noopener noreferrer"
-                                  : undefined
-                              }
-                              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                            >
-                              <span>{action.label}</span>
-                              <span className="text-gray-400">→</span>
-                            </a>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </>
+                <Separator />
+                <AxisGraph
+                  typeId={resolvedTypeCharacter.aiKind}
+                  axes={axisScores}
+                />
               </CardContent>
             </Card>
 
+            {(() => {
+              const compat = TYPE_COMPATIBILITY[resolvedTypeCharacter.aiKind];
+              const goodChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.good);
+              const badChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.bad);
+              if (!compat || !goodChar || !badChar) return null;
+              return (
+                <div className="mx-auto mt-6 max-w-md space-y-3">
+                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                    タイプ相性
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-green-100 bg-green-50 p-3 text-center">
+                      <p className="text-xs text-green-600 font-bold mb-1">相性◎</p>
+                      <p className="text-sm font-bold text-gray-800">{goodChar.characterName}</p>
+                      <p className="text-xs text-gray-400">{goodChar.aiName}</p>
+                      <a
+                        href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.good] ?? compat.good}`}
+                        className="text-xs underline underline-offset-2 text-green-600 hover:text-green-800 mt-1 block"
+                      >
+                        使い方を見る →
+                      </a>
+                    </div>
+                    <div className="rounded-xl border border-red-100 bg-red-50 p-3 text-center">
+                      <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
+                      <p className="text-sm font-bold text-gray-800">{badChar.characterName}</p>
+                      <p className="text-xs text-gray-400">{badChar.aiName}</p>
+                      <a
+                        href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.bad] ?? compat.bad}`}
+                        className="text-xs underline underline-offset-2 text-red-400 hover:text-red-600 mt-1 block"
+                      >
+                        使い方を見る →
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+            {(() => {
+              const famous = TYPE_FAMOUS[resolvedTypeCharacter.aiKind];
+              if (!famous) return null;
+              return (
+                <div className="mx-auto mt-6 max-w-md space-y-3">
+                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                    同じタイプの有名人
+                  </p>
+                  <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+                    <div className="flex flex-wrap gap-2">
+                      {famous.names.map((name) => (
+                        <span
+                          key={name}
+                          className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400">{famous.reason}</p>
+                  </div>
+                </div>
+              );
+            })()}
+            {(() => {
+              const companies = TYPE_COMPANIES[resolvedTypeCharacter.aiKind];
+              if (!companies) return null;
+              return (
+                <div className="mx-auto mt-4 max-w-md space-y-2">
+                  <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+                    <p className="text-xs font-bold text-gray-500">同じタイプの企業・職種</p>
+                    <div className="flex flex-wrap gap-2">
+                      {companies.companies.map((name) => (
+                        <span
+                          key={name}
+                          className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400">{companies.reason}</p>
+                  </div>
+                </div>
+              );
+            })()}
+            {(() => {
+              const roadmap = TYPE_ROADMAP[resolvedTypeCharacter.aiKind];
+              if (!roadmap) return null;
+              return (
+                <div className="mx-auto mt-6 max-w-md space-y-3">
+                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                    活用ロードマップ
+                  </p>
+                  <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+                    {roadmap.steps.map((step, i) => (
+                      <div key={i} className="flex items-start gap-3">
+                        <span
+                          className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                          style={{
+                            backgroundColor:
+                              AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#7C3AED",
+                          }}
+                        >
+                          {i + 1}
+                        </span>
+                        <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
             {result.layerCompleted === 4 ? (
               <PersonalizedPrompts
                 typeId={resolvedTypeCharacter.aiKind}
@@ -1303,26 +1272,119 @@ export default function DiagnosisResultPage() {
                 accentColor={AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#7C3AED"}
               />
             ) : null}
-
             {(() => {
-              const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
-              if (!link) {
-                return null;
-              }
+              const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
+              if (!nextActions) return null;
               return (
-                <div className="mx-auto mt-3 max-w-md text-center">
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-gray-500 underline underline-offset-4 transition-colors hover:text-gray-700"
-                  >
-                    {link.label} →
-                  </a>
+                <div className="mx-auto mt-6 max-w-md space-y-3">
+                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                    次のアクション
+                  </p>
+                  <div className="space-y-2">
+                    {nextActions.actions.map((action, i) => (
+                      <a
+                        key={i}
+                        href={
+                          action.url.startsWith("/guide/")
+                            ? `/${locale}${action.url}`
+                            : action.url
+                        }
+                        target={action.url.startsWith("http") ? "_blank" : undefined}
+                        rel={
+                          action.url.startsWith("http")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                        className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <span>{action.label}</span>
+                        <span className="text-gray-400">→</span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               );
             })()}
-
+            <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+              SHARE YOUR TYPE
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              <a
+                href={twitterUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                Xでシェアする
+              </a>
+              <a
+                href={`https://social-plugins.line.me/lineit/share?url=${shareUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.477 2 2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879V14.89h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.989C18.343 21.129 22 16.99 22 12c0-5.523-4.477-10-10-10z" />
+                </svg>
+                LINE
+              </a>
+              <button
+                type="button"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(
+                    `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
+                  );
+                  toast.success("リンクをコピーしました ✓");
+                }}
+                className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+                </svg>
+                コピー
+              </button>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+                Facebook
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  const imageUrl = `https://kompass-rosy.vercel.app/api/og?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
+                  const link = document.createElement("a");
+                  link.href = imageUrl;
+                  link.download = `kompass_${resolvedTypeCharacter.aiKind}.png`;
+                  link.click();
+                  toast.success(
+                    "画像をダウンロードしました。Instagramストーリーに使えます ✓"
+                  );
+                }}
+                className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                </svg>
+                Instagram
+              </button>
+            </div>
             <Card className="text-left">
               <CardHeader>
                 <CardTitle>{resultPageCopy.contraryTitle}</CardTitle>
@@ -1333,7 +1395,6 @@ export default function DiagnosisResultPage() {
                 </blockquote>
               </CardContent>
             </Card>
-
             {result.layerCompleted >= 1 ? (
               <Card className="text-left">
                 <CardHeader>
@@ -1361,7 +1422,6 @@ export default function DiagnosisResultPage() {
                 </p>
               </div>
             ) : null}
-
             {result.layerCompleted >= 2 ? (
               <>
                 <div className="mx-auto mt-4 max-w-md">
@@ -1399,6 +1459,219 @@ export default function DiagnosisResultPage() {
                 </Card>
               </>
             ) : null}
+            {result.layerCompleted < 4 && remainingQuestions > 0 ? (
+              <div className="mx-auto mt-4 max-w-md">
+                <div className="rounded-xl border-2 border-dashed border-gray-300 p-4 text-center space-y-2">
+                  <p className="text-xs text-gray-500 font-medium">
+                    もっと詳しく診断できます
+                  </p>
+                  <a
+                    href={`/${locale}/diagnosis?resume=true`}
+                    className="inline-block rounded-full bg-gray-800 px-6 py-2.5 text-sm font-bold text-white hover:bg-gray-600 transition-colors"
+                  >
+                    続きを診断する（残り{remainingQuestions}問）→
+                  </a>
+                </div>
+              </div>
+            ) : null}
+            <Card className="text-left">
+              <CardHeader>
+                <CardTitle className="text-base">{resultPageCopy.nextStepTitle}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+                {advanced ? (
+                  <>
+                    {result.subAI.map((entry, idx) => (
+                      <div key={`sub-${idx}-${entry.name}`} className="space-y-2">
+                        <p>
+                          <span className="font-semibold text-foreground">
+                            {resultPageCopy.subAiLabel}
+                          </span>
+                          ：{entry.name}
+                        </p>
+                        {entry.usage !== "" ? <p>{entry.usage}</p> : null}
+                      </div>
+                    ))}
+                    <Separator />
+                    {result.expertView !== "" ? (
+                      <p className="border-l-4 border-border pl-3 text-foreground">
+                        {result.expertView}
+                      </p>
+                    ) : null}
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="font-medium text-foreground">
+                      {resultPageCopy.setupOkTitle}
+                    </p>
+                    <p>{result.baseAI.setup}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            {personalityBlock !== null && result.layerCompleted === 1 ? (
+              <p className="text-left text-xs text-muted-foreground">
+                {personalityBlock.shareText}
+              </p>
+            ) : null}
+            <Card className="text-left">
+              <CardContent className="space-y-3 pt-6">
+                <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">
+                  WEEKLY UPDATE
+                </p>
+                <p className="mb-1 text-sm font-bold text-gray-900">
+                  毎週、あなたのタイプ向けAI活用法を届けます
+                </p>
+                <p className="mb-4 text-xs text-gray-500">
+                  新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
+                </p>
+                <form
+                  className="flex flex-col gap-3 sm:flex-row sm:items-center"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void handleFollowupSubmit();
+                  }}
+                >
+                  <input
+                    type="email"
+                    name="followup-email"
+                    autoComplete="email"
+                    value={followupEmail}
+                    onChange={(e) => {
+                      setFollowupEmail(e.target.value);
+                      setFollowupError(null);
+                      if (followupStatus !== "idle") {
+                        setFollowupStatus("idle");
+                      }
+                    }}
+                    placeholder="you@example.com"
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                    required
+                  />
+                  <Button type="submit" disabled={followupStatus === "saving"}>
+                    {followupStatus === "saving" ? "登録中..." : "無料で受け取る"}
+                  </Button>
+                </form>
+                {followupStatus === "saved" ? (
+                  <p className="text-sm text-emerald-600">
+                    登録しました。次回のアップデートをお楽しみに ✓
+                  </p>
+                ) : null}
+                {followupError !== null ? (
+                  <p className="text-sm text-destructive" role="alert">
+                    {followupError}
+                  </p>
+                ) : null}
+              </CardContent>
+            </Card>
+            <div className="mx-auto mt-4 max-w-md text-center">
+              <p className="text-xs text-gray-400">
+                最新のAI活用情報は
+                <a
+                  href="https://twitter.com/intent/follow?screen_name=kompass_ai"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2 hover:text-gray-600 transition-colors mx-1"
+                >
+                  X（@kompass_ai）
+                </a>
+                で発信中
+              </p>
+            </div>
+            <p className="text-center text-xs text-gray-300 mt-4">
+              診断日：
+              {new Date().toLocaleDateString("ja-JP", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link
+                href={`/${locale}/diagnosis`}
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "default" }),
+                  "inline-flex rounded-full px-6"
+                )}
+              >
+                {resultPageCopy.redoDiagnosis}
+              </Link>
+            </div>
+            <Card className="text-left">
+              <CardHeader>
+                <CardTitle className="text-base">{resultPageCopy.mbtiCardTitle}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                  <label className="block min-w-0 flex-1">
+                    <span className="sr-only">MBTI</span>
+                    <input
+                      type="text"
+                      name="mbti"
+                      maxLength={4}
+                      autoCapitalize="characters"
+                      autoComplete="off"
+                      value={mbtiInput}
+                      onChange={(e) => {
+                        const v = e.target.value
+                          .toUpperCase()
+                          .replace(/[^A-Z]/g, "")
+                          .slice(0, 4);
+                        setMbtiInput(v);
+                        setMbtiFieldError(null);
+                        setMbtiApplied(null);
+                        setMbtiAppliedScores(null);
+                      }}
+                      placeholder={resultPageCopy.mbtiPlaceholder}
+                      className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
+                    />
+                  </label>
+                  <Button
+                    type="button"
+                    onClick={() => handleMbtiApply()}
+                    disabled={scoringSnapshot === null}
+                  >
+                    {resultPageCopy.mbtiApply}
+                  </Button>
+                </div>
+                {mbtiFieldError !== null ? (
+                  <p className="text-destructive text-sm" role="alert">
+                    {mbtiFieldError}
+                  </p>
+                ) : null}
+                {scoringSnapshot === null ? (
+                  <p className="text-muted-foreground text-xs">
+                    {resultPageCopy.mbtiNoScoresHint}
+                  </p>
+                ) : null}
+                {mbtiApplied !== null ? (
+                  <div className="space-y-2 text-sm leading-relaxed">
+                    <p className="text-foreground">{mbtiApplied.changeMessage}</p>
+                    <p className="text-muted-foreground">
+                      {mbtiApplied.compatibilityComment}
+                    </p>
+                  </div>
+                ) : null}
+                <p className="text-muted-foreground text-xs">
+                  <a
+                    href="https://www.16personalities.com/ja"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-foreground font-medium underline underline-offset-2"
+                  >
+                    {resultPageCopy.mbtiWhatLink}
+                  </a>
+                </p>
+              </CardContent>
+            </Card>
+            <div className="mx-auto mt-6 max-w-md text-center">
+              <a
+                href={`/${locale}/diagnosis`}
+                className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-4 transition-colors"
+              >
+                もう一度診断する
+              </a>
+            </div>
           </>
         ) : (
           <Card className="text-left">
@@ -1413,241 +1686,6 @@ export default function DiagnosisResultPage() {
             </CardContent>
           </Card>
         )}
-
-        <Card className="text-left">
-          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0">
-            <CardTitle className="text-base">{resultPageCopy.statsTitle}</CardTitle>
-            {statsDisplay.badge !== null ? (
-              <Badge variant="secondary">{statsDisplay.badge}</Badge>
-            ) : null}
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-muted-foreground">{statsDisplay.line}</p>
-            <Progress value={userTypePercent} />
-          </CardContent>
-        </Card>
-
-        <Card className="text-left">
-          <CardHeader>
-            <CardTitle className="text-base">{resultPageCopy.nextStepTitle}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm leading-relaxed text-muted-foreground">
-            {advanced ? (
-              <>
-                {result.subAI.map((entry, idx) => (
-                  <div key={`sub-${idx}-${entry.name}`} className="space-y-2">
-                    <p>
-                      <span className="font-semibold text-foreground">
-                        {resultPageCopy.subAiLabel}
-                      </span>
-                      ：{entry.name}
-                    </p>
-                    {entry.usage !== "" ? <p>{entry.usage}</p> : null}
-                  </div>
-                ))}
-                <Separator />
-                {result.expertView !== "" ? (
-                  <p className="border-l-4 border-border pl-3 text-foreground">
-                    {result.expertView}
-                  </p>
-                ) : null}
-              </>
-            ) : (
-              <div className="space-y-3">
-                <p className="font-medium text-foreground">
-                  {resultPageCopy.setupOkTitle}
-                </p>
-                <p>{result.baseAI.setup}</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {personalityBlock !== null && result.layerCompleted === 1 ? (
-          <p className="text-left text-xs text-muted-foreground">
-            {personalityBlock.shareText}
-          </p>
-        ) : null}
-
-        <Card className="text-left">
-          <CardContent className="space-y-3 pt-6">
-            <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">
-              WEEKLY UPDATE
-            </p>
-            <p className="mb-1 text-sm font-bold text-gray-900">
-              毎週、あなたのタイプ向けAI活用法を届けます
-            </p>
-            <p className="mb-4 text-xs text-gray-500">
-              新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
-            </p>
-            <form
-              className="flex flex-col gap-3 sm:flex-row sm:items-center"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void handleFollowupSubmit();
-              }}
-            >
-              <input
-                type="email"
-                name="followup-email"
-                autoComplete="email"
-                value={followupEmail}
-                onChange={(e) => {
-                  setFollowupEmail(e.target.value);
-                  setFollowupError(null);
-                  if (followupStatus !== "idle") {
-                    setFollowupStatus("idle");
-                  }
-                }}
-                placeholder="you@example.com"
-                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-                required
-              />
-              <Button type="submit" disabled={followupStatus === "saving"}>
-                {followupStatus === "saving" ? "登録中..." : "無料で受け取る"}
-              </Button>
-            </form>
-            {followupStatus === "saved" ? (
-              <p className="text-sm text-emerald-600">
-                登録しました。次回のアップデートをお楽しみに ✓
-              </p>
-            ) : null}
-            {followupError !== null ? (
-              <p className="text-sm text-destructive" role="alert">
-                {followupError}
-              </p>
-            ) : null}
-          </CardContent>
-        </Card>
-
-        <div className="mx-auto mt-4 max-w-md text-center">
-          <p className="text-xs text-gray-400">
-            最新のAI活用情報は
-            <a
-              href="https://twitter.com/intent/follow?screen_name=kompass_ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline underline-offset-2 hover:text-gray-600 transition-colors mx-1"
-            >
-              X（@kompass_ai）
-            </a>
-            で発信中
-          </p>
-        </div>
-
-        <p className="text-center text-xs text-gray-300 mt-4">
-          診断日：
-          {new Date().toLocaleDateString("ja-JP", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link
-            href={`/${locale}/diagnosis`}
-            className={cn(
-              buttonVariants({ variant: "outline", size: "default" }),
-              "inline-flex rounded-full px-6"
-            )}
-          >
-            {resultPageCopy.redoDiagnosis}
-          </Link>
-        </div>
-
-        {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-          <div className="mx-auto mt-4 max-w-md">
-            <div className="rounded-xl border-2 border-dashed border-gray-300 p-4 text-center space-y-2">
-              <p className="text-xs text-gray-500 font-medium">
-                もっと詳しく診断できます
-              </p>
-              <a
-                href={`/${locale}/diagnosis?resume=true`}
-                className="inline-block rounded-full bg-gray-800 px-6 py-2.5 text-sm font-bold text-white hover:bg-gray-600 transition-colors"
-              >
-                続きを診断する（残り{remainingQuestions}問）→
-              </a>
-            </div>
-          </div>
-        ) : null}
-
-        <Card className="text-left">
-          <CardHeader>
-            <CardTitle className="text-base">{resultPageCopy.mbtiCardTitle}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-              <label className="block min-w-0 flex-1">
-                <span className="sr-only">MBTI</span>
-                <input
-                  type="text"
-                  name="mbti"
-                  maxLength={4}
-                  autoCapitalize="characters"
-                  autoComplete="off"
-                  value={mbtiInput}
-                  onChange={(e) => {
-                    const v = e.target.value
-                      .toUpperCase()
-                      .replace(/[^A-Z]/g, "")
-                      .slice(0, 4);
-                    setMbtiInput(v);
-                    setMbtiFieldError(null);
-                    setMbtiApplied(null);
-                    setMbtiAppliedScores(null);
-                  }}
-                  placeholder={resultPageCopy.mbtiPlaceholder}
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
-                />
-              </label>
-              <Button
-                type="button"
-                onClick={() => handleMbtiApply()}
-                disabled={scoringSnapshot === null}
-              >
-                {resultPageCopy.mbtiApply}
-              </Button>
-            </div>
-            {mbtiFieldError !== null ? (
-              <p className="text-destructive text-sm" role="alert">
-                {mbtiFieldError}
-              </p>
-            ) : null}
-            {scoringSnapshot === null ? (
-              <p className="text-muted-foreground text-xs">
-                {resultPageCopy.mbtiNoScoresHint}
-              </p>
-            ) : null}
-            {mbtiApplied !== null ? (
-              <div className="space-y-2 text-sm leading-relaxed">
-                <p className="text-foreground">{mbtiApplied.changeMessage}</p>
-                <p className="text-muted-foreground">
-                  {mbtiApplied.compatibilityComment}
-                </p>
-              </div>
-            ) : null}
-            <p className="text-muted-foreground text-xs">
-              <a
-                href="https://www.16personalities.com/ja"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground font-medium underline underline-offset-2"
-              >
-                {resultPageCopy.mbtiWhatLink}
-              </a>
-            </p>
-          </CardContent>
-        </Card>
-
-        <div className="mx-auto mt-6 max-w-md text-center">
-          <a
-            href={`/${locale}/diagnosis`}
-            className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-4 transition-colors"
-          >
-            もう一度診断する
-          </a>
-        </div>
       </div>
     </main>
   );

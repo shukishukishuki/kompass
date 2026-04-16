@@ -222,18 +222,14 @@ export default async function GuidePage({
       </div>
 
       <div className="mx-auto max-w-2xl px-6 pb-10">
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-gray-50 p-5">
+        <div className="rounded-2xl bg-gray-900 p-6 flex items-center justify-between gap-4">
           <div>
-            <p className="mb-1 text-sm font-bold text-gray-800">
-              まだ診断していない方へ
-            </p>
-            <p className="text-xs text-gray-500">
-              診断するとあなた専用のガイドが解放されます
-            </p>
+            <p className="text-sm font-bold text-white mb-1">あなたのAIタイプは？</p>
+            <p className="text-xs text-gray-400">10問・無料・登録不要</p>
           </div>
           <Link
             href={`/${locale}/diagnosis`}
-            className="shrink-0 rounded-full bg-gray-900 px-5 py-2 text-xs font-bold text-white transition-colors hover:bg-gray-700"
+            className="shrink-0 rounded-full bg-white px-5 py-2 text-xs font-bold text-gray-900 hover:bg-gray-100 transition-colors"
           >
             診断する →
           </Link>

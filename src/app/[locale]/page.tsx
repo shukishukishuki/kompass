@@ -585,6 +585,22 @@ export default async function LocaleHomePage({
         </div>
       </section>
 
+      <section className="w-full max-w-2xl mx-auto px-6 py-10 text-center">
+        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">
+          ABOUT
+        </p>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">Kompassについて</h2>
+        <p className="text-sm text-gray-500 leading-relaxed mb-6">
+          Kompassは「思考スタイルで最適なAIを選ぶ」という新しい視点でAI選びを提案する診断サービスです。
+          ChatGPT・Claude・Gemini・Perplexity・Copilotそれぞれの特性を分析し、あなたの思考パターンに本当に合う1つのAIを提案します。
+        </p>
+        <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
+          <span>✦ 2026年提供開始</span>
+          <span>✦ 完全無料</span>
+          <span>✦ 登録不要</span>
+        </div>
+      </section>
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
