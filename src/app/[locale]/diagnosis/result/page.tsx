@@ -141,6 +141,54 @@ const TYPE_ROADMAP: Record<string, { steps: string[] }> = {
   },
 };
 
+const TYPE_NEXT_ACTIONS: Record<
+  string,
+  { actions: { label: string; url: string }[] }
+> = {
+  claude: {
+    actions: [
+      { label: "Claudeを無料で試す", url: "https://claude.ai" },
+      { label: "共感ジャンキーのガイドを見る", url: "/ja/guide/empath" },
+      { label: "もう一度診断する", url: "/ja/diagnosis" },
+    ],
+  },
+  chatgpt: {
+    actions: [
+      { label: "ChatGPTを無料で試す", url: "https://chatgpt.com" },
+      { label: "丸投げ屋のガイドを見る", url: "/ja/guide/generalist" },
+      { label: "もう一度診断する", url: "/ja/diagnosis" },
+    ],
+  },
+  gemini: {
+    actions: [
+      { label: "Geminiを無料で試す", url: "https://gemini.google.com" },
+      { label: "情報スナイパーのガイドを見る", url: "/ja/guide/scout" },
+      { label: "もう一度診断する", url: "/ja/diagnosis" },
+    ],
+  },
+  perplexity: {
+    actions: [
+      { label: "Perplexityを無料で試す", url: "https://perplexity.ai" },
+      { label: "裏取りマニアのガイドを見る", url: "/ja/guide/analyst" },
+      { label: "もう一度診断する", url: "/ja/diagnosis" },
+    ],
+  },
+  copilot: {
+    actions: [
+      { label: "Copilotを無料で試す", url: "https://copilot.microsoft.com" },
+      { label: "整理の鬼のガイドを見る", url: "/ja/guide/executive" },
+      { label: "もう一度診断する", url: "/ja/diagnosis" },
+    ],
+  },
+  jiyujin: {
+    actions: [
+      { label: "まずClaudeを試す", url: "https://claude.ai" },
+      { label: "AI遊牧民のガイドを見る", url: "/ja/guide/orchestrator" },
+      { label: "もう一度診断する", url: "/ja/diagnosis" },
+    ],
+  },
+};
+
 const AI_LABEL_JA: Record<string, string> = {
   claude: "Claude",
   chatgpt: "ChatGPT",
@@ -1167,6 +1215,35 @@ export default function DiagnosisResultPage() {
                               </span>
                               <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
                             </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  {(() => {
+                    const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
+                    if (!nextActions) return null;
+                    return (
+                      <div className="mx-auto mt-6 max-w-md space-y-3">
+                        <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                          次のアクション
+                        </p>
+                        <div className="space-y-2">
+                          {nextActions.actions.map((action, i) => (
+                            <a
+                              key={i}
+                              href={action.url}
+                              target={action.url.startsWith("http") ? "_blank" : undefined}
+                              rel={
+                                action.url.startsWith("http")
+                                  ? "noopener noreferrer"
+                                  : undefined
+                              }
+                              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            >
+                              <span>{action.label}</span>
+                              <span className="text-gray-400">→</span>
+                            </a>
                           ))}
                         </div>
                       </div>
