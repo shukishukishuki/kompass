@@ -89,17 +89,8 @@ export async function GET(req: NextRequest) {
   const textColor = data.darkText ? "#1a1a2e" : "#ffffff";
   const subColor = data.darkText ? "rgba(26,26,46,0.6)" : "rgba(255,255,255,0.6)";
 
-  // キャラ画像をfetch（base64変換）
-  const baseUrl = req.nextUrl.origin;
-  let charImgSrc = "";
-  try {
-    const imgRes = await fetch(`${baseUrl}${data.charImg}`);
-    const imgBuf = await imgRes.arrayBuffer();
-    const base64 = Buffer.from(imgBuf).toString("base64");
-    charImgSrc = `data:image/png;base64,${base64}`;
-  } catch {
-    // 画像取得失敗時は円だけ表示
-  }
+  // Edge runtimeでも安定して参照できるよう、画像は絶対URLを直接指定する
+  const charImgSrc = `https://kompass-rosy.vercel.app${data.charImg}`;
 
   const response = new ImageResponse(
     (
@@ -154,12 +145,14 @@ export async function GET(req: NextRequest) {
             overflow: "hidden",
             flexShrink: 0,
           }}>
-            {charImgSrc ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={charImgSrc} width={200} height={200} style={{ objectFit: "contain" }} alt="" />
-            ) : (
-              <div style={{ width: "200px", height: "200px", display: "flex" }} />
-            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={charImgSrc}
+              width={200}
+              height={200}
+              style={{ objectFit: "contain" }}
+              alt=""
+            />
           </div>
 
           {/* 中：テキスト */}
