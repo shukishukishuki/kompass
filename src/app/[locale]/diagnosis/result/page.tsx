@@ -886,6 +886,27 @@ export default function DiagnosisResultPage() {
             >
               {heroCharacterName}
             </h1>
+            {scoringSnapshot && (
+              <div className="flex justify-center gap-2 flex-wrap mt-3">
+                {Object.entries(scoringSnapshot.scoresByAi)
+                  .sort(([, a], [, b]) => b - a)
+                  .slice(0, 3)
+                  .map(([aiKind, score]) => (
+                    <span
+                      key={aiKind}
+                      className="text-xs rounded-full px-3 py-1 font-medium text-white"
+                      style={{
+                        backgroundColor:
+                          AI_THEME_COLORS[
+                            aiKind as keyof typeof AI_THEME_COLORS
+                          ] ?? "#7C3AED",
+                      }}
+                    >
+                      {aiKind} {Math.round(score)}pt
+                    </span>
+                  ))}
+              </div>
+            )}
             <p className="mt-2 text-sm uppercase tracking-wide text-white/90 md:text-base">
               {resolvedTypeCharacter.typeEn}
             </p>

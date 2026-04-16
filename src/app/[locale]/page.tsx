@@ -553,9 +553,11 @@ export default async function LocaleHomePage({
             },
           ].map((item, i) => (
             <details key={i} className="rounded-xl border border-gray-200 bg-white">
-              <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-gray-800 list-none flex items-center justify-between">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-gray-800 list-none flex items-center justify-between group">
                 {item.q}
-                <span className="text-gray-400 text-xs ml-2">▼</span>
+                <span className="text-gray-400 text-xs ml-2 transition-transform group-open:rotate-180">
+                  ▼
+                </span>
               </summary>
               <p className="px-5 pb-4 text-sm text-gray-600 leading-relaxed">{item.a}</p>
             </details>

@@ -334,6 +334,12 @@ export default async function GuideTypeDetailPage({
           <p className="mt-2 text-sm text-slate-600">
             右のボタンでそのままコピーして使えます。
           </p>
+          <div className="space-y-2 mb-2">
+            <h2 className="text-sm font-bold text-gray-700">すぐ使えるプロンプト</h2>
+            <p className="text-xs text-gray-400">
+              コピーしてそのままAIに貼り付けて使えます。診断済みの方はあなた専用プロンプトが結果画面に表示されます。
+            </p>
+          </div>
           <div className="mt-4">
             <PromptList prompts={content.prompts} />
           </div>
