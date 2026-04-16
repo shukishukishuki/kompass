@@ -54,6 +54,9 @@ export default async function TypesPage({
         <p className="mt-3 text-center text-sm text-slate-600 md:text-base">
           {copy.subtitle}
         </p>
+        <p className="text-sm text-gray-500 text-center mb-8 leading-relaxed">
+          あなたはどのタイプ？タップして詳しい使い方を見る。
+        </p>
         <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TYPE_CHARACTERS.map((character) => (
             <Link

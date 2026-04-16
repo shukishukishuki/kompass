@@ -13,6 +13,7 @@ interface AiGuide {
   name: string;
   color: string;
   tagline: string;
+  readTime: string;
   description: string;
   bestFor: string[];
   free: boolean;
@@ -25,6 +26,7 @@ const AI_GUIDES: AiGuide[] = [
     name: "ChatGPT",
     color: "#10A37F",
     tagline: "なんでも屋の万能選手",
+    readTime: "初心者向け",
     description:
       "文章・コード・翻訳・アイデア出しまで幅広く対応。迷ったらまずここ。無料枠が最も充実している。",
     bestFor: [
@@ -40,6 +42,7 @@ const AI_GUIDES: AiGuide[] = [
     name: "Claude",
     color: "#CC785C",
     tagline: "思考の深さで選ぶなら",
+    readTime: "中級者向け",
     description:
       "長文の読解・複雑な思考整理・感情に寄り添った対話が得意。答えより過程を大事にしたい人向け。",
     bestFor: [
@@ -55,6 +58,7 @@ const AI_GUIDES: AiGuide[] = [
     name: "Gemini",
     color: "#4285F4",
     tagline: "最新情報を即座に",
+    readTime: "初心者向け",
     description:
       "Googleの検索力と連携。リアルタイム情報・画像理解・Googleサービスとの連携が強み。",
     bestFor: [
@@ -70,6 +74,7 @@ const AI_GUIDES: AiGuide[] = [
     name: "Perplexity",
     color: "#20B2AA",
     tagline: "根拠付きで調べるなら",
+    readTime: "中級者向け",
     description:
       "回答に出典・ソースが明示される。「それ本当に正しいの？」が気になる人に最適。",
     bestFor: [
@@ -85,6 +90,7 @@ const AI_GUIDES: AiGuide[] = [
     name: "Copilot",
     color: "#0078D4",
     tagline: "仕事の整理・構造化に",
+    readTime: "ビジネス向け",
     description:
       "Microsoft Officeとの連携が強力。Word・Excel・Teamsで使えば業務効率が大幅アップ。",
     bestFor: [
@@ -134,6 +140,9 @@ export default async function GuidePage({
                 />
                 <span className="font-bold text-gray-900">{ai.name}</span>
                 <span className="text-xs text-gray-400">{ai.tagline}</span>
+                <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+                  {ai.readTime}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 {ai.free ? (

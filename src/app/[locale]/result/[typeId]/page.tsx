@@ -48,7 +48,7 @@ export default async function TypeResultPage({
   const color = AI_THEME_COLORS[character.aiKind] ?? "#7C3AED";
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <div className="mx-auto max-w-md space-y-6 px-6 py-12">
         <div className="space-y-3 text-center">
           <div

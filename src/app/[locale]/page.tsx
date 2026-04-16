@@ -248,7 +248,7 @@ export default async function LocaleHomePage({
             ].map((char, i) => (
               <div
                 key={i}
-                className="h-12 w-12 overflow-hidden rounded-full"
+                className="h-12 w-12 overflow-hidden rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
                 style={{ backgroundColor: `${char.color}33` }}
               >
                 <img

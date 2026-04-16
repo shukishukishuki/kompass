@@ -389,7 +389,7 @@ export default function DiagnosisPage() {
 
   if (phase === "intro") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
+      <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12 bg-gradient-to-b from-gray-50 to-white">
         <div className="w-full max-w-md space-y-6 text-center">
           <div className="flex justify-center gap-2 mb-4">
             {[

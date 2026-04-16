@@ -1140,6 +1140,9 @@ export default function DiagnosisResultPage() {
                     <CardTitle>{resultPageCopy.literacyTitle}</CardTitle>
                   </CardHeader>
                   <CardContent>
+                    <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
+                      AI LITERACY
+                    </p>
                     <p className="text-sm leading-relaxed text-muted-foreground">
                       {personalityBlock.literacyAnalysis}
                     </p>
