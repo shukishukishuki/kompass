@@ -1,3 +1,7 @@
+export async function generateMetadata() {
+  return { title: "プライバシーポリシー" };
+}
+
 export default function PrivacyPage() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-16 text-gray-800">

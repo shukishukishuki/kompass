@@ -462,6 +462,42 @@ export default async function LocaleHomePage({
         </div>
       </section>
 
+      <section className="w-full max-w-2xl mx-auto px-6 py-10">
+        <h2 className="text-center text-xl font-bold text-gray-900 mb-6">よくある質問</h2>
+        <div className="space-y-3">
+          {[
+            {
+              q: "診断は無料ですか？",
+              a: "はい、完全無料です。登録も不要でそのまま診断できます。",
+            },
+            {
+              q: "何問ありますか？",
+              a: "まず10問で診断できます。深く知りたい方は最大40問まで回答できます。",
+            },
+            {
+              q: "診断結果は保存されますか？",
+              a: "診断結果はブラウザのセッションに保存されます。ブラウザを閉じると消えるため、結果はスクリーンショットやシェア機能でお手元に保存してください。",
+            },
+            {
+              q: "どのAIが一番いいですか？",
+              a: "「一番良いAI」は人によって違います。Kompassはあなたの思考スタイルに合ったAIを提案します。使い方次第でどのAIも強力なツールになります。",
+            },
+            {
+              q: "診断結果が気に入らない場合は？",
+              a: "何度でも診断し直せます。また、結果はあくまで参考です。気になる別のAIを試してみることも大切です。",
+            },
+          ].map((item, i) => (
+            <details key={i} className="rounded-xl border border-gray-200 bg-white">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-gray-800 list-none flex items-center justify-between">
+                {item.q}
+                <span className="text-gray-400 text-xs ml-2">▼</span>
+              </summary>
+              <p className="px-5 pb-4 text-sm text-gray-600 leading-relaxed">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
       <footer className="border-t border-zinc-200 px-4 py-8 text-center text-sm text-slate-600">
         <div className="flex justify-center gap-4 text-xs text-gray-400">
           <a
@@ -475,6 +511,14 @@ export default async function LocaleHomePage({
             className="transition-colors hover:text-gray-600"
           >
             プライバシーポリシー
+          </a>
+          <a
+            href="https://twitter.com/intent/tweet?text=AIタイプ診断やってみた！%20%23Kompass&url=https://kompass-rosy.vercel.app/ja"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-600 transition-colors"
+          >
+            X（旧Twitter）
           </a>
         </div>
         <p className="mt-3">Kompass © 2026</p>

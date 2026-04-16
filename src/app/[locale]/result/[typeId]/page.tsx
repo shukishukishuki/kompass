@@ -15,9 +15,15 @@ export async function generateMetadata({
   params: Promise<{ typeId: string; locale: string }>;
 }): Promise<Metadata> {
   const { typeId } = await params;
+  const character = TYPE_CHARACTERS.find((item) => item.typeId === typeId);
   const ogUrl = `https://kompass-rosy.vercel.app/api/og?type=${typeId}&lang=ja`;
   return {
     metadataBase: new URL("https://kompass-rosy.vercel.app"),
+    title:
+      character !== undefined
+        ? `${character.characterName}｜AIタイプ診断結果`
+        : undefined,
+    description: character?.oneLiner,
     openGraph: {
       images: [{ url: ogUrl, width: 1200, height: 630 }],
     },
@@ -95,6 +101,14 @@ export default async function TypeResultPage({
           >
             他のタイプを見る
           </Link>
+        </div>
+        <div className="text-center mt-2">
+          <a
+            href={`/${locale}/guide/${typeId}`}
+            className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
+          >
+            {character.characterName}のAI活用ガイドを見る →
+          </a>
         </div>
       </div>
     </main>

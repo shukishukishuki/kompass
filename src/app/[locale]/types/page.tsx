@@ -3,6 +3,14 @@ import Link from "next/link";
 import { AI_THEME_COLORS } from "@/types/ai";
 import { hexToRgba, TYPE_CHARACTERS } from "@/lib/type-characters";
 
+export async function generateMetadata() {
+  return {
+    title: "AIタイプ一覧",
+    description:
+      "共感ジャンキー・丸投げ屋・情報スナイパー・裏取りマニア・整理の鬼・AI遊牧民。6つのAIタイプの特徴を解説。",
+  };
+}
+
 interface TypesPageCopy {
   title: string;
   subtitle: string;

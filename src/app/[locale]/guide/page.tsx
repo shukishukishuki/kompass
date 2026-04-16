@@ -1,5 +1,13 @@
 import Link from "next/link";
 
+export async function generateMetadata() {
+  return {
+    title: "AI活用ガイド",
+    description:
+      "ChatGPT・Claude・Gemini・Perplexity・Copilotの特徴と使い分けを解説。あなたに合うAIの使い方を見つけよう。",
+  };
+}
+
 interface AiGuide {
   id: string;
   name: string;
@@ -146,6 +154,16 @@ export default async function GuidePage({
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mx-auto max-w-2xl px-6 pb-6">
+        <div className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5 text-center space-y-2">
+          <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+            WEEKLY TOPICS
+          </p>
+          <p className="text-sm font-bold text-gray-700">今週のAI最新トピック</p>
+          <p className="text-xs text-gray-400">1,000ユーザー達成後に自動配信開始予定</p>
+        </div>
       </div>
 
       <div className="mx-auto max-w-2xl px-6 pb-6">

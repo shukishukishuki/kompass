@@ -213,6 +213,20 @@ export function generateStaticParams(): { typeId: TypeId }[] {
   }));
 }
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ typeId: string }>;
+}) {
+  const { typeId } = await params;
+  const detail = GUIDE_DETAILS[typeId as keyof typeof GUIDE_DETAILS];
+  if (!detail) return {};
+  return {
+    title: `${detail.oneShotCopy}｜AIタイプ別ガイド`,
+    description: detail.whenToUse,
+  };
+}
+
 /**
  * タイプ別のAIガイド詳細ページ
  */
