@@ -14,8 +14,27 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kompass-rosy.vercel.app"),
-  title: "Kompass",
-  description: "あなたのベースAIを決める、AI意思決定サービス",
+  title: {
+    default: "Kompass｜あなたに合うAIを診断する",
+    template: "%s | Kompass",
+  },
+  description:
+    "ChatGPT・Claude・Gemini・Perplexity・Copilotの中から、あなたの思考スタイルに最適なAIを40問で診断。無料・登録不要。",
+  keywords: [
+    "AI診断",
+    "ChatGPT",
+    "Claude",
+    "Gemini",
+    "Perplexity",
+    "Copilot",
+    "AI活用",
+    "AIツール",
+  ],
+  openGraph: {
+    siteName: "Kompass",
+    type: "website",
+    locale: "ja_JP",
+  },
 };
 
 export default function RootLayout({

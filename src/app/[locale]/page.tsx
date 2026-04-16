@@ -199,6 +199,28 @@ const COPY_BY_LOCALE: Record<LocaleCode, LandingCopy> = {
   },
 };
 
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
+  if (locale === "en") {
+    return {
+      title: "Kompass | Find Your Perfect AI",
+      description:
+        "Discover which AI — ChatGPT, Claude, Gemini, Perplexity, or Copilot — fits your thinking style. Free, 40-question diagnosis.",
+    };
+  }
+
+  return {
+    title: "Kompass｜あなたに合うAIを40問で診断",
+    description:
+      "ChatGPT・Claude・Gemini・Perplexity・Copilotの中から、あなたの思考スタイルに最適なAIを診断。無料・登録不要・3〜5分。",
+  };
+}
+
 export default async function LocaleHomePage({
   params,
 }: Readonly<{
