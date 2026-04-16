@@ -44,6 +44,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
 import { AxisGraph } from "@/components/diagnosis/AxisGraph";
+import { PersonalizedPrompts } from "@/components/diagnosis/PersonalizedPrompts";
 import {
   Card,
   CardContent,
@@ -258,6 +259,16 @@ function isDiagnosisResult(value: unknown): value is DiagnosisResult {
       typeof o2.aiName !== "string" ||
       typeof o2.description !== "string"
     ) {
+      return false;
+    }
+  }
+  if ("answers" in o && o.answers !== undefined) {
+    const answers = o.answers;
+    if (typeof answers !== "object" || answers === null) {
+      return false;
+    }
+    const entries = Object.entries(answers as Record<string, unknown>);
+    if (!entries.every(([k, v]) => typeof k === "string" && typeof v === "string")) {
       return false;
     }
   }
@@ -587,6 +598,13 @@ export default function DiagnosisResultPage() {
     return buildAxisScoresFromAiScores(baseScores);
   }, [mbtiAppliedScores, scoringSnapshot]);
 
+  const layer4Answers = useMemo(() => {
+    if (result === null) {
+      return {};
+    }
+    return result.answers ?? {};
+  }, [result]);
+
   const resultHeroBackground = useMemo(() => {
     return AI_THEME_COLORS[resolvedTypeCharacter.aiKind];
   }, [resolvedTypeCharacter.aiKind]);
@@ -795,24 +813,6 @@ export default function DiagnosisResultPage() {
             <div className="mx-auto mt-6 max-w-md">
               <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
             </div>
-            {(() => {
-              const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
-              if (!link) {
-                return null;
-              }
-              return (
-                <div className="mx-auto mt-3 max-w-md text-center">
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-600"
-                  >
-                    {link.label} →
-                  </a>
-                </div>
-              );
-            })()}
           </div>
           {!isDiagnosed ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
@@ -910,6 +910,33 @@ export default function DiagnosisResultPage() {
                 </>
               </CardContent>
             </Card>
+
+            {result.layerCompleted === 4 ? (
+              <PersonalizedPrompts
+                typeId={resolvedTypeCharacter.aiKind}
+                answers={layer4Answers}
+                accentColor={AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#7C3AED"}
+              />
+            ) : null}
+
+            {(() => {
+              const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
+              if (!link) {
+                return null;
+              }
+              return (
+                <div className="mx-auto mt-3 max-w-md text-center">
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 underline underline-offset-4 transition-colors hover:text-gray-700"
+                  >
+                    {link.label} →
+                  </a>
+                </div>
+              );
+            })()}
 
             <Card className="text-left">
               <CardHeader>

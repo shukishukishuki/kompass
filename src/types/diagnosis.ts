@@ -57,4 +57,6 @@ export interface DiagnosisResult {
   rarityLabel?: string;
   /** タイプ別の性格特性コピー。クライアント表示用 */
   personalityDescription?: PersonalityDescription;
+  /** Layer4（Q31〜Q40）の回答（パーソナライズプロンプト生成用） */
+  answers?: Record<string, string>;
 }

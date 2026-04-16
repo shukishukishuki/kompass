@@ -113,7 +113,11 @@ function isLayerCompletedValue(value: unknown): value is LayerCompleted {
  */
 function isDiagnosisRequestBody(
   value: unknown
-): value is { scoringResult: ScoringResult; userLayer: UserLayer } {
+): value is {
+  scoringResult: ScoringResult;
+  userLayer: UserLayer;
+  layer4Answers?: Record<string, string>;
+} {
   if (typeof value !== "object" || value === null) {
     return false;
   }
@@ -123,6 +127,15 @@ function isDiagnosisRequestBody(
   }
   if (!isUserLayer(o.userLayer)) {
     return false;
+  }
+  if ("layer4Answers" in o && o.layer4Answers !== undefined) {
+    if (typeof o.layer4Answers !== "object" || o.layer4Answers === null) {
+      return false;
+    }
+    const entries = Object.entries(o.layer4Answers as Record<string, unknown>);
+    if (!entries.every(([k, v]) => typeof k === "string" && typeof v === "string")) {
+      return false;
+    }
   }
   return true;
 }
@@ -176,7 +189,8 @@ function buildSubAiEntries(
 function buildDiagnosisResult(
   scoring: ScoringResult,
   userLayer: UserLayer,
-  texts: ClaudeGeneratedText
+  texts: ClaudeGeneratedText,
+  layer4Answers: Record<string, string> | undefined
 ): DiagnosisResult {
   const personalityKind = scoring.first;
   const personality = PERSONALITY_BY_AI[personalityKind];
@@ -214,6 +228,7 @@ function buildDiagnosisResult(
     scoreDiff: scoring.scoreDiff,
     displayMode: scoring.displayMode,
     layerCompleted: scoring.layerCompleted,
+    answers: layer4Answers,
   };
 }
 
@@ -242,13 +257,14 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    const { scoringResult, userLayer } = parsed;
+    const { scoringResult, userLayer, layer4Answers } = parsed;
 
     const texts = await generateDiagnosisTexts(scoringResult, userLayer);
     const diagnosis = buildDiagnosisResult(
       scoringResult,
       userLayer,
-      texts
+      texts,
+      layer4Answers
     );
 
     const savedId = await saveDiagnosisResult(diagnosis);

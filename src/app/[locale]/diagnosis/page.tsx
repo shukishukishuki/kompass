@@ -29,6 +29,34 @@ const messagesByLocale: Record<string, MessagesFile> = {
   en: enMessages as MessagesFile,
 };
 
+/** Layer4（Q31〜Q40）の回答だけを抽出して API に渡す */
+function buildLayer4Answers(
+  allAnswers: QuestionAnswer[],
+  questions: MessagesFile["diagnosis"]["questions"]
+): Record<string, string> {
+  const map = new Map<number, string>();
+  for (const answer of allAnswers) {
+    if (answer.questionId < 31 || answer.questionId > 40) {
+      continue;
+    }
+    const question = questions.find((q) => q.id === answer.questionId);
+    if (question === undefined) {
+      continue;
+    }
+    const option = question.options.find((opt) => opt.value === answer.value);
+    if (option === undefined) {
+      continue;
+    }
+    map.set(answer.questionId, option.label);
+  }
+  const ordered = [...map.entries()].sort((a, b) => a[0] - b[0]);
+  const out: Record<string, string> = {};
+  for (const [questionId, label] of ordered) {
+    out[`Q${questionId}`] = label;
+  }
+  return out;
+}
+
 /** flow 未定義時の日本語フォールバック */
 const FALLBACK_FLOW: DiagnosisFlowCopy = {
   mbtiInvalid: "有効なMBTIタイプ（4文字）を入力するか、空のままにしてください",
@@ -170,6 +198,7 @@ export default function DiagnosisPage() {
         body: JSON.stringify({
           scoringResult,
           userLayer: scoringResult.userLayer,
+          layer4Answers: buildLayer4Answers(finalAnswers, questions),
         }),
       });
       if (!diagnosisRes.ok) {
@@ -188,7 +217,7 @@ export default function DiagnosisPage() {
       sessionStorage.removeItem(DIAGNOSIS_MBTI_STORAGE_KEY);
       router.push(`/${locale}/diagnosis/result`);
     },
-    [locale, mbtiValue, router]
+    [locale, mbtiValue, questions, router]
   );
 
   const handleBack = useCallback(() => {
