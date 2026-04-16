@@ -272,6 +272,23 @@ export default async function LocaleHomePage({
           <p className="text-xs text-gray-400 text-center mt-2">
             深く知りたい人は最大40問まで
           </p>
+          <div className="flex flex-wrap justify-center gap-2 mt-4 mb-2">
+            {[
+              { name: "ChatGPT", color: "#10A37F" },
+              { name: "Claude", color: "#CC785C" },
+              { name: "Gemini", color: "#4285F4" },
+              { name: "Perplexity", color: "#20B2AA" },
+              { name: "Copilot", color: "#0078D4" },
+            ].map((ai) => (
+              <span
+                key={ai.name}
+                className="rounded-full px-3 py-1 text-xs font-medium text-white"
+                style={{ backgroundColor: ai.color }}
+              >
+                {ai.name}
+              </span>
+            ))}
+          </div>
           <p className="mx-auto mt-6 max-w-2xl text-base text-slate-700 md:text-xl">
             {copy.heroSub}
           </p>

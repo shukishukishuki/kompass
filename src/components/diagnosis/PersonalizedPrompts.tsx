@@ -21,6 +21,7 @@ export function PersonalizedPrompts({
 }: PersonalizedPromptsProps) {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const generate = async () => {
@@ -41,9 +42,11 @@ export function PersonalizedPrompts({
     void generate();
   }, [answers, typeId]);
 
-  const handleCopy = async (text: string) => {
+  const handleCopy = async (text: string, index: number) => {
     await navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
     toast.success("コピーしました。AIに貼り付けてすぐ使えます ✓");
+    setTimeout(() => setCopiedIndex(null), 2000);
   };
 
   if (loading) {
@@ -86,10 +89,12 @@ export function PersonalizedPrompts({
           <p className="text-sm leading-relaxed text-gray-700">{p.prompt}</p>
           <button
             type="button"
-            onClick={() => void handleCopy(p.prompt)}
-            className="text-xs text-gray-400 underline underline-offset-2 transition-colors hover:text-gray-600"
+            onClick={() => void handleCopy(p.prompt, i)}
+            className={`text-xs transition-colors underline underline-offset-2 ${
+              copiedIndex === i ? "text-green-500" : "text-gray-400 hover:text-gray-600"
+            }`}
           >
-            コピーする
+            {copiedIndex === i ? "コピー済み ✓" : "コピーする"}
           </button>
         </div>
       ))}
