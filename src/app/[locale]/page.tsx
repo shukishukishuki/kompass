@@ -55,6 +55,57 @@ const CHARACTER_CARDS: CharacterCard[] = [
   },
 ];
 
+const TYPE_PREVIEWS = [
+  {
+    id: "claude",
+    name: "共感ジャンキー",
+    en: "The Confidant",
+    color: "#CC785C",
+    catch: "答えより、わかってほしかった。",
+    img: "/images/kompass_char_01_empath.png",
+  },
+  {
+    id: "copilot",
+    name: "整理の鬼",
+    en: "The Executive",
+    color: "#0078D4",
+    catch: "混沌を見ると、手を動かしたくなる。",
+    img: "/images/kompass_char_02_executor.png",
+  },
+  {
+    id: "perplexity",
+    name: "裏取りマニア",
+    en: "The Analyst",
+    color: "#20B2AA",
+    catch: "「たぶん」で動くのは無理。",
+    img: "/images/kompass_char_03_analyst.png",
+  },
+  {
+    id: "chatgpt",
+    name: "丸投げ屋",
+    en: "The Generalist",
+    color: "#10A37F",
+    catch: "考えるより、投げた方が早い。",
+    img: "/images/kompass_char_04_generalist.png",
+  },
+  {
+    id: "gemini",
+    name: "情報スナイパー",
+    en: "The Scout",
+    color: "#4285F4",
+    catch: "いらない情報、本当にいらない。",
+    img: "/images/kompass_char_05_scout.png",
+  },
+  {
+    id: "jiyujin",
+    name: "AI遊牧民",
+    en: "The Orchestrator",
+    color: "#7C3AED",
+    catch: "1つのAIで満足できたことがない。",
+    img: "/images/kompass_char_06_nomad.png",
+  },
+] as const;
+
 type LocaleCode = "ja" | "en";
 
 interface LandingCopy {
@@ -278,6 +329,59 @@ export default async function LocaleHomePage({
             className="mt-8 inline-flex rounded-full bg-[#52B788] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#52B788]/30 transition hover:brightness-95 md:text-base"
           >
             {copy.bottomCtaButton}
+          </a>
+        </div>
+      </section>
+
+      {/* タイプ紹介セクション */}
+      <section className="mx-auto w-full max-w-2xl px-6 py-12">
+        <p className="mb-2 text-center text-xs font-bold tracking-widest text-gray-400 uppercase">
+          6 TYPES
+        </p>
+        <h2 className="mb-2 text-center text-xl font-bold text-gray-900">
+          あなたはどのタイプ？
+        </h2>
+        <p className="mb-8 text-center text-sm text-gray-500">
+          思考スタイルで、あなたに合うAIが決まる。
+        </p>
+
+        <div className="grid grid-cols-2 gap-3">
+          {TYPE_PREVIEWS.map((type) => (
+            <div
+              key={type.id}
+              className="flex items-center gap-3 rounded-xl p-4"
+              style={{
+                backgroundColor: `${type.color}15`,
+                border: `1px solid ${type.color}33`,
+              }}
+            >
+              <img
+                src={type.img}
+                alt={type.name}
+                width={56}
+                height={56}
+                className="shrink-0 rounded-full object-contain"
+                style={{ backgroundColor: `${type.color}33` }}
+              />
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-gray-900">
+                  {type.name}
+                </p>
+                <p className="mb-1 text-xs text-gray-400">{type.en}</p>
+                <p className="text-xs leading-relaxed text-gray-600">
+                  {type.catch}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 text-center">
+          <a
+            href={`/${locale}/diagnosis`}
+            className="inline-block rounded-full bg-gray-900 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+          >
+            診断してタイプを知る →
           </a>
         </div>
       </section>
