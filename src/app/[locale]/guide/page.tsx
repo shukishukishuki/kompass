@@ -128,9 +128,12 @@ export default async function GuidePage({
       </div>
       <div className="mx-auto max-w-2xl space-y-4 px-6 pb-6">
         {AI_GUIDES.map((ai) => (
-          <div
+          <a
             key={ai.id}
-            className="space-y-3 rounded-xl border border-gray-200 bg-white p-5"
+            href={ai.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-xl border border-gray-200 bg-white p-5 space-y-3 block hover:shadow-md transition-shadow"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -150,14 +153,6 @@ export default async function GuidePage({
                     無料あり
                   </span>
                 ) : null}
-                <a
-                  href={ai.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-gray-400 underline underline-offset-2 transition-colors hover:text-gray-600"
-                >
-                  試す →
-                </a>
               </div>
             </div>
             <p className="text-sm leading-relaxed text-gray-600">
@@ -174,7 +169,7 @@ export default async function GuidePage({
                 </span>
               ))}
             </div>
-          </div>
+          </a>
         ))}
       </div>
 

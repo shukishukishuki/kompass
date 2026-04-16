@@ -141,6 +141,15 @@ const TYPE_ROADMAP: Record<string, { steps: string[] }> = {
   },
 };
 
+const AI_LABEL_JA: Record<string, string> = {
+  claude: "Claude",
+  chatgpt: "ChatGPT",
+  gemini: "Gemini",
+  perplexity: "Perplexity",
+  copilot: "Copilot",
+  jiyujin: "遊牧民",
+};
+
 /** resultPage 未定義時のフォールバック（ja） */
 const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   statsAggregating: "集計中",
@@ -902,7 +911,7 @@ export default function DiagnosisResultPage() {
                           ] ?? "#7C3AED",
                       }}
                     >
-                      {aiKind} {Math.round(score)}pt
+                      {AI_LABEL_JA[aiKind] ?? aiKind} {Math.round(score)}pt
                     </span>
                   ))}
               </div>
