@@ -1059,9 +1059,14 @@ export default function DiagnosisResultPage() {
 
         <Card className="text-left">
           <CardContent className="space-y-3 pt-6">
-            <p className="text-sm font-semibold">3日後にどうだったか教えてください</p>
-            <p className="text-sm text-muted-foreground">
-              メールアドレスを登録すると、3日後にフォローアップをお送りします
+            <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">
+              WEEKLY UPDATE
+            </p>
+            <p className="mb-1 text-sm font-bold text-gray-900">
+              毎週、あなたのタイプ向けAI活用法を届けます
+            </p>
+            <p className="mb-4 text-xs text-gray-500">
+              新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
             </p>
             <form
               className="flex flex-col gap-3 sm:flex-row sm:items-center"
@@ -1087,12 +1092,12 @@ export default function DiagnosisResultPage() {
                 required
               />
               <Button type="submit" disabled={followupStatus === "saving"}>
-                {followupStatus === "saving" ? "登録中..." : "登録する"}
+                {followupStatus === "saving" ? "登録中..." : "無料で受け取る"}
               </Button>
             </form>
             {followupStatus === "saved" ? (
               <p className="text-sm text-emerald-600">
-                登録ありがとうございました。3日後にフォローアップをお送りします。
+                登録しました。次回のアップデートをお楽しみに ✓
               </p>
             ) : null}
             {followupError !== null ? (
