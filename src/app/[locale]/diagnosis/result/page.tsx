@@ -246,6 +246,9 @@ const AI_LABEL_JA: Record<string, string> = {
   jiyujin: "遊牧民",
 };
 
+const BOTTOM_SECTION_HEADING_CLASS =
+  "mb-2 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase";
+
 /** resultPage 未定義時のフォールバック（ja） */
 const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   statsAggregating: "まだ集計中（診断者募集中！）",
@@ -1590,6 +1593,9 @@ export default function DiagnosisResultPage() {
         <div className="mx-auto mt-6 w-full max-w-2xl px-6">
           <Card className="text-left border-none shadow-md">
             <CardContent className="space-y-4 pt-6">
+              <p className={BOTTOM_SECTION_HEADING_CLASS}>
+                この診断結果を保存して、後から見返す
+              </p>
               <button
                 type="button"
                 aria-label="この診断結果を保存して、後から見返す"
@@ -1659,6 +1665,7 @@ export default function DiagnosisResultPage() {
             }}
             className="space-y-3"
           >
+            <p className={BOTTOM_SECTION_HEADING_CLASS}>続きを診断する</p>
             <p
               style={{
                 fontSize: 13,
@@ -1706,7 +1713,7 @@ export default function DiagnosisResultPage() {
 
       {result.layerCompleted >= 1 ? (
       <div className="mx-auto mt-8 w-full max-w-2xl px-6">
-        <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
+        <p className={cn(BOTTOM_SECTION_HEADING_CLASS, "text-center mb-3")}>
           SHARE YOUR TYPE
         </p>
         <div className="flex flex-wrap justify-center gap-2">
@@ -1867,81 +1874,9 @@ export default function DiagnosisResultPage() {
                 </Card>
               </>
             ) : null}
-            <Card className="text-left">
-              <CardHeader>
-                <CardTitle className="text-base">{resultPageCopy.mbtiCardTitle}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                  <label className="block min-w-0 flex-1">
-                    <span className="sr-only">MBTI</span>
-                    <input
-                      type="text"
-                      name="mbti"
-                      maxLength={4}
-                      autoCapitalize="characters"
-                      autoComplete="off"
-                      value={mbtiInput}
-                      onChange={(e) => {
-                        const v = e.target.value
-                          .toUpperCase()
-                          .replace(/[^A-Z]/g, "")
-                          .slice(0, 4);
-                        setMbtiInput(v);
-                        setMbtiFieldError(null);
-                        setMbtiApplied(null);
-                        setMbtiAppliedScores(null);
-                      }}
-                      placeholder={resultPageCopy.mbtiPlaceholder}
-                      className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
-                    />
-                  </label>
-                  <Button
-                    type="button"
-                    onClick={() => handleMbtiApply()}
-                    disabled={scoringSnapshot === null}
-                  >
-                    {resultPageCopy.mbtiApply}
-                  </Button>
-                </div>
-                {mbtiFieldError !== null ? (
-                  <p className="text-destructive text-sm" role="alert">
-                    {mbtiFieldError}
-                  </p>
-                ) : null}
-                {scoringSnapshot === null ? (
-                  <p className="text-muted-foreground text-xs">
-                    {resultPageCopy.mbtiNoScoresHint}
-                  </p>
-                ) : null}
-                {mbtiApplied !== null ? (
-                  <div className="space-y-2 text-sm leading-relaxed">
-                    <p className="text-foreground">{mbtiApplied.changeMessage}</p>
-                    <p className="text-muted-foreground">
-                      {mbtiApplied.compatibilityComment}
-                    </p>
-                  </div>
-                ) : null}
-                <p className="text-muted-foreground text-xs">
-                  <a
-                    href="https://www.16personalities.com/ja"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-foreground font-medium underline underline-offset-2"
-                  >
-                    {resultPageCopy.mbtiWhatLink}
-                  </a>
-                </p>
-              </CardContent>
-            </Card>
-            <Card
-              id="section-ai-usage"
-              className="text-left scroll-mt-4"
-            >
-              <CardHeader>
-                <CardTitle className="text-base">{resultPageCopy.nextStepTitle}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+            <section id="section-ai-usage" className="scroll-mt-4 border-t border-[#f0f0f0] bg-white pt-6">
+              <p className={BOTTOM_SECTION_HEADING_CLASS}>次の一歩 / まずこれだけOK</p>
+              <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
                 {advanced ? (
                   <>
                     {result.subAI.map((entry, idx) => (
@@ -1970,67 +1905,61 @@ export default function DiagnosisResultPage() {
                     <p>{result.baseAI.setup}</p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-            <Card className="text-left">
-              <CardContent className="space-y-3 pt-6">
-                <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">
-                  WEEKLY UPDATE
-                </p>
-                <p className="mb-1 text-sm font-bold text-gray-900">
-                  毎週、あなたのタイプ向けAI活用法を届けます
-                </p>
-                <p className="mb-4 text-xs text-gray-500">
-                  新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
-                </p>
-                <form
-                  className="flex flex-col gap-3 sm:flex-row sm:items-center"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    void handleFollowupSubmit();
+              </div>
+            </section>
+            <section className="border-t border-[#f0f0f0] bg-white pt-6">
+              <p className={BOTTOM_SECTION_HEADING_CLASS}>WEEKLY UPDATE</p>
+              <p className="mb-1 text-sm font-bold text-gray-900">
+                毎週、あなたのタイプ向けAI活用法を届けます
+              </p>
+              <p className="mb-4 text-xs text-gray-500">
+                新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
+              </p>
+              <form
+                className="flex flex-col gap-3 sm:flex-row sm:items-center"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void handleFollowupSubmit();
+                }}
+              >
+                <input
+                  type="email"
+                  name="followup-email"
+                  autoComplete="email"
+                  value={followupEmail}
+                  onChange={(e) => {
+                    setFollowupEmail(e.target.value);
+                    setFollowupError(null);
+                    if (followupStatus !== "idle") {
+                      setFollowupStatus("idle");
+                    }
                   }}
-                >
-                  <input
-                    type="email"
-                    name="followup-email"
-                    autoComplete="email"
-                    value={followupEmail}
-                    onChange={(e) => {
-                      setFollowupEmail(e.target.value);
-                      setFollowupError(null);
-                      if (followupStatus !== "idle") {
-                        setFollowupStatus("idle");
-                      }
-                    }}
-                    placeholder="you@example.com"
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
-                    required
-                  />
-                  <Button type="submit" disabled={followupStatus === "saving"}>
-                    {followupStatus === "saving" ? "登録中..." : "無料で受け取る"}
-                  </Button>
-                </form>
-                {followupStatus === "saved" ? (
-                  <p className="text-sm text-emerald-600">
-                    登録しました。次回のアップデートをお楽しみに ✓
-                  </p>
-                ) : null}
-                {followupError !== null ? (
-                  <p className="text-sm text-destructive" role="alert">
-                    {followupError}
-                  </p>
-                ) : null}
-              </CardContent>
-            </Card>
+                  placeholder="you@example.com"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                  required
+                />
+                <Button type="submit" disabled={followupStatus === "saving"}>
+                  {followupStatus === "saving" ? "登録中..." : "無料で受け取る"}
+                </Button>
+              </form>
+              {followupStatus === "saved" ? (
+                <p className="mt-3 text-sm text-emerald-600">
+                  登録しました。次回のアップデートをお楽しみに ✓
+                </p>
+              ) : null}
+              {followupError !== null ? (
+                <p className="mt-3 text-sm text-destructive" role="alert">
+                  {followupError}
+                </p>
+              ) : null}
+            </section>
             {result.layerCompleted >= 1
               ? (() => {
                   const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
                   if (!nextActions) return null;
                   return (
-                    <div className="space-y-3">
-                      <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                        次のアクション
-                      </p>
+                    <section className="border-t border-[#f0f0f0] bg-white pt-6">
+                      <p className={BOTTOM_SECTION_HEADING_CLASS}>次のアクション</p>
                       <div className="space-y-2">
                         {nextActions.actions.map((action, i) => (
                           <a
@@ -2053,36 +1982,90 @@ export default function DiagnosisResultPage() {
                           </a>
                         ))}
                       </div>
-                    </div>
+                    </section>
                   );
                 })()
               : null}
-            <div className="mx-auto mt-4 max-w-2xl text-center">
-              <p className="text-xs text-gray-400">
-                最新のAI活用情報は
+            <section className="border-t border-[#f0f0f0] bg-white pt-6">
+              <p className={BOTTOM_SECTION_HEADING_CLASS}>MBTI入力</p>
+              <p className="mb-3 text-sm text-gray-900">{resultPageCopy.mbtiCardTitle}</p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                <label className="block min-w-0 flex-1">
+                  <span className="sr-only">MBTI</span>
+                  <input
+                    type="text"
+                    name="mbti"
+                    maxLength={4}
+                    autoCapitalize="characters"
+                    autoComplete="off"
+                    value={mbtiInput}
+                    onChange={(e) => {
+                      const v = e.target.value
+                        .toUpperCase()
+                        .replace(/[^A-Z]/g, "")
+                        .slice(0, 4);
+                      setMbtiInput(v);
+                      setMbtiFieldError(null);
+                      setMbtiApplied(null);
+                      setMbtiAppliedScores(null);
+                    }}
+                    placeholder={resultPageCopy.mbtiPlaceholder}
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
+                  />
+                </label>
+                <Button
+                  type="button"
+                  onClick={() => handleMbtiApply()}
+                  disabled={scoringSnapshot === null}
+                >
+                  {resultPageCopy.mbtiApply}
+                </Button>
+              </div>
+              {mbtiFieldError !== null ? (
+                <p className="mt-3 text-destructive text-sm" role="alert">
+                  {mbtiFieldError}
+                </p>
+              ) : null}
+              {scoringSnapshot === null ? (
+                <p className="mt-3 text-muted-foreground text-xs">
+                  {resultPageCopy.mbtiNoScoresHint}
+                </p>
+              ) : null}
+              {mbtiApplied !== null ? (
+                <div className="mt-3 space-y-2 text-sm leading-relaxed">
+                  <p className="text-foreground">{mbtiApplied.changeMessage}</p>
+                  <p className="text-muted-foreground">
+                    {mbtiApplied.compatibilityComment}
+                  </p>
+                </div>
+              ) : null}
+              <p className="mt-3 text-muted-foreground text-xs">
                 <a
-                  href="https://twitter.com/intent/follow?screen_name=kompass_ai"
+                  href="https://www.16personalities.com/ja"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline underline-offset-2 hover:text-gray-600 transition-colors mx-1"
+                  className="text-foreground font-medium underline underline-offset-2"
                 >
-                  X（@kompass_ai）
+                  {resultPageCopy.mbtiWhatLink}
                 </a>
-                で発信中
               </p>
-            </div>
-            <p className="text-center text-xs text-gray-300 mt-4">
-              診断日：
-              {new Date().toLocaleDateString("ja-JP", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-            <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
-              SHARE YOUR TYPE
-            </p>
-            <div className="flex flex-wrap justify-center gap-2">
+            </section>
+            <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
+              <p className={BOTTOM_SECTION_HEADING_CLASS}>診断日時</p>
+              <p className="text-xs text-gray-500">
+                診断日：
+                {new Date().toLocaleDateString("ja-JP", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </section>
+            <section className="border-t border-[#f0f0f0] bg-white pt-6">
+              <p className={cn(BOTTOM_SECTION_HEADING_CLASS, "text-center mb-3")}>
+                SHARE YOUR TYPE
+              </p>
+              <div className="flex flex-wrap justify-center gap-2">
               <a
                 href={`https://social-plugins.line.me/lineit/share?url=${shareUrl}`}
                 target="_blank"
@@ -2147,18 +2130,24 @@ export default function DiagnosisResultPage() {
                 </svg>
                 Instagram
               </button>
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link
-                href={`/${locale}/diagnosis`}
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "default" }),
-                  "inline-flex rounded-full px-6"
-                )}
-              >
-                {resultPageCopy.redoDiagnosis}
-              </Link>
-            </div>
+              </div>
+            </section>
+            <section className="border-t border-[#f0f0f0] bg-white pt-6">
+              <p className={cn(BOTTOM_SECTION_HEADING_CLASS, "text-center mb-3")}>
+                もう一度診断する
+              </p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <Link
+                  href={`/${locale}/diagnosis`}
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "default" }),
+                    "inline-flex rounded-full px-6"
+                  )}
+                >
+                  {resultPageCopy.redoDiagnosis}
+                </Link>
+              </div>
+            </section>
           </>
         ) : (
           <Card className="text-left">
