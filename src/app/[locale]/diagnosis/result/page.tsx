@@ -24,7 +24,6 @@ import {
 import { enqueueDiagnosisBehaviorLog } from "@/lib/diagnosis-behavior-log";
 import {
   getPersonalityDescription,
-  PERSONALITY_DESCRIPTIONS,
 } from "@/lib/personality-descriptions";
 import { buildScoringResultFromAggregatedScores } from "@/lib/scoringEngine";
 import { AI_KIND_TO_GUIDE } from "@/lib/type-id-map";
@@ -244,6 +243,15 @@ const AI_LABEL_JA: Record<string, string> = {
   perplexity: "Perplexity",
   copilot: "Copilot",
   jiyujin: "遊牧民",
+};
+
+const X_SHARE_ONE_LINERS: Record<string, string> = {
+  empath: "答えを求めるより、まず気持ちを整理したいタイプ。",
+  generalist: "考えるより先に動く、叩き台主義者。",
+  scout: "古い情報では動けない、リアルタイム志向。",
+  analyst: "根拠がないと動けないタイプ。AIには必ず出典を求める。",
+  executive: "整理されてないと息ができない、構造化思考の持ち主。",
+  orchestrator: "1つのAIで満足できたことがない、AI使い分け派。",
 };
 
 const BOTTOM_SECTION_HEADING_CLASS =
@@ -933,16 +941,19 @@ export default function DiagnosisResultPage() {
     });
   }, [mbtiInput, result, scoringSnapshot, resultPageCopy]);
 
-  const personalityDesc = PERSONALITY_DESCRIPTIONS[resolvedTypeCharacter.aiKind];
-  const shareText = encodeURIComponent(
-    personalityDesc?.shareText
-      ? `${personalityDesc.shareText} #Kompass #AI診断`
-      : `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした！\n\nあなたのベースAIは？ #Kompass #AI診断`
-  );
   const shareUrl = encodeURIComponent(
     `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
   );
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+  const xShareTypeId =
+    resolvedTypeCharacter.typeId ?? AI_KIND_TO_GUIDE[resolvedTypeCharacter.aiKind];
+  const xShareOneLiner =
+    X_SHARE_ONE_LINERS[xShareTypeId] ??
+    "あなたは何タイプ？ ぜひ診断してみてください。";
+  const xShareLandingUrl = "https://kompass-rosy.vercel.app";
+  const shareText = encodeURIComponent(
+    `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした。\n\n${xShareOneLiner}\n\nあなたは何タイプ？\n→ ${xShareLandingUrl}\n#Kompass`
+  );
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}`;
 
   const remainingQuestions = result
     ? result.layerCompleted === 1
