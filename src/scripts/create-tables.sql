@@ -43,6 +43,8 @@ alter table diagnosis_results add column if not exists task_type text;
 alter table users add column if not exists email_sent_at timestamptz;
 alter table users add column if not exists layer_completed integer;
 alter table users add column if not exists ai_type text;
+alter table users add column if not exists email_2_sent_at timestamptz;
+alter table users add column if not exists email_3_sent_at timestamptz;
 
 drop policy if exists "allow update diagnosis_results behavior" on diagnosis_results;
 create policy "allow update diagnosis_results behavior" on diagnosis_results
