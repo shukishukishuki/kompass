@@ -26,28 +26,39 @@ export function TypePromptTabs({
   twitterShareHref,
 }: Readonly<TypePromptTabsProps>) {
   const [activeTypeId, setActiveTypeId] = useState<TypeId>(userTypeId);
-  const isLockedTab = activeTypeId !== userTypeId;
+  const isLockedTab =
+    String(activeTypeId).trim() !== String(userTypeId).trim();
 
   useEffect(() => {
-    console.log("[TypePromptTabs] tab state", {
-      userTypeId,
-      activeTypeId,
-      isLockedTab,
-    });
+    console.log("[TypePromptTabs] userTypeId:", JSON.stringify(userTypeId));
+    console.log("[TypePromptTabs] activeTypeId:", JSON.stringify(activeTypeId));
+    console.log(
+      "[TypePromptTabs] isLocked:",
+      String(activeTypeId).trim() !== String(userTypeId).trim()
+    );
   }, [activeTypeId, isLockedTab, userTypeId]);
 
   const shareOverlay = (
     <>
-      <p style={{ fontSize: 14, textAlign: "center" }}>
-        他のタイプのプロンプトを見るには、友達にKompassを試してもらおう 👉
+      <p style={{ fontSize: 14, textAlign: "center", fontWeight: 600 }}>
+        他のタイプのプロンプトを見るには
+        <br />
+        友達にKompassを試してもらおう 👉
       </p>
       <a
         href={twitterShareHref}
         target="_blank"
         rel="noopener noreferrer"
-        className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+        style={{
+          background: "#000",
+          color: "#fff",
+          padding: "10px 20px",
+          borderRadius: 8,
+          fontSize: 14,
+          textDecoration: "none",
+        }}
       >
-        シェアする
+        Xでシェアする
       </a>
     </>
   );
@@ -111,12 +122,13 @@ export function TypePromptTabs({
 
       <div className="mt-4" role="tabpanel">
         {isLockedTab ? (
-          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden" }}>
+          <div style={{ position: "relative" }}>
             <div
               style={{
-                filter: "blur(6px)",
+                filter: "blur(8px)",
                 pointerEvents: "none",
                 userSelect: "none",
+                WebkitUserSelect: "none",
               }}
             >
               <PromptList prompts={GUIDE_DETAILS[activeTypeId].prompts} />
@@ -124,13 +136,18 @@ export function TypePromptTabs({
             <div
               style={{
                 position: "absolute",
-                inset: 0,
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: "rgba(255,255,255,0.6)",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                background: "rgba(255,255,255,0.5)",
                 gap: 12,
+                padding: 24,
+                borderRadius: 12,
               }}
             >
               {shareOverlay}
