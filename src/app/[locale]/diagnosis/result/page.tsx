@@ -1201,20 +1201,6 @@ export default function DiagnosisResultPage() {
         >
           {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
         </p>
-        <div className="relative z-10 mx-auto mt-6 w-full max-w-2xl">
-          <Card className="text-left bg-white/95 text-gray-900 shadow-md">
-            <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 pb-3">
-              <CardTitle className="text-base">{resultPageCopy.statsTitle}</CardTitle>
-              {statsDisplay.badge !== null ? (
-                <Badge variant="secondary">{statsDisplay.badge}</Badge>
-              ) : null}
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground">{statsDisplay.line}</p>
-              <Progress value={userTypePercent} />
-            </CardContent>
-          </Card>
-        </div>
         {/* ヒーロー下部タブ（見た目＋スクロール） */}
         <nav
           className="relative z-10 mx-auto mt-10 flex max-w-lg gap-0 overflow-hidden rounded-t-2xl border border-black/[0.06] bg-white/55 backdrop-blur-md"
@@ -1289,57 +1275,251 @@ export default function DiagnosisResultPage() {
         </nav>
       </section>
 
-      {personalityDetailSections.length > 0 ? (
-        <section className="mx-auto mt-8 w-full max-w-2xl space-y-3 px-4 md:px-6">
-          {personalityDetailSections.map((section) => (
-            <article
-              key={section.title}
-              className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+      <section className="mx-auto mt-8 w-full max-w-5xl px-4 md:px-6">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-[3fr_2fr]">
+          <div className="space-y-6">
+            {personalityDetailSections.length > 0 ? (
+              <section className="space-y-3">
+                {personalityDetailSections.map((section) => (
+                  <article
+                    key={section.title}
+                    className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+                    style={{
+                      borderLeftWidth: "2px",
+                      borderLeftColor: AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#C9A84C",
+                    }}
+                  >
+                    <p className="mb-2 text-[12px] uppercase tracking-[0.1em] text-[#999]">
+                      {section.title}
+                    </p>
+                    <p className="text-[15px] leading-[1.8] text-gray-800">{section.body}</p>
+                  </article>
+                ))}
+              </section>
+            ) : null}
+            <Card
+              id="section-detail"
+              className="text-left scroll-mt-4"
               style={{
-                borderLeftWidth: "2px",
-                borderLeftColor: AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#C9A84C",
+                backgroundColor: "#fff",
+                border: `1.5px solid ${hexToRgba(AI_THEME_COLORS[resolvedTypeCharacter.aiKind], 0.2)}`,
+                borderRadius: 16,
               }}
             >
-              <p className="mb-2 text-[12px] uppercase tracking-[0.1em] text-[#999]">
-                {section.title}
-              </p>
-              <p className="text-[15px] leading-[1.8] text-gray-800">{section.body}</p>
-            </article>
-          ))}
-        </section>
-      ) : null}
-
-      <div className="mx-auto mt-8 w-full max-w-2xl space-y-6 px-4 md:px-6">
-        <div className="relative">
-          <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
-            <div className="mx-auto w-full max-w-2xl">
-              <OneClickAIButton
-                typeId={resolvedTypeCharacter.aiKind}
-                accentColor={heroTheme.primary}
-                actionLabelColor={heroTheme.cText}
-                diagnosisRecordId={result.recordId ?? null}
-              />
-            </div>
+              <CardHeader>
+                <CardTitle>{resultPageCopy.detailTitle}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {personalityBlock?.supplement ?? ""}
+                </p>
+                <p className="text-sm leading-relaxed">{result.baseAI.reason}</p>
+                {result.baseAI.note !== undefined &&
+                result.baseAI.note.trim() !== "" ? (
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {result.baseAI.note}
+                  </p>
+                ) : null}
+                {result.layerCompleted >= 2 ? (
+                  <>
+                    <Separator />
+                    <div>
+                      <p className="text-sm font-semibold">{resultPageCopy.strengths}</p>
+                      <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+                        {(personalityBlock?.strengths ?? []).map((t) => (
+                          <li key={t}>{t}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{resultPageCopy.weaknesses}</p>
+                      <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+                        {(personalityBlock?.weaknesses ?? []).map((t) => (
+                          <li key={t}>{t}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </>
+                ) : null}
+                {result.layerCompleted >= 3 ? (
+                  <>
+                    <Separator />
+                    <AxisGraph
+                      typeId={resolvedTypeCharacter.aiKind}
+                      axes={axisScores}
+                    />
+                  </>
+                ) : null}
+              </CardContent>
+            </Card>
+            {result.layerCompleted >= 2
+              ? (() => {
+                  const roadmap = TYPE_ROADMAP[resolvedTypeCharacter.aiKind];
+                  if (!roadmap) return null;
+                  return (
+                    <div className="space-y-3">
+                      <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
+                        活用ロードマップ
+                      </p>
+                      <div
+                        className="rounded-2xl bg-white p-4 space-y-3"
+                        style={{
+                          border: `1.5px solid ${hexToRgba(AI_THEME_COLORS[resolvedTypeCharacter.aiKind], 0.2)}`,
+                        }}
+                      >
+                        {roadmap.steps.map((step, i) => (
+                          <div key={i} className="flex items-start gap-3">
+                            <span
+                              className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                              style={{
+                                backgroundColor:
+                                  AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#C9A84C",
+                              }}
+                            >
+                              {i + 1}
+                            </span>
+                            <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()
+              : null}
           </div>
-          {!isDiagnosed ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <p className="px-4 text-center text-sm font-medium text-[#1a3328]">
-                診断を完了するとプロンプトが解放されます
-              </p>
-              <Link
-                href={`/${locale}/diagnosis`}
-                className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
-              >
-                診断する →
-              </Link>
+          <div className="space-y-6">
+            <Card className="text-left bg-white/95 text-gray-900 shadow-md">
+              <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 pb-3">
+                <CardTitle className="text-base">{resultPageCopy.statsTitle}</CardTitle>
+                {statsDisplay.badge !== null ? (
+                  <Badge variant="secondary">{statsDisplay.badge}</Badge>
+                ) : null}
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-sm text-muted-foreground">{statsDisplay.line}</p>
+                <Progress value={userTypePercent} />
+              </CardContent>
+            </Card>
+            <div className="relative">
+              <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
+                <OneClickAIButton
+                  typeId={resolvedTypeCharacter.aiKind}
+                  accentColor={heroTheme.primary}
+                  actionLabelColor={heroTheme.cText}
+                  diagnosisRecordId={result.recordId ?? null}
+                />
+              </div>
+              {!isDiagnosed ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                  <p className="px-4 text-center text-sm font-medium text-[#1a3328]">
+                    診断を完了するとプロンプトが解放されます
+                  </p>
+                  <Link
+                    href={`/${locale}/diagnosis`}
+                    className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+                  >
+                    診断する →
+                  </Link>
+                </div>
+              ) : null}
             </div>
-          ) : null}
+            {result.layerCompleted >= 2
+              ? (() => {
+                  const compat = TYPE_COMPATIBILITY[resolvedTypeCharacter.aiKind];
+                  const goodChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.good);
+                  const badChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.bad);
+                  if (!compat || !goodChar || !badChar) return null;
+                  return (
+                    <div className="space-y-3">
+                      <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
+                        タイプ相性
+                      </p>
+                      <div className="grid grid-cols-2 gap-3 rounded-xl bg-[#f9f9f9] p-3">
+                        <div className="rounded-xl bg-green-50 p-3 text-center">
+                          <p className="text-xs text-green-600 font-bold mb-1">相性◎</p>
+                          <p className="text-sm font-bold text-gray-800">{goodChar.characterName}</p>
+                          <p className="text-xs text-gray-400">{goodChar.aiName}</p>
+                          <a
+                            href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.good] ?? compat.good}`}
+                            className="text-xs underline underline-offset-2 text-green-600 hover:text-green-800 mt-1 block"
+                          >
+                            使い方を見る →
+                          </a>
+                        </div>
+                        <div className="rounded-xl bg-red-50 p-3 text-center">
+                          <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
+                          <p className="text-sm font-bold text-gray-800">{badChar.characterName}</p>
+                          <p className="text-xs text-gray-400">{badChar.aiName}</p>
+                          <a
+                            href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.bad] ?? compat.bad}`}
+                            className="text-xs underline underline-offset-2 text-red-400 hover:text-red-600 mt-1 block"
+                          >
+                            使い方を見る →
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()
+              : null}
+            {result.layerCompleted >= 2
+              ? (() => {
+                  const famous = TYPE_FAMOUS[resolvedTypeCharacter.aiKind];
+                  if (!famous) return null;
+                  return (
+                    <div className="space-y-3">
+                      <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
+                        同じタイプの有名人
+                      </p>
+                      <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
+                        <div className="flex flex-wrap gap-2">
+                          {famous.names.map((name) => (
+                            <span
+                              key={name}
+                              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                            >
+                              {name}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-400">{famous.reason}</p>
+                      </div>
+                    </div>
+                  );
+                })()
+              : null}
+            {result.layerCompleted >= 2
+              ? (() => {
+                  const companies = TYPE_COMPANIES[resolvedTypeCharacter.aiKind];
+                  if (!companies) return null;
+                  return (
+                    <div className="space-y-2">
+                      <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
+                        <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
+                          同じタイプの企業・職種
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {companies.companies.map((name) => (
+                            <span
+                              key={name}
+                              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
+                            >
+                              {name}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-400">{companies.reason}</p>
+                      </div>
+                    </div>
+                  );
+                })()
+              : null}
+          </div>
         </div>
-
-      </div>
+      </section>
 
       {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-        <div className="mx-auto mt-8 w-full max-w-2xl px-4 md:px-6">
+        <div className="mx-auto mt-8 w-full max-w-5xl px-4 md:px-6">
           <div
             style={{
               background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
@@ -1397,7 +1577,7 @@ export default function DiagnosisResultPage() {
       ) : null}
 
       {result.layerCompleted >= 1 ? (
-      <div className="mx-auto mt-8 w-full max-w-2xl px-4 md:px-6">
+      <div className="mx-auto mt-8 w-full max-w-5xl px-4 md:px-6">
         <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
           SHARE YOUR TYPE
         </p>
@@ -1471,190 +1651,9 @@ export default function DiagnosisResultPage() {
       ) : null}
 
       {/* 下部ゾーン：スクロールで詳細 */}
-      <div className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-10 md:px-6">
+      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-10 md:px-6">
         {personalityBlock !== null ? (
           <>
-            <Card
-              id="section-detail"
-              className="text-left scroll-mt-4"
-              style={{
-                backgroundColor: "#fff",
-                border: `1.5px solid ${hexToRgba(AI_THEME_COLORS[resolvedTypeCharacter.aiKind], 0.2)}`,
-                borderRadius: 16,
-              }}
-            >
-              <CardHeader>
-                <CardTitle>{resultPageCopy.detailTitle}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {personalityBlock.supplement}
-                </p>
-                <p className="text-sm leading-relaxed">{result.baseAI.reason}</p>
-                {result.baseAI.note !== undefined &&
-                result.baseAI.note.trim() !== "" ? (
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {result.baseAI.note}
-                  </p>
-                ) : null}
-                {result.layerCompleted >= 2 ? (
-                  <>
-                    <Separator />
-                    <div>
-                      <p className="text-sm font-semibold">{resultPageCopy.strengths}</p>
-                      <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
-                        {personalityBlock.strengths.map((t) => (
-                          <li key={t}>{t}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{resultPageCopy.weaknesses}</p>
-                      <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
-                        {personalityBlock.weaknesses.map((t) => (
-                          <li key={t}>{t}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </>
-                ) : null}
-                {result.layerCompleted >= 3 ? (
-                  <>
-                    <Separator />
-                    <AxisGraph
-                      typeId={resolvedTypeCharacter.aiKind}
-                      axes={axisScores}
-                    />
-                  </>
-                ) : null}
-              </CardContent>
-            </Card>
-
-            {result.layerCompleted >= 2
-              ? (() => {
-                  const compat = TYPE_COMPATIBILITY[resolvedTypeCharacter.aiKind];
-                  const goodChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.good);
-                  const badChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.bad);
-                  if (!compat || !goodChar || !badChar) return null;
-                  return (
-                    <div className="mx-auto mb-8 max-w-2xl space-y-3">
-                      <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                        タイプ相性
-                      </p>
-                      <div className="grid grid-cols-2 gap-3 rounded-xl bg-[#f9f9f9] p-3">
-                        <div className="rounded-xl bg-green-50 p-3 text-center">
-                          <p className="text-xs text-green-600 font-bold mb-1">相性◎</p>
-                          <p className="text-sm font-bold text-gray-800">{goodChar.characterName}</p>
-                          <p className="text-xs text-gray-400">{goodChar.aiName}</p>
-                          <a
-                            href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.good] ?? compat.good}`}
-                            className="text-xs underline underline-offset-2 text-green-600 hover:text-green-800 mt-1 block"
-                          >
-                            使い方を見る →
-                          </a>
-                        </div>
-                        <div className="rounded-xl bg-red-50 p-3 text-center">
-                          <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
-                          <p className="text-sm font-bold text-gray-800">{badChar.characterName}</p>
-                          <p className="text-xs text-gray-400">{badChar.aiName}</p>
-                          <a
-                            href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.bad] ?? compat.bad}`}
-                            className="text-xs underline underline-offset-2 text-red-400 hover:text-red-600 mt-1 block"
-                          >
-                            使い方を見る →
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()
-              : null}
-            {result.layerCompleted >= 2
-              ? (() => {
-                  const famous = TYPE_FAMOUS[resolvedTypeCharacter.aiKind];
-                  if (!famous) return null;
-                  return (
-                    <div className="mx-auto mb-8 max-w-2xl space-y-3">
-                      <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                        同じタイプの有名人
-                      </p>
-                      <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
-                        <div className="flex flex-wrap gap-2">
-                          {famous.names.map((name) => (
-                            <span
-                              key={name}
-                              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
-                            >
-                              {name}
-                            </span>
-                          ))}
-                        </div>
-                        <p className="text-xs text-gray-400">{famous.reason}</p>
-                      </div>
-                    </div>
-                  );
-                })()
-              : null}
-            {result.layerCompleted >= 2
-              ? (() => {
-                  const companies = TYPE_COMPANIES[resolvedTypeCharacter.aiKind];
-                  if (!companies) return null;
-                  return (
-                    <div className="mx-auto mb-8 max-w-2xl space-y-2">
-                      <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
-                        <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                          同じタイプの企業・職種
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {companies.companies.map((name) => (
-                            <span
-                              key={name}
-                              className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700"
-                            >
-                              {name}
-                            </span>
-                          ))}
-                        </div>
-                        <p className="text-xs text-gray-400">{companies.reason}</p>
-                      </div>
-                    </div>
-                  );
-                })()
-              : null}
-            {result.layerCompleted >= 2
-              ? (() => {
-                  const roadmap = TYPE_ROADMAP[resolvedTypeCharacter.aiKind];
-                  if (!roadmap) return null;
-                  return (
-                    <div className="mx-auto mb-8 max-w-2xl space-y-3">
-                      <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                        活用ロードマップ
-                      </p>
-                      <div
-                        className="rounded-2xl bg-white p-4 space-y-3"
-                        style={{
-                          border: `1.5px solid ${hexToRgba(AI_THEME_COLORS[resolvedTypeCharacter.aiKind], 0.2)}`,
-                        }}
-                      >
-                        {roadmap.steps.map((step, i) => (
-                          <div key={i} className="flex items-start gap-3">
-                            <span
-                              className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
-                              style={{
-                                backgroundColor:
-                                  AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#C9A84C",
-                              }}
-                            >
-                              {i + 1}
-                            </span>
-                            <p className="text-sm text-gray-700 leading-relaxed">{step}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })()
-              : null}
             {result.layerCompleted >= 4 ? (
               <PersonalizedPrompts
                 typeId={resolvedTypeCharacter.aiKind}

@@ -156,16 +156,11 @@ export function OneClickAIButton({
     openUrlInNewTab(shareUrl);
   };
 
-  const actionButtonStyle: CSSProperties = {
-    backgroundColor: `${accentColor}26`,
+  const actionTextStyle: CSSProperties = {
     color: actionLineColor,
-    padding: "14px 16px",
-    fontSize: 14,
-    fontWeight: 600,
-    width: "100%",
-    border: "none",
-    borderRadius: 12,
-    cursor: "default",
+    fontSize: 13,
+    opacity: 0.8,
+    marginBottom: 8,
   };
 
   const mainButtonStyle: CSSProperties = {
@@ -206,7 +201,7 @@ export function OneClickAIButton({
 
   return (
     <div className="w-full space-y-3">
-      <div style={actionButtonStyle}>今日のアクション：{todayLine}</div>
+      <p style={actionTextStyle}>今日のアクション：{todayLine}</p>
       <button
         type="button"
         onClick={() => void handleMainUse(primaryUrl, label)}
