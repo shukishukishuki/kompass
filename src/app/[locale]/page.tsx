@@ -237,19 +237,29 @@ export default async function LocaleHomePage({
     <main className="bg-[#f8f7ff] text-slate-900">
       <section className="bg-[#fafafa] px-4 py-20 text-center opacity-0 animate-[fadeIn_0.5s_ease-in_forwards]">
         <div className="mx-auto max-w-3xl">
-          <div className="mb-4 flex justify-center" aria-hidden>
-            <svg
-              width="80"
-              height="80"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-[#1a7a4a]"
-            >
-              <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-              <path d="M12 4l2.2 8L12 20l-2.2-8L12 4z" fill="currentColor" />
-              <path d="M12 4l8 8h-8l-8-8h8z" fill="currentColor" opacity="0.25" />
-            </svg>
+          <div className="mb-8 flex justify-center gap-2">
+            {[
+              { src: "/images/kompass_char_01_empath.png", color: AI_THEME_COLORS.claude },
+              { src: "/images/kompass_char_02_executor.png", color: AI_THEME_COLORS.copilot },
+              { src: "/images/kompass_char_03_analyst.png", color: AI_THEME_COLORS.perplexity },
+              { src: "/images/kompass_char_04_generalist.png", color: AI_THEME_COLORS.chatgpt },
+              { src: "/images/kompass_char_05_scout.png", color: AI_THEME_COLORS.gemini },
+              { src: "/images/kompass_char_06_nomad.png", color: AI_THEME_COLORS.jiyujin },
+            ].map((char, i) => (
+              <div
+                key={i}
+                className="h-16 w-16 overflow-visible rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
+                style={{ backgroundColor: `${char.color}33` }}
+              >
+                <img
+                  src={char.src}
+                  alt=""
+                  width={64}
+                  height={64}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            ))}
           </div>
           <h1
             className="mt-6 whitespace-pre-line text-4xl leading-tight text-slate-900 md:text-6xl"
