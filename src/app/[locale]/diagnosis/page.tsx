@@ -122,6 +122,13 @@ const LAYER_CARD_DEEP: CSSProperties = {
   border: "1.5px solid rgba(82,183,136,0.3)",
 };
 
+const LOADING_MESSAGES = [
+  "あなたの回答を分析中...",
+  "思考スタイルを解析しています...",
+  "あなたに最適なAIを探しています...",
+  "もうすぐ結果が出ます...",
+] as const;
+
 /** sessionStorage に保存するキー（結果ページと共有） */
 export const DIAGNOSIS_RESULT_STORAGE_KEY = "kompass_diagnosis_result";
 
@@ -293,6 +300,8 @@ export default function DiagnosisPage() {
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
+  const [loadingLayerCompleted, setLoadingLayerCompleted] = useState<LayerCompleted>(1);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   /** Layer1 完了直後の年代（スコアに影響しない） */
   const [ageRange, setAgeRange] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -410,6 +419,19 @@ export default function DiagnosisPage() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (phase !== "loading") {
+      return;
+    }
+    setLoadingMessageIndex(0);
+    const timer = window.setInterval(() => {
+      setLoadingMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+    }, 1200);
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [phase]);
 
   const submitAnswers = useCallback(
     async (finalAnswers: QuestionAnswer[], layerDone: LayerCompleted) => {
@@ -545,6 +567,7 @@ export default function DiagnosisPage() {
       finalSubmitLockRef.current = true;
 
       setAnswers(nextAnswers);
+      setLoadingLayerCompleted(total > 30 ? 4 : 3);
       setPhase("loading");
 
       try {
@@ -567,6 +590,7 @@ export default function DiagnosisPage() {
         return;
       }
       finalSubmitLockRef.current = true;
+      setLoadingLayerCompleted(layerDone);
       setPhase("loading");
       try {
         await submitAnswers(answers, layerDone);
@@ -626,14 +650,83 @@ export default function DiagnosisPage() {
   }
 
   if (phase === "loading") {
+    const loadingPalette =
+      loadingLayerCompleted === 4
+        ? {
+            from: "#7C3AED",
+            mid: "#A78BFA",
+            to: "#EDE9FE",
+            text: "#2E1065",
+          }
+        : {
+            from: "#52B788",
+            mid: "#9FE3C5",
+            to: "#ECFDF5",
+            text: "#0F3D2E",
+          };
+    const loadingTexts =
+      loadingLayerCompleted === 4
+        ? [
+            "回答お疲れ様でした！ 詳細な分析を行っています...",
+            ...LOADING_MESSAGES,
+          ]
+        : [...LOADING_MESSAGES];
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4">
-        <p className="text-base text-zinc-800">{copy.diagnosis.loadingLabel}</p>
-        <div
-          className="mt-6 h-2 w-48 overflow-hidden rounded-full bg-zinc-200"
-          aria-hidden
+      <main
+        className="flex min-h-screen flex-col items-center justify-center px-4 text-center"
+        style={{
+          background: `linear-gradient(160deg, ${loadingPalette.from} 0%, ${loadingPalette.mid} 45%, ${loadingPalette.to} 100%)`,
+        }}
+      >
+        <style>{`
+          @keyframes loading-fade {
+            0% { opacity: 0; transform: translateY(4px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-4px); }
+          }
+          @keyframes loading-dot {
+            0%, 80%, 100% { transform: scale(0.75); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+          }
+          @keyframes loading-progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+        `}</style>
+        <p
+          className="max-w-2xl px-2"
+          style={{
+            color: loadingPalette.text,
+            fontSize: 18,
+            fontWeight: 600,
+            animation: "loading-fade 1.2s ease-in-out infinite",
+          }}
         >
-          <div className="h-full w-full rounded-full bg-zinc-800 transition-all" />
+          {loadingTexts[loadingMessageIndex % loadingTexts.length] ?? copy.diagnosis.loadingLabel}
+        </p>
+        <div className="mt-4 flex items-center gap-2" aria-hidden>
+          <span
+            className="h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: loadingPalette.text, animation: "loading-dot 1s 0s infinite" }}
+          />
+          <span
+            className="h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: loadingPalette.text, animation: "loading-dot 1s 0.16s infinite" }}
+          />
+          <span
+            className="h-2.5 w-2.5 rounded-full"
+            style={{ backgroundColor: loadingPalette.text, animation: "loading-dot 1s 0.32s infinite" }}
+          />
+        </div>
+        <div className="mt-6 h-2 w-56 overflow-hidden rounded-full bg-white/50" aria-hidden>
+          <div
+            className="h-full w-1/2 rounded-full"
+            style={{
+              backgroundColor: loadingPalette.text,
+              animation: "loading-progress 1.5s linear infinite",
+            }}
+          />
         </div>
       </main>
     );

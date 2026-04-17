@@ -165,7 +165,7 @@ export function OneClickAIButton({
     width: "100%",
     border: "none",
     borderRadius: 12,
-    cursor: "pointer",
+    cursor: "default",
   };
 
   const mainButtonStyle: CSSProperties = {
@@ -206,13 +206,7 @@ export function OneClickAIButton({
 
   return (
     <div className="w-full space-y-3">
-      <button
-        type="button"
-        onClick={() => void handleMainUse(primaryUrl, label)}
-        style={actionButtonStyle}
-      >
-        今日のアクション：{todayLine} →
-      </button>
+      <div style={actionButtonStyle}>今日のアクション：{todayLine}</div>
       <button
         type="button"
         onClick={() => void handleMainUse(primaryUrl, label)}

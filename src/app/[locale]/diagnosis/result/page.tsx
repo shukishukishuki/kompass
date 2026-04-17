@@ -1290,7 +1290,7 @@ export default function DiagnosisResultPage() {
       </section>
 
       {personalityDetailSections.length > 0 ? (
-        <section className="mx-auto mt-8 w-full max-w-2xl space-y-3 px-6">
+        <section className="mx-auto mt-8 w-full max-w-2xl space-y-3 px-4 md:px-6">
           {personalityDetailSections.map((section) => (
             <article
               key={section.title}
@@ -1309,7 +1309,7 @@ export default function DiagnosisResultPage() {
         </section>
       ) : null}
 
-      <div className="mx-auto mt-8 w-full max-w-2xl space-y-6 px-6">
+      <div className="mx-auto mt-8 w-full max-w-2xl space-y-6 px-4 md:px-6">
         <div className="relative">
           <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
             <div className="mx-auto w-full max-w-2xl">
@@ -1336,45 +1336,10 @@ export default function DiagnosisResultPage() {
           ) : null}
         </div>
 
-        {result.layerCompleted >= 1
-          ? (() => {
-              const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
-              if (!nextActions) return null;
-              return (
-                <div className="space-y-3">
-                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                    次のアクション
-                  </p>
-                  <div className="space-y-2">
-                    {nextActions.actions.map((action, i) => (
-                      <a
-                        key={i}
-                        href={
-                          action.url.startsWith("/")
-                            ? `/${locale}${action.url}`
-                            : action.url
-                        }
-                        target={action.url.startsWith("http") ? "_blank" : undefined}
-                        rel={
-                          action.url.startsWith("http")
-                            ? "noopener noreferrer"
-                            : undefined
-                        }
-                        className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
-                      >
-                        <span>{action.label}</span>
-                        <span className="text-gray-400">→</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              );
-            })()
-          : null}
       </div>
 
       {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-        <div className="mx-auto mt-8 w-full max-w-2xl px-6">
+        <div className="mx-auto mt-8 w-full max-w-2xl px-4 md:px-6">
           <div
             style={{
               background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
@@ -1432,23 +1397,11 @@ export default function DiagnosisResultPage() {
       ) : null}
 
       {result.layerCompleted >= 1 ? (
-      <div className="mx-auto mt-8 w-full max-w-2xl px-6">
+      <div className="mx-auto mt-8 w-full max-w-2xl px-4 md:px-6">
         <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
           SHARE YOUR TYPE
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <a
-            href={twitterUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={logXShareClicked}
-            className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-            </svg>
-            Xでシェアする
-          </a>
           <a
             href={`https://social-plugins.line.me/lineit/share?url=${shareUrl}`}
             target="_blank"
@@ -1518,7 +1471,7 @@ export default function DiagnosisResultPage() {
       ) : null}
 
       {/* 下部ゾーン：スクロールで詳細 */}
-      <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-10">
+      <div className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-10 md:px-6">
         {personalityBlock !== null ? (
           <>
             <Card
@@ -1942,6 +1895,41 @@ export default function DiagnosisResultPage() {
                 ) : null}
               </CardContent>
             </Card>
+            {result.layerCompleted >= 1
+              ? (() => {
+                  const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
+                  if (!nextActions) return null;
+                  return (
+                    <div className="space-y-3">
+                      <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                        次のアクション
+                      </p>
+                      <div className="space-y-2">
+                        {nextActions.actions.map((action, i) => (
+                          <a
+                            key={i}
+                            href={
+                              action.url.startsWith("/")
+                                ? `/${locale}${action.url}`
+                                : action.url
+                            }
+                            target={action.url.startsWith("http") ? "_blank" : undefined}
+                            rel={
+                              action.url.startsWith("http")
+                                ? "noopener noreferrer"
+                                : undefined
+                            }
+                            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                          >
+                            <span>{action.label}</span>
+                            <span className="text-gray-400">→</span>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()
+              : null}
             <div className="mx-auto mt-4 max-w-2xl text-center">
               <p className="text-xs text-gray-400">
                 最新のAI活用情報は
@@ -1968,18 +1956,6 @@ export default function DiagnosisResultPage() {
               SHARE YOUR TYPE
             </p>
             <div className="flex flex-wrap justify-center gap-2">
-              <a
-                href={twitterUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={logXShareClicked}
-                className="flex items-center justify-center gap-2 rounded-full border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-                Xでシェアする
-              </a>
               <a
                 href={`https://social-plugins.line.me/lineit/share?url=${shareUrl}`}
                 target="_blank"
