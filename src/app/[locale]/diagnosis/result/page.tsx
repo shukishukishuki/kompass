@@ -178,39 +178,50 @@ const TYPE_ROADMAP: Record<string, { steps: string[] }> = {
   },
 };
 
-/** ヒーローの「無料で試す」と重複しないよう、ガイド導線のみ */
 const TYPE_NEXT_ACTIONS: Record<
   string,
   { actions: { label: string; url: string }[] }
 > = {
   claude: {
     actions: [
+      { label: "Claudeを無料で試す", url: "https://claude.ai" },
       { label: "共感ジャンキーのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.claude}` },
+      { label: "もう一度診断する", url: "/diagnosis" },
     ],
   },
   chatgpt: {
     actions: [
+      { label: "ChatGPTを無料で試す", url: "https://chatgpt.com" },
       { label: "丸投げ屋のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.chatgpt}` },
+      { label: "もう一度診断する", url: "/diagnosis" },
     ],
   },
   gemini: {
     actions: [
+      { label: "Geminiを無料で試す", url: "https://gemini.google.com" },
       { label: "情報スナイパーのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.gemini}` },
+      { label: "もう一度診断する", url: "/diagnosis" },
     ],
   },
   perplexity: {
     actions: [
+      { label: "Perplexityを無料で試す", url: "https://perplexity.ai" },
       { label: "裏取りマニアのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.perplexity}` },
+      { label: "もう一度診断する", url: "/diagnosis" },
     ],
   },
   copilot: {
     actions: [
+      { label: "Copilotを無料で試す", url: "https://copilot.microsoft.com" },
       { label: "整理の鬼のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.copilot}` },
+      { label: "もう一度診断する", url: "/diagnosis" },
     ],
   },
   jiyujin: {
     actions: [
+      { label: "まずClaudeを無料で試す", url: "https://claude.ai" },
       { label: "AI遊牧民のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.jiyujin}` },
+      { label: "もう一度診断する", url: "/diagnosis" },
     ],
   },
 };
@@ -1081,12 +1092,6 @@ export default function DiagnosisResultPage() {
           </p>
         ) : null}
         <p
-          className="relative z-10 mt-3 text-xs"
-          style={{ color: `${heroTheme.cText}aa` }}
-        >
-          {resultPageCopy.screenshotTagline}
-        </p>
-        <p
           className="relative z-10 mt-6 text-sm font-medium"
           style={{ color: heroTheme.cText }}
         >
@@ -1382,6 +1387,152 @@ export default function DiagnosisResultPage() {
                 twitterShareHref={twitterUrl}
               />
             </div>
+            <Card className="text-left">
+              <CardHeader>
+                <CardTitle>{resultPageCopy.contraryTitle}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <blockquote className="border-l-4 border-border pl-3 text-sm italic text-muted-foreground">
+                  {personalityBlock.contraryCopy}
+                </blockquote>
+              </CardContent>
+            </Card>
+            {result.layerCompleted >= 1 ? (
+              <Card className="text-left">
+                <CardHeader>
+                  <CardTitle>{resultPageCopy.oppositeTitle}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm leading-relaxed text-muted-foreground">
+                  <p className="font-medium text-foreground">
+                    {personalityBlock.oppositeType.typeJa}（
+                    {personalityBlock.oppositeType.aiName}）
+                  </p>
+                  <p>{personalityBlock.oppositeType.description}</p>
+                  <a
+                    href={`/${locale}/guide/${oppositeGuideTypeId}`}
+                    className="text-xs underline underline-offset-2 text-gray-400 hover:text-gray-600 mt-1 block"
+                  >
+                    使い方を見る →
+                  </a>
+                </CardContent>
+              </Card>
+            ) : null}
+            {result.layerCompleted === 1 ? (
+              <div className="mx-auto mt-4 max-w-md rounded-xl bg-gray-50 border border-gray-200 p-4 text-center space-y-2">
+                <p className="text-xs text-gray-500">
+                  続けて診断すると「NGな使い方」「AIリテラシー分析」が解放されます
+                </p>
+              </div>
+            ) : null}
+            {result.layerCompleted >= 2 ? (
+              <>
+                <div className="mx-auto mt-4 max-w-md">
+                  <p className="text-center text-xs text-gray-400 mb-2">
+                    ✦ Layer {result.layerCompleted} 解放済み
+                  </p>
+                </div>
+                <Card className="text-left">
+                  <CardHeader>
+                    <CardTitle>{resultPageCopy.ngTitle}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2">
+                      {[personalityBlock.ngUsage].map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                          <span className="shrink-0 text-red-400 mt-0.5">✕</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+                <Card className="text-left">
+                  <CardHeader>
+                    <CardTitle>{resultPageCopy.literacyTitle}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
+                      AI LITERACY
+                    </p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {personalityBlock.literacyAnalysis}
+                    </p>
+                  </CardContent>
+                </Card>
+              </>
+            ) : null}
+            {personalityBlock !== null && result.layerCompleted === 1 ? (
+              <p className="text-left text-xs text-muted-foreground">
+                {personalityBlock.shareText}
+              </p>
+            ) : null}
+            <Card className="text-left">
+              <CardHeader>
+                <CardTitle className="text-base">{resultPageCopy.mbtiCardTitle}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                  <label className="block min-w-0 flex-1">
+                    <span className="sr-only">MBTI</span>
+                    <input
+                      type="text"
+                      name="mbti"
+                      maxLength={4}
+                      autoCapitalize="characters"
+                      autoComplete="off"
+                      value={mbtiInput}
+                      onChange={(e) => {
+                        const v = e.target.value
+                          .toUpperCase()
+                          .replace(/[^A-Z]/g, "")
+                          .slice(0, 4);
+                        setMbtiInput(v);
+                        setMbtiFieldError(null);
+                        setMbtiApplied(null);
+                        setMbtiAppliedScores(null);
+                      }}
+                      placeholder={resultPageCopy.mbtiPlaceholder}
+                      className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
+                    />
+                  </label>
+                  <Button
+                    type="button"
+                    onClick={() => handleMbtiApply()}
+                    disabled={scoringSnapshot === null}
+                  >
+                    {resultPageCopy.mbtiApply}
+                  </Button>
+                </div>
+                {mbtiFieldError !== null ? (
+                  <p className="text-destructive text-sm" role="alert">
+                    {mbtiFieldError}
+                  </p>
+                ) : null}
+                {scoringSnapshot === null ? (
+                  <p className="text-muted-foreground text-xs">
+                    {resultPageCopy.mbtiNoScoresHint}
+                  </p>
+                ) : null}
+                {mbtiApplied !== null ? (
+                  <div className="space-y-2 text-sm leading-relaxed">
+                    <p className="text-foreground">{mbtiApplied.changeMessage}</p>
+                    <p className="text-muted-foreground">
+                      {mbtiApplied.compatibilityComment}
+                    </p>
+                  </div>
+                ) : null}
+                <p className="text-muted-foreground text-xs">
+                  <a
+                    href="https://www.16personalities.com/ja"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-foreground font-medium underline underline-offset-2"
+                  >
+                    {resultPageCopy.mbtiWhatLink}
+                  </a>
+                </p>
+              </CardContent>
+            </Card>
             {(() => {
               const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
               if (!nextActions) return null;
@@ -1395,7 +1546,7 @@ export default function DiagnosisResultPage() {
                       <a
                         key={i}
                         href={
-                          action.url.startsWith("/guide/")
+                          action.url.startsWith("/")
                             ? `/${locale}${action.url}`
                             : action.url
                         }
@@ -1495,95 +1646,6 @@ export default function DiagnosisResultPage() {
                 Instagram
               </button>
             </div>
-            <Card className="text-left">
-              <CardHeader>
-                <CardTitle>{resultPageCopy.contraryTitle}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <blockquote className="border-l-4 border-border pl-3 text-sm italic text-muted-foreground">
-                  {personalityBlock.contraryCopy}
-                </blockquote>
-              </CardContent>
-            </Card>
-            {result.layerCompleted >= 1 ? (
-              <Card className="text-left">
-                <CardHeader>
-                  <CardTitle>{resultPageCopy.oppositeTitle}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm leading-relaxed text-muted-foreground">
-                  <p className="font-medium text-foreground">
-                    {personalityBlock.oppositeType.typeJa}（
-                    {personalityBlock.oppositeType.aiName}）
-                  </p>
-                  <p>{personalityBlock.oppositeType.description}</p>
-                  <a
-                    href={`/${locale}/guide/${oppositeGuideTypeId}`}
-                    className="text-xs underline underline-offset-2 text-gray-400 hover:text-gray-600 mt-1 block"
-                  >
-                    使い方を見る →
-                  </a>
-                </CardContent>
-              </Card>
-            ) : null}
-            {result.layerCompleted === 1 ? (
-              <div className="mx-auto mt-4 max-w-md rounded-xl bg-gray-50 border border-gray-200 p-4 text-center space-y-2">
-                <p className="text-xs text-gray-500">
-                  続けて診断すると「NGな使い方」「AIリテラシー分析」が解放されます
-                </p>
-              </div>
-            ) : null}
-            {result.layerCompleted >= 2 ? (
-              <>
-                <div className="mx-auto mt-4 max-w-md">
-                  <p className="text-center text-xs text-gray-400 mb-2">
-                    ✦ Layer {result.layerCompleted} 解放済み
-                  </p>
-                </div>
-                <Card className="text-left">
-                  <CardHeader>
-                    <CardTitle>{resultPageCopy.ngTitle}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2">
-                      {[personalityBlock.ngUsage].map((item, i) => (
-                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                          <span className="shrink-0 text-red-400 mt-0.5">✕</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-                <Card className="text-left">
-                  <CardHeader>
-                    <CardTitle>{resultPageCopy.literacyTitle}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-3">
-                      AI LITERACY
-                    </p>
-                    <p className="text-sm leading-relaxed text-muted-foreground">
-                      {personalityBlock.literacyAnalysis}
-                    </p>
-                  </CardContent>
-                </Card>
-              </>
-            ) : null}
-            {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-              <div className="mx-auto mt-4 max-w-md">
-                <div className="rounded-xl border-2 border-dashed border-gray-300 p-4 text-center space-y-2">
-                  <p className="text-xs text-gray-500 font-medium">
-                    もっと詳しく診断できます
-                  </p>
-                  <a
-                    href={`/${locale}/diagnosis?resumeFromLayer=${result.layerCompleted}`}
-                    className="inline-block rounded-full bg-gray-800 px-6 py-2.5 text-sm font-bold text-white hover:bg-gray-600 transition-colors"
-                  >
-                    続きを診断する（残り{remainingQuestions}問）→
-                  </a>
-                </div>
-              </div>
-            ) : null}
             <Card
               id="section-ai-usage"
               className="text-left scroll-mt-4"
@@ -1622,10 +1684,51 @@ export default function DiagnosisResultPage() {
                 )}
               </CardContent>
             </Card>
-            {personalityBlock !== null && result.layerCompleted === 1 ? (
-              <p className="text-left text-xs text-muted-foreground">
-                {personalityBlock.shareText}
-              </p>
+            {result.layerCompleted < 4 && remainingQuestions > 0 ? (
+              <div className="mx-auto mt-4 w-full max-w-md">
+                <div
+                  style={{
+                    background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
+                    border: `2px solid ${hexToRgba(heroTheme.primary, 0.4)}`,
+                    borderRadius: 16,
+                    padding: 24,
+                    textAlign: "center",
+                  }}
+                  className="space-y-3"
+                >
+                  <span
+                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+                    style={{
+                      backgroundColor: heroTheme.primary,
+                      color: "#fff",
+                    }}
+                  >
+                    🔍 もっと深く知る
+                  </span>
+                  <p className="text-[18px] font-bold" style={{ color: heroTheme.cText }}>
+                    診断の精度をもっと上げられます
+                  </p>
+                  <p className="text-sm leading-relaxed text-zinc-700">
+                    残り{remainingQuestions}
+                    問に答えると、より詳細な分析と専用プロンプトが解放されます
+                  </p>
+                  <a
+                    href={`/${locale}/diagnosis?resumeFromLayer=${result.layerCompleted}`}
+                    className="block w-full text-center font-bold text-white transition-opacity hover:opacity-90"
+                    style={{
+                      background: heroTheme.cText,
+                      color: "#fff",
+                      borderRadius: 12,
+                      padding: "14px 24px",
+                      fontSize: 16,
+                      width: "100%",
+                      boxShadow: `0 4px 16px ${hexToRgba(heroTheme.primary, 0.3)}`,
+                    }}
+                  >
+                    続きを診断する（残り{remainingQuestions}問）→
+                  </a>
+                </div>
+              </div>
             ) : null}
             <Card className="text-left">
               <CardContent className="space-y-3 pt-6">
@@ -1710,73 +1813,6 @@ export default function DiagnosisResultPage() {
                 {resultPageCopy.redoDiagnosis}
               </Link>
             </div>
-            <Card className="text-left">
-              <CardHeader>
-                <CardTitle className="text-base">{resultPageCopy.mbtiCardTitle}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                  <label className="block min-w-0 flex-1">
-                    <span className="sr-only">MBTI</span>
-                    <input
-                      type="text"
-                      name="mbti"
-                      maxLength={4}
-                      autoCapitalize="characters"
-                      autoComplete="off"
-                      value={mbtiInput}
-                      onChange={(e) => {
-                        const v = e.target.value
-                          .toUpperCase()
-                          .replace(/[^A-Z]/g, "")
-                          .slice(0, 4);
-                        setMbtiInput(v);
-                        setMbtiFieldError(null);
-                        setMbtiApplied(null);
-                        setMbtiAppliedScores(null);
-                      }}
-                      placeholder={resultPageCopy.mbtiPlaceholder}
-                      className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
-                    />
-                  </label>
-                  <Button
-                    type="button"
-                    onClick={() => handleMbtiApply()}
-                    disabled={scoringSnapshot === null}
-                  >
-                    {resultPageCopy.mbtiApply}
-                  </Button>
-                </div>
-                {mbtiFieldError !== null ? (
-                  <p className="text-destructive text-sm" role="alert">
-                    {mbtiFieldError}
-                  </p>
-                ) : null}
-                {scoringSnapshot === null ? (
-                  <p className="text-muted-foreground text-xs">
-                    {resultPageCopy.mbtiNoScoresHint}
-                  </p>
-                ) : null}
-                {mbtiApplied !== null ? (
-                  <div className="space-y-2 text-sm leading-relaxed">
-                    <p className="text-foreground">{mbtiApplied.changeMessage}</p>
-                    <p className="text-muted-foreground">
-                      {mbtiApplied.compatibilityComment}
-                    </p>
-                  </div>
-                ) : null}
-                <p className="text-muted-foreground text-xs">
-                  <a
-                    href="https://www.16personalities.com/ja"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-foreground font-medium underline underline-offset-2"
-                  >
-                    {resultPageCopy.mbtiWhatLink}
-                  </a>
-                </p>
-              </CardContent>
-            </Card>
           </>
         ) : (
           <Card className="text-left">
