@@ -46,7 +46,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
 
     await resend.emails.send({
-      from: "noreply@kompass-rosy.vercel.app",
+      from: "onboarding@resend.dev",
       to: body.email.trim(),
       subject,
       html,
