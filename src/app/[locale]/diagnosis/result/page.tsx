@@ -958,7 +958,10 @@ export default function DiagnosisResultPage() {
     }
     setFollowupStatus("saving");
     setFollowupError(null);
-    const saved = await saveUserFollowupEmail(email, displayPersonalityJa);
+    const saved = await saveUserFollowupEmail(email, displayPersonalityJa, {
+      aiType: resolvedTypeCharacter.aiKind,
+      layerCompleted: result.layerCompleted,
+    });
     if (saved) {
       setFollowupStatus("saved");
       setFollowupEmail("");
@@ -966,7 +969,7 @@ export default function DiagnosisResultPage() {
     }
     setFollowupStatus("error");
     setFollowupError("現在は登録できません。時間をおいて再度お試しください。");
-  }, [result, followupEmail, displayPersonalityJa]);
+  }, [result, followupEmail, displayPersonalityJa, resolvedTypeCharacter.aiKind]);
 
   if (!hydrated) {
     return (

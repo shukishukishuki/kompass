@@ -61,6 +61,11 @@ export interface SaveDiagnosisResultMeta {
   infrastructure: string | null;
 }
 
+interface SaveFollowupMeta {
+  aiType?: string | null;
+  layerCompleted?: number | null;
+}
+
 /**
  * 診断結果を diagnosis_results に保存する
  * @returns 成功時は挿入行の id、失敗時は null
@@ -195,20 +200,54 @@ function isUsersTableMissingError(value: unknown): boolean {
 }
 
 /**
+ * users テーブルに新カラムが未反映か（段階的移行中の互換対策）
+ */
+function isUsersColumnMissingError(value: unknown): boolean {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const o = value as Record<string, unknown>;
+  const message = o.message;
+  if (typeof message !== "string") {
+    return false;
+  }
+  return (
+    message.includes("column") &&
+    (message.includes("ai_type") ||
+      message.includes("layer_completed") ||
+      message.includes("email_sent_at"))
+  );
+}
+
+/**
  * フォローアップ用メールを users テーブルへ保存する
  * テーブルが未作成の場合のみ warn で握りつぶす
  */
 export async function saveUserFollowupEmail(
   email: string,
-  diagnosisType: string
+  diagnosisType: string,
+  meta?: SaveFollowupMeta
 ): Promise<boolean> {
   try {
     const supabase = createSupabaseClient();
-    const payload: UsersInsertPayload = {
+    const basePayload: UsersInsertPayload = {
       email,
       diagnosis_type: diagnosisType,
     };
-    const { error } = await supabase.from("users").insert(payload);
+
+    const payloadWithMeta: UsersInsertPayload = {
+      ...basePayload,
+      ai_type: meta?.aiType ?? null,
+      layer_completed: meta?.layerCompleted ?? null,
+      email_sent_at: new Date().toISOString(),
+    };
+
+    let { error } = await supabase.from("users").insert(payloadWithMeta);
+    if (error !== null && isUsersColumnMissingError(error)) {
+      const retry = await supabase.from("users").insert(basePayload);
+      error = retry.error;
+    }
+
     if (error !== null) {
       if (isUsersTableMissingError(error)) {
         console.warn(
@@ -223,6 +262,21 @@ export async function saveUserFollowupEmail(
       );
       return false;
     }
+
+    try {
+      await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          ai_type: meta?.aiType ?? diagnosisType,
+          layer_completed: meta?.layerCompleted ?? 1,
+        }),
+      });
+    } catch {
+      // メール送信失敗はUXを止めない
+    }
+
     return true;
   } catch (e) {
     if (isUsersTableMissingError(e)) {

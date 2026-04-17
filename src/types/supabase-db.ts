@@ -29,4 +29,7 @@ export interface DiagnosisResultsBehaviorPatch {
 export interface UsersInsertPayload {
   email: string;
   diagnosis_type: string;
+  ai_type?: string | null;
+  layer_completed?: number | null;
+  email_sent_at?: string | null;
 }

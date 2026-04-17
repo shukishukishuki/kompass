@@ -40,6 +40,9 @@ alter table diagnosis_results add column if not exists clicked_share boolean;
 alter table diagnosis_results add column if not exists visited_at timestamptz;
 alter table diagnosis_results add column if not exists ai_execution_feedback text;
 alter table diagnosis_results add column if not exists task_type text;
+alter table users add column if not exists email_sent_at timestamptz;
+alter table users add column if not exists layer_completed integer;
+alter table users add column if not exists ai_type text;
 
 drop policy if exists "allow update diagnosis_results behavior" on diagnosis_results;
 create policy "allow update diagnosis_results behavior" on diagnosis_results
