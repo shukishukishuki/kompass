@@ -124,6 +124,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "M PLUS Rounded 1c", -apple-system, sans-serif;
   }
   html {
     @apply font-sans;
@@ -149,5 +150,82 @@
   }
   50% {
     box-shadow: var(--cta-shadow-high, 0 8px 32px rgba(0, 0, 0, 0.45));
+  }
+}
+
+/* 共感ジャンキー: ゆっくり左右にゆれる（共感・寄り添い） */
+@keyframes sway {
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-2deg);
+  }
+  50% {
+    transform: translateX(-50%) rotate(2deg);
+  }
+}
+
+/* 整理の鬼: 小刻みにビシッと動く（几帳面・精確） */
+@keyframes snap {
+  0%,
+  90%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  95% {
+    transform: translateX(-50%) translateY(-6px);
+  }
+}
+
+/* 裏取りマニア: じわっとズームイン・アウト（探求・注視） */
+@keyframes scrutinize {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.06);
+  }
+}
+
+/* 丸投げ屋: ふわっとバウンス（気軽・おおらか） */
+@keyframes bounce-soft {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+/* 情報スナイパー: 素早くピクッと動く（鋭敏・反応速） */
+@keyframes snipe {
+  0%,
+  85%,
+  100% {
+    transform: translateX(-50%);
+  }
+  88% {
+    transform: translateX(calc(-50% + 5px));
+  }
+  92% {
+    transform: translateX(calc(-50% - 5px));
+  }
+  96% {
+    transform: translateX(-50%);
+  }
+}
+
+/* AI遊牧民: ふわふわ浮遊（自由・漂流） */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(-1deg);
+  }
+  33% {
+    transform: translateX(-50%) translateY(-8px) rotate(1deg);
+  }
+  66% {
+    transform: translateX(-50%) translateY(-4px) rotate(-0.5deg);
   }
 }

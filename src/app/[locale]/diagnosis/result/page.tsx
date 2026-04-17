@@ -178,6 +178,15 @@ const TYPE_ROADMAP: Record<string, { steps: string[] }> = {
   },
 };
 
+const CHARACTER_ANIMATION_BY_KIND: Record<AiKind, string> = {
+  claude: "sway 3s ease-in-out infinite",
+  copilot: "snap 2.5s ease-in-out infinite",
+  perplexity: "scrutinize 4s ease-in-out infinite",
+  chatgpt: "bounce-soft 2s ease-in-out infinite",
+  gemini: "snipe 3s ease-in-out infinite",
+  jiyujin: "float 5s ease-in-out infinite",
+};
+
 const TYPE_NEXT_ACTIONS: Record<
   string,
   { actions: { label: string; url: string }[] }
@@ -1064,7 +1073,12 @@ export default function DiagnosisResultPage() {
                   objectFit: "contain",
                   bottom: 0,
                   left: "50%",
+                  animation:
+                    CHARACTER_ANIMATION_BY_KIND[resolvedTypeCharacter.aiKind] ??
+                    "none",
                   transform: "translateX(-50%)",
+                  transformOrigin: "50% 90%",
+                  willChange: "transform",
                   zIndex: 10,
                 }}
               />
