@@ -49,8 +49,6 @@ export interface DiagnosisResultPageCopy {
   rarityGeneral: string;
   rarityUnusual: string;
   rarityRare: string;
-  /** スクショ用ゾーンの小さな固定コピー */
-  screenshotTagline: string;
   /** ヒーロー下タブ（結果） */
   heroTabResult: string;
   /** ヒーロー下タブ（詳細） */

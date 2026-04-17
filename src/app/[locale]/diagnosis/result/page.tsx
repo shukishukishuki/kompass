@@ -243,7 +243,6 @@ const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   rarityGeneral: "一般的なタイプ",
   rarityUnusual: "少し珍しいタイプ",
   rarityRare: "レアタイプ",
-  screenshotTagline: "",
   heroTabResult: "結果",
   heroTabDetail: "詳細",
   heroTabAiUsage: "AI活用法",
@@ -1028,22 +1027,21 @@ export default function DiagnosisResultPage() {
           </p>
 
           <div className="mx-auto flex w-full max-w-md flex-col items-center">
-            <div className="relative flex h-[220px] w-full max-w-[280px] items-end justify-center overflow-visible">
+            <div className="relative mx-auto h-[220px] w-fit overflow-visible">
               <div
-                className="relative flex h-[200px] w-[200px] shrink-0 items-end justify-center overflow-visible rounded-full"
+                className="absolute left-1/2 top-1/2 h-[200px] w-[200px] -translate-x-1/2 -translate-y-1/2 rounded-full"
                 style={{
                   backgroundColor: hexToRgba(heroTheme.primary, 0.22),
                 }}
-              >
-                <Image
-                  src={resolvedTypeCharacter.imageSrc}
-                  alt={`${heroCharacterName} のキャラクター`}
-                  width={280}
-                  height={280}
-                  className="h-[280px] w-[280px] max-w-none object-contain object-bottom -translate-y-[26%]"
-                  priority
-                />
-              </div>
+              />
+              <Image
+                src={resolvedTypeCharacter.imageSrc}
+                alt={`${heroCharacterName} のキャラクター`}
+                width={280}
+                height={280}
+                className="relative z-10 h-[280px] w-[280px] max-w-none object-contain object-bottom -translate-y-[18%]"
+                priority
+              />
             </div>
             <h1
               id="hero-heading"
@@ -1210,6 +1208,56 @@ export default function DiagnosisResultPage() {
           </button>
         </nav>
       </section>
+
+      {result.layerCompleted < 4 && remainingQuestions > 0 ? (
+        <div className="mx-auto mt-4 w-full max-w-lg px-4">
+          <div
+            style={{
+              background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
+              border: `2px solid ${hexToRgba(heroTheme.primary, 0.4)}`,
+              borderRadius: 16,
+              padding: 24,
+              textAlign: "center",
+              animation: "ctaPulse 2.5s ease-in-out infinite",
+              ["--cta-shadow-low" as string]: `0 4px 20px ${hexToRgba(heroTheme.primary, 0.2)}`,
+              ["--cta-shadow-high" as string]: `0 8px 32px ${hexToRgba(heroTheme.primary, 0.45)}`,
+            }}
+            className="space-y-3"
+          >
+            <span
+              className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
+              style={{
+                backgroundColor: heroTheme.primary,
+                color: "#fff",
+              }}
+            >
+              🔍 もっと深く知る
+            </span>
+            <p className="text-[18px] font-bold" style={{ color: heroTheme.cText }}>
+              診断の精度をもっと上げられます
+            </p>
+            <p className="text-sm leading-relaxed text-zinc-700">
+              残り{remainingQuestions}
+              問に答えると、より詳細な分析と専用プロンプトが解放されます
+            </p>
+            <a
+              href={`/${locale}/diagnosis?resumeFromLayer=${result.layerCompleted}`}
+              className="block w-full text-center font-bold text-white transition-opacity hover:opacity-90"
+              style={{
+                background: heroTheme.cText,
+                color: "#fff",
+                borderRadius: 12,
+                padding: "14px 24px",
+                fontSize: 16,
+                width: "100%",
+                boxShadow: `0 4px 16px ${hexToRgba(heroTheme.primary, 0.3)}`,
+              }}
+            >
+              続きを診断する（残り{remainingQuestions}問）→
+            </a>
+          </div>
+        </div>
+      ) : null}
 
       {/* 下部ゾーン：スクロールで詳細 */}
       <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-10">
@@ -1383,7 +1431,7 @@ export default function DiagnosisResultPage() {
             ) : null}
             <div className="mx-auto mt-6 max-w-md">
               <TypePromptTabs
-                userPersonalityJa={displayPersonalityJa}
+                userTypeId={resolvedTypeCharacter.typeId}
                 twitterShareHref={twitterUrl}
               />
             </div>
@@ -1684,52 +1732,6 @@ export default function DiagnosisResultPage() {
                 )}
               </CardContent>
             </Card>
-            {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-              <div className="mx-auto mt-4 w-full max-w-md">
-                <div
-                  style={{
-                    background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
-                    border: `2px solid ${hexToRgba(heroTheme.primary, 0.4)}`,
-                    borderRadius: 16,
-                    padding: 24,
-                    textAlign: "center",
-                  }}
-                  className="space-y-3"
-                >
-                  <span
-                    className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
-                    style={{
-                      backgroundColor: heroTheme.primary,
-                      color: "#fff",
-                    }}
-                  >
-                    🔍 もっと深く知る
-                  </span>
-                  <p className="text-[18px] font-bold" style={{ color: heroTheme.cText }}>
-                    診断の精度をもっと上げられます
-                  </p>
-                  <p className="text-sm leading-relaxed text-zinc-700">
-                    残り{remainingQuestions}
-                    問に答えると、より詳細な分析と専用プロンプトが解放されます
-                  </p>
-                  <a
-                    href={`/${locale}/diagnosis?resumeFromLayer=${result.layerCompleted}`}
-                    className="block w-full text-center font-bold text-white transition-opacity hover:opacity-90"
-                    style={{
-                      background: heroTheme.cText,
-                      color: "#fff",
-                      borderRadius: 12,
-                      padding: "14px 24px",
-                      fontSize: 16,
-                      width: "100%",
-                      boxShadow: `0 4px 16px ${hexToRgba(heroTheme.primary, 0.3)}`,
-                    }}
-                  >
-                    続きを診断する（残り{remainingQuestions}問）→
-                  </a>
-                </div>
-              </div>
-            ) : null}
             <Card className="text-left">
               <CardContent className="space-y-3 pt-6">
                 <p className="mb-2 text-xs font-bold tracking-widest text-gray-400 uppercase">

@@ -51,6 +51,15 @@ export function PromptList({
           !isDiagnosed && !previewLocked && "blur-sm",
           previewLocked && "blur-[6px]"
         )}
+        style={
+          previewLocked
+            ? {
+                filter: "blur(6px)",
+                pointerEvents: "none",
+                userSelect: "none",
+              }
+            : undefined
+        }
       >
         <div className="space-y-3">
           {prompts.map((prompt, index) => (

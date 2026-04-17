@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { PromptList } from "@/components/guide/prompt-list";
 import { GUIDE_DETAILS } from "@/lib/guide-details";
 import {
@@ -11,8 +11,8 @@ import {
 import { cn } from "@/lib/utils";
 
 interface TypePromptTabsProps {
-  /** 表示上の自分のタイプ（日本語・診断結果の type） */
-  userPersonalityJa: string;
+  /** 表示上の自分のタイプID（result 側で確定済み） */
+  userTypeId: TypeId;
   /** X シェア用の intent URL（既存の twitterUrl を渡す） */
   twitterShareHref: string;
 }
@@ -22,14 +22,9 @@ interface TypePromptTabsProps {
  * 自分のタイプのみ通常表示し、他タイプはブラー＋シェア誘導オーバーレイ。
  */
 export function TypePromptTabs({
-  userPersonalityJa,
+  userTypeId,
   twitterShareHref,
 }: Readonly<TypePromptTabsProps>) {
-  const userTypeId = useMemo((): TypeId => {
-    const hit = TYPE_CHARACTERS.find((c) => c.typeJa === userPersonalityJa);
-    return hit?.typeId ?? "empath";
-  }, [userPersonalityJa]);
-
   const [activeTypeId, setActiveTypeId] = useState<TypeId>(userTypeId);
 
   const shareOverlay = (
