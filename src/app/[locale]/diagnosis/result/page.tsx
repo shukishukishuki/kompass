@@ -421,6 +421,10 @@ function isDiagnosisResult(value: unknown): value is DiagnosisResult {
       typeof p.characterName !== "string" ||
       typeof p.catchCopy !== "string" ||
       typeof p.supplement !== "string" ||
+      typeof p.whoYouAre !== "string" ||
+      typeof p.thinkingPattern !== "string" ||
+      typeof p.workStyle !== "string" ||
+      typeof p.aiCompatibility !== "string" ||
       typeof p.contraryCopy !== "string" ||
       typeof p.shareText !== "string" ||
       typeof p.ngUsage !== "string" ||
@@ -783,6 +787,18 @@ export default function DiagnosisResultPage() {
     return getPersonalityDescription(displayPersonalityJa, locale);
   }, [result, locale, displayPersonalityJa]);
 
+  const personalityDetailSections = useMemo(() => {
+    if (personalityBlock === null) {
+      return [];
+    }
+    return [
+      { title: "あなたはこういう人です", body: personalityBlock.whoYouAre },
+      { title: "思考パターン", body: personalityBlock.thinkingPattern },
+      { title: "職場での振る舞い", body: personalityBlock.workStyle },
+      { title: "AIとの相性", body: personalityBlock.aiCompatibility },
+    ];
+  }, [personalityBlock]);
+
   const statsDisplay = useMemo(() => {
     if (result === null) {
       return {
@@ -951,7 +967,7 @@ export default function DiagnosisResultPage() {
     return (
       <main className="min-h-screen pb-16">
         <section
-          className="px-4 pb-12 pt-12 text-center text-white shadow-lg"
+          className="px-6 pb-12 pt-12 text-center text-white shadow-lg"
           style={{ backgroundColor: resultHeroBackground }}
           aria-labelledby="hero-heading"
         >
@@ -976,9 +992,9 @@ export default function DiagnosisResultPage() {
               診断であなたのタイプを表示
             </h1>
           </div>
-          <div className="relative mx-auto mt-6 max-w-md">
+          <div className="relative mx-auto mt-6 max-w-2xl">
             <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
-              <div className="mx-auto mt-6 max-w-md">
+              <div className="mx-auto mt-6 max-w-2xl">
                 <OneClickAIButton
                   typeId={resolvedTypeCharacter.aiKind}
                   accentColor={AI_KIND_THEMES[resolvedTypeCharacter.aiKind].primary}
@@ -1032,7 +1048,7 @@ export default function DiagnosisResultPage() {
       {/* 上部ゾーン（スクショ用）：キャラ名・コピー・固定文・推奨AI・シェア */}
       <section
         id="section-hero-result"
-        className="relative overflow-x-clip px-4 pb-4 pt-12 text-center shadow-lg"
+        className="relative overflow-x-clip px-6 pb-4 pt-12 text-center shadow-lg"
         style={{
           background: `linear-gradient(180deg, ${heroTheme.cMid} 0%, ${heroTheme.cLight} 55%, #f8fffe 85%, #ffffff 100%)`,
           boxShadow: `0 4px 20px ${hexToRgba(heroTheme.primary, 0.15)}`,
@@ -1075,12 +1091,12 @@ export default function DiagnosisResultPage() {
             診断完了 ✦ あなたのAIタイプが決まりました
           </p>
 
-          <div className="mx-auto flex w-full max-w-md flex-col items-center overflow-visible">
+          <div className="mx-auto flex w-full max-w-2xl flex-col items-center overflow-visible">
             <div
               style={{
                 position: "relative",
-                width: 220,
-                height: 220,
+                width: 280,
+                height: 280,
                 margin: "0 auto 16px",
                 overflow: "visible",
               }}
@@ -1102,8 +1118,8 @@ export default function DiagnosisResultPage() {
                 alt={resolvedTypeCharacterView.nameJa}
                 style={{
                   position: "absolute",
-                  width: 260,
-                  height: 260,
+                  width: 320,
+                  height: 320,
                   objectFit: "contain",
                   bottom: 0,
                   left: "50%",
@@ -1122,6 +1138,7 @@ export default function DiagnosisResultPage() {
                 color: heroTheme.cText,
                 fontWeight: 500,
                 fontSize: 36,
+                fontFamily: '"Noto Sans JP", "BIZ UDGothic", sans-serif',
               }}
             >
               {heroCharacterName}
@@ -1164,7 +1181,7 @@ export default function DiagnosisResultPage() {
               fontFamily: 'Georgia, "游明朝", "Yu Mincho", serif',
               fontWeight: 400,
               fontSize: 22,
-              fontStyle: "italic",
+              fontStyle: "normal",
               letterSpacing: "0.02em",
               color: heroTheme.cText,
             }}
@@ -1184,7 +1201,7 @@ export default function DiagnosisResultPage() {
         >
           {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
         </p>
-        <div className="relative z-10 mx-auto mt-6 w-full max-w-md">
+        <div className="relative z-10 mx-auto mt-6 w-full max-w-2xl">
           <Card className="text-left bg-white/95 text-gray-900 shadow-md">
             <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 pb-3">
               <CardTitle className="text-base">{resultPageCopy.statsTitle}</CardTitle>
@@ -1197,31 +1214,6 @@ export default function DiagnosisResultPage() {
               <Progress value={userTypePercent} />
             </CardContent>
           </Card>
-        </div>
-        <div className="relative z-10">
-          <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
-            <div className="mx-auto mt-6 max-w-md">
-              <OneClickAIButton
-                typeId={resolvedTypeCharacter.aiKind}
-                accentColor={heroTheme.primary}
-                actionLabelColor={heroTheme.cText}
-                diagnosisRecordId={result.recordId ?? null}
-              />
-            </div>
-          </div>
-          {!isDiagnosed ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <p className="px-4 text-center text-sm font-medium text-[#1a3328]">
-                診断を完了するとプロンプトが解放されます
-              </p>
-              <Link
-                href={`/${locale}/diagnosis`}
-                className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
-              >
-                診断する →
-              </Link>
-            </div>
-          ) : null}
         </div>
         {/* ヒーロー下部タブ（見た目＋スクロール） */}
         <nav
@@ -1297,8 +1289,92 @@ export default function DiagnosisResultPage() {
         </nav>
       </section>
 
+      {personalityDetailSections.length > 0 ? (
+        <section className="mx-auto mt-8 w-full max-w-2xl space-y-3 px-6">
+          {personalityDetailSections.map((section) => (
+            <article
+              key={section.title}
+              className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm"
+              style={{
+                borderLeftWidth: "2px",
+                borderLeftColor: AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#C9A84C",
+              }}
+            >
+              <p className="mb-2 text-[12px] uppercase tracking-[0.1em] text-[#999]">
+                {section.title}
+              </p>
+              <p className="text-[15px] leading-[1.8] text-gray-800">{section.body}</p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      <div className="mx-auto mt-8 w-full max-w-2xl space-y-6 px-6">
+        <div className="relative">
+          <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
+            <div className="mx-auto w-full max-w-2xl">
+              <OneClickAIButton
+                typeId={resolvedTypeCharacter.aiKind}
+                accentColor={heroTheme.primary}
+                actionLabelColor={heroTheme.cText}
+                diagnosisRecordId={result.recordId ?? null}
+              />
+            </div>
+          </div>
+          {!isDiagnosed ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+              <p className="px-4 text-center text-sm font-medium text-[#1a3328]">
+                診断を完了するとプロンプトが解放されます
+              </p>
+              <Link
+                href={`/${locale}/diagnosis`}
+                className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+              >
+                診断する →
+              </Link>
+            </div>
+          ) : null}
+        </div>
+
+        {result.layerCompleted >= 1
+          ? (() => {
+              const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
+              if (!nextActions) return null;
+              return (
+                <div className="space-y-3">
+                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                    次のアクション
+                  </p>
+                  <div className="space-y-2">
+                    {nextActions.actions.map((action, i) => (
+                      <a
+                        key={i}
+                        href={
+                          action.url.startsWith("/")
+                            ? `/${locale}${action.url}`
+                            : action.url
+                        }
+                        target={action.url.startsWith("http") ? "_blank" : undefined}
+                        rel={
+                          action.url.startsWith("http")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
+                        className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                      >
+                        <span>{action.label}</span>
+                        <span className="text-gray-400">→</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()
+          : null}
+      </div>
+
       {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-        <div className="mx-auto mt-8 w-full max-w-lg px-4">
+        <div className="mx-auto mt-8 w-full max-w-2xl px-6">
           <div
             style={{
               background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
@@ -1355,43 +1431,8 @@ export default function DiagnosisResultPage() {
         </div>
       ) : null}
 
-      {result.layerCompleted >= 1
-        ? (() => {
-            const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
-            if (!nextActions) return null;
-            return (
-              <div className="mx-auto mt-8 w-full max-w-lg px-4 space-y-3">
-                <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-                  次のアクション
-                </p>
-                <div className="space-y-2">
-                  {nextActions.actions.map((action, i) => (
-                    <a
-                      key={i}
-                      href={
-                        action.url.startsWith("/")
-                          ? `/${locale}${action.url}`
-                          : action.url
-                      }
-                      target={action.url.startsWith("http") ? "_blank" : undefined}
-                      rel={
-                        action.url.startsWith("http")
-                          ? "noopener noreferrer"
-                          : undefined
-                      }
-                      className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <span>{action.label}</span>
-                      <span className="text-gray-400">→</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            );
-          })()
-        : null}
       {result.layerCompleted >= 1 ? (
-      <div className="mx-auto mt-8 w-full max-w-lg px-4">
+      <div className="mx-auto mt-8 w-full max-w-2xl px-6">
         <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
           SHARE YOUR TYPE
         </p>
@@ -1477,7 +1518,7 @@ export default function DiagnosisResultPage() {
       ) : null}
 
       {/* 下部ゾーン：スクロールで詳細 */}
-      <div className="mx-auto flex max-w-lg flex-col gap-8 px-4 py-10">
+      <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-10">
         {personalityBlock !== null ? (
           <>
             <Card
@@ -1543,7 +1584,7 @@ export default function DiagnosisResultPage() {
                   const badChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.bad);
                   if (!compat || !goodChar || !badChar) return null;
                   return (
-                    <div className="mx-auto mb-8 max-w-md space-y-3">
+                    <div className="mx-auto mb-8 max-w-2xl space-y-3">
                       <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
                         タイプ相性
                       </p>
@@ -1580,7 +1621,7 @@ export default function DiagnosisResultPage() {
                   const famous = TYPE_FAMOUS[resolvedTypeCharacter.aiKind];
                   if (!famous) return null;
                   return (
-                    <div className="mx-auto mb-8 max-w-md space-y-3">
+                    <div className="mx-auto mb-8 max-w-2xl space-y-3">
                       <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
                         同じタイプの有名人
                       </p>
@@ -1606,7 +1647,7 @@ export default function DiagnosisResultPage() {
                   const companies = TYPE_COMPANIES[resolvedTypeCharacter.aiKind];
                   if (!companies) return null;
                   return (
-                    <div className="mx-auto mb-8 max-w-md space-y-2">
+                    <div className="mx-auto mb-8 max-w-2xl space-y-2">
                       <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
                         <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
                           同じタイプの企業・職種
@@ -1632,7 +1673,7 @@ export default function DiagnosisResultPage() {
                   const roadmap = TYPE_ROADMAP[resolvedTypeCharacter.aiKind];
                   if (!roadmap) return null;
                   return (
-                    <div className="mx-auto mb-8 max-w-md space-y-3">
+                    <div className="mx-auto mb-8 max-w-2xl space-y-3">
                       <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
                         活用ロードマップ
                       </p>
@@ -1669,7 +1710,7 @@ export default function DiagnosisResultPage() {
               />
             ) : null}
             {result.layerCompleted >= 3 ? (
-              <div className="mx-auto mt-6 max-w-md">
+              <div className="mx-auto mt-6 max-w-2xl">
                 <TypePromptTabs
                   userTypeId={resolvedTypeCharacter.typeId}
                   twitterShareHref={twitterUrl}
@@ -1711,7 +1752,7 @@ export default function DiagnosisResultPage() {
             ) : null}
             {result.layerCompleted >= 4 ? (
               <>
-                <div className="mx-auto mt-4 max-w-md">
+                <div className="mx-auto mt-4 max-w-2xl">
                   <p className="text-center text-xs text-gray-400 mb-2">
                     ✦ Layer {result.layerCompleted} 解放済み
                   </p>
@@ -1901,7 +1942,7 @@ export default function DiagnosisResultPage() {
                 ) : null}
               </CardContent>
             </Card>
-            <div className="mx-auto mt-4 max-w-md text-center">
+            <div className="mx-auto mt-4 max-w-2xl text-center">
               <p className="text-xs text-gray-400">
                 最新のAI活用情報は
                 <a

@@ -142,10 +142,10 @@ const COPY_BY_LOCALE: Record<LocaleCode, LandingCopy> = {
     heroNote: "登録不要ですぐ無料公開",
     empathyTitle: "こんなこと、ありませんか？",
     empathyItems: [
-      "使ってるけど、しっくりこない",
       "毎回「それっぽい答え」しか返ってこない",
-      "周りはうまく使ってるのに自分だけ遅れてる気がする",
-      "ChatGPTとClaudeの違いが正直わからない",
+      "企画書の叩き台を出させたら、使えなかった",
+      "調べものを頼んだら、古い情報が混じってた",
+      "結局自分でやり直した",
     ],
     typesTitle: "6つのAI思考タイプ",
     typesSub: "あなたの本当の強みを引き出すAIはどれ？",
@@ -264,7 +264,10 @@ export default async function LocaleHomePage({
               </div>
             ))}
           </div>
-          <h1 className="mt-6 text-4xl leading-tight font-extrabold whitespace-pre-line text-slate-900 md:text-6xl">
+          <h1
+            className="mt-6 whitespace-pre-line text-4xl leading-tight text-slate-900 md:text-6xl"
+            style={{ fontWeight: 400, fontFamily: "Georgia, serif" }}
+          >
             {copy.heroTitle}
           </h1>
           <p className="mt-3 mb-6 text-center text-sm leading-relaxed text-gray-500">

@@ -14,6 +14,10 @@ export interface PersonalityDescription {
   characterName: string;
   catchCopy: string;
   supplement: string;
+  whoYouAre: string;
+  thinkingPattern: string;
+  workStyle: string;
+  aiCompatibility: string;
   contraryCopy: string;
   strengths: string[];
   weaknesses: string[];

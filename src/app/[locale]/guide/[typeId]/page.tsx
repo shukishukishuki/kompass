@@ -179,26 +179,52 @@ export default function GuideTypeDetailPage() {
               コピーしてそのままAIに貼り付けて使えます。診断済みの方はあなた専用プロンプトが結果画面に表示されます。
             </p>
           </div>
-          <div className="mt-4">
-            <PromptList prompts={content.prompts} previewLocked={previewLocked} />
+          <div className="relative mt-4">
+            <div className={previewLocked ? "pointer-events-none blur-sm" : ""}>
+              <PromptList prompts={content.prompts} previewLocked={previewLocked} />
+            </div>
+            {previewLocked ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Link
+                  href={`/${locale}/diagnosis`}
+                  className="inline-block rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+                >
+                  診断してプロンプトを解放する
+                </Link>
+              </div>
+            ) : null}
           </div>
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900">NGな使い方</h2>
-          <ul className="mt-3 space-y-2">
-            {content.ngUsages.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                <span className="mt-0.5 shrink-0 text-red-400">✕</span>
-                {item}
-              </li>
-            ))}
-          </ul>
+          <div className="relative mt-3">
+            <ul className={userTypeId === null ? "space-y-2 blur-sm pointer-events-none" : "space-y-2"}>
+              {content.ngUsages.map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <span className="mt-0.5 shrink-0 text-red-400">✕</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            {userTypeId === null ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Link
+                  href={`/${locale}/diagnosis`}
+                  className="inline-block rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
+                >
+                  診断してプロンプトを解放する
+                </Link>
+              </div>
+            ) : null}
+          </div>
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="space-y-2">
-            <h2 className="text-sm font-bold text-gray-700">今すぐ使う</h2>
+            <h2 className="text-sm font-bold text-gray-700">
+              自分の性格に合った使い方をAIに指示する
+            </h2>
             <OneClickAIButton
               typeId={aiKind}
               accentColor={character.theme.primary}
