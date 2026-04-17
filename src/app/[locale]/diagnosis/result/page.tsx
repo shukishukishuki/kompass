@@ -968,6 +968,11 @@ export default function DiagnosisResultPage() {
   const heroTypeEnLine = mbtiApplied?.correctedTypeEn ?? result.typeEn;
   const heroCharacterName =
     personalityBlock?.characterName ?? displayPersonalityJa;
+  const resolvedTypeCharacterView = {
+    ...resolvedTypeCharacter,
+    imagePath: resolvedTypeCharacter.imageSrc,
+    nameJa: heroCharacterName,
+  };
   const oppositeTypeId = personalityBlock?.oppositeType.typeJa;
   const oppositeCharacter = TYPE_CHARACTERS.find(
     (character) => character.typeJa === oppositeTypeId
@@ -1028,38 +1033,27 @@ export default function DiagnosisResultPage() {
 
           <div className="mx-auto flex w-full max-w-md flex-col items-center overflow-visible">
             <div
-              style={{
-                position: "relative",
-                width: 200,
-                height: 200,
-                margin: "0 auto",
-                overflow: "visible",
-              }}
+              className="relative mx-auto"
+              style={{ width: 180, height: 180, overflow: "visible" }}
             >
               <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  borderRadius: "50%",
-                  background: heroTheme.cMid,
-                }}
+                className="absolute inset-0 rounded-full"
+                style={{ background: heroTheme.cMid }}
               />
-              <Image
-                src={resolvedTypeCharacter.imageSrc}
-                alt={`${heroCharacterName} のキャラクター`}
-                width={220}
-                height={220}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resolvedTypeCharacterView.imagePath}
+                alt={resolvedTypeCharacterView.nameJa}
+                className="absolute"
                 style={{
-                  position: "absolute",
+                  width: 200,
+                  height: 200,
+                  objectFit: "contain",
                   bottom: 0,
                   left: "50%",
-                  transform: "translateX(-50%) translateY(18%)",
-                  width: 220,
-                  height: 220,
-                  objectFit: "contain",
+                  transform: "translateX(-50%)",
                   zIndex: 10,
                 }}
-                priority
               />
             </div>
             <h1
