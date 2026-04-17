@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 
 export const runtime = "edge";
 
+/** OGP 用タイプ定義（bg / accent は kompass_ogp_spec.md に準拠） */
 const TYPE_DATA = {
   empath: {
     ja: { label: "共感ジャンキー", catch: "答えじゃなくて、わかってほしかっただけ。" },
@@ -12,6 +13,7 @@ const TYPE_DATA = {
     bg: "#FDF3E3",
     accent: "#E8952A",
     charImg: "/images/kompass_char_01_empath.png",
+    /** 明るい背景 → メイン・サブテキストは #1a1a2e 系 */
     darkText: true,
   },
   executor: {
@@ -32,6 +34,7 @@ const TYPE_DATA = {
     bg: "#0F1629",
     accent: "#20B2AA",
     charImg: "/images/kompass_char_03_analyst.png",
+    /** ダーク背景 → テキスト白 */
     darkText: false,
   },
   generalist: {
@@ -86,8 +89,11 @@ export async function GET(req: NextRequest) {
   const data = TYPE_DATA[typeKey as keyof typeof TYPE_DATA] ?? TYPE_DATA.empath;
 
   const text = data[lang];
+  /** 明るい bg: メイン #1a1a2e / ダーク bg: 白（仕様） */
   const textColor = data.darkText ? "#1a1a2e" : "#ffffff";
-  const subColor = data.darkText ? "rgba(26,26,46,0.6)" : "rgba(255,255,255,0.6)";
+  const subColor = data.darkText
+    ? "rgba(26,26,46,0.6)"
+    : "rgba(255,255,255,0.65)";
 
   // Edge runtimeでも安定して参照できるよう、画像は絶対URLを直接指定する
   const charImgSrc = `https://kompass-rosy.vercel.app${data.charImg}`;
@@ -124,27 +130,31 @@ export async function GET(req: NextRequest) {
           </span>
         </div>
 
-        {/* メインコンテンツ */}
-        <div style={{
-          display: "flex",
-          flex: 1,
-          alignItems: "center",
-          padding: "0 48px 48px",
-          gap: "48px",
-        }}>
-          {/* 左：キャラ */}
-          <div style={{
-            width: "220px",
-            height: "220px",
-            borderRadius: "50%",
-            backgroundColor: data.accent + "33",
-            border: `4px solid ${data.accent}`,
+        {/* メイン：左キャラ / 中央タイプコピー / 右端 RECOMMENDED AI（独立） */}
+        <div
+          style={{
             display: "flex",
+            flex: 1,
             alignItems: "center",
-            justifyContent: "center",
-            overflow: "hidden",
-            flexShrink: 0,
-          }}>
+            padding: "0 48px 48px",
+            gap: "40px",
+          }}
+        >
+          {/* 左：キャラ（円形クリップ＋アクセント色の背景） */}
+          <div
+            style={{
+              width: "220px",
+              height: "220px",
+              borderRadius: "50%",
+              backgroundColor: `${data.accent}33`,
+              border: `4px solid ${data.accent}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+              flexShrink: 0,
+            }}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={charImgSrc}
@@ -155,51 +165,95 @@ export async function GET(req: NextRequest) {
             />
           </div>
 
-          {/* 中：テキスト */}
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            flex: 1,
-            gap: "12px",
-          }}>
-            <div style={{ color: textColor, fontSize: 72, fontWeight: "bold", display: "flex", lineHeight: 1.1 }}>
+          {/* 中：タイプ名・キャッチ（AI名より小さく） */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flex: 1,
+              gap: "12px",
+              minWidth: 0,
+            }}
+          >
+            <div
+              style={{
+                color: textColor,
+                fontSize: 56,
+                fontWeight: "bold",
+                display: "flex",
+                lineHeight: 1.1,
+              }}
+            >
               {text.label}
             </div>
-            <div style={{ color: subColor, fontSize: 26, display: "flex", letterSpacing: "0.1em" }}>
-              {TYPE_DATA[typeKey as keyof typeof TYPE_DATA]?.ja.label !== text.label
-                ? TYPE_DATA[typeKey as keyof typeof TYPE_DATA]?.ja.label
+            <div
+              style={{
+                color: subColor,
+                fontSize: 26,
+                display: "flex",
+                letterSpacing: "0.1em",
+              }}
+            >
+              {lang === "en" && TYPE_DATA[typeKey as keyof typeof TYPE_DATA]
+                ? TYPE_DATA[typeKey as keyof typeof TYPE_DATA].ja.label
                 : data.ai}
             </div>
-            <div style={{
-              color: textColor,
-              fontSize: 24,
-              display: "flex",
-              marginTop: "8px",
-              opacity: 0.85,
-            }}>
+            <div
+              style={{
+                color: textColor,
+                fontSize: 24,
+                display: "flex",
+                marginTop: "8px",
+                opacity: 0.85,
+              }}
+            >
               {text.catch}
             </div>
           </div>
 
-          {/* 右：推奨AI */}
-          <div style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "8px",
-            flexShrink: 0,
-          }}>
-            <div style={{ color: subColor, fontSize: 16, display: "flex", letterSpacing: "0.15em" }}>
+          {/* 右端：RECOMMENDED AI（AI名を最大フォント） */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              justifyContent: "center",
+              gap: "10px",
+              flexShrink: 0,
+              width: "320px",
+            }}
+          >
+            <div
+              style={{
+                color: subColor,
+                fontSize: 15,
+                display: "flex",
+                letterSpacing: "0.2em",
+                fontWeight: 600,
+              }}
+            >
               RECOMMENDED AI
             </div>
-            <div style={{
-              width: "64px",
-              height: "6px",
-              backgroundColor: data.accent,
-              borderRadius: "3px",
-              display: "flex",
-            }} />
-            <div style={{ color: data.accent, fontSize: 48, fontWeight: "bold", display: "flex" }}>
+            <div
+              style={{
+                width: "72px",
+                height: "6px",
+                backgroundColor: data.accent,
+                borderRadius: "3px",
+                display: "flex",
+              }}
+            />
+            <div
+              style={{
+                color: data.accent,
+                fontSize: 92,
+                fontWeight: "bold",
+                display: "flex",
+                lineHeight: 1.05,
+                textAlign: "right",
+                letterSpacing: "-0.02em",
+              }}
+            >
               {data.ai}
             </div>
           </div>

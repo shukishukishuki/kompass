@@ -22,6 +22,12 @@ export interface DiagnosisFlowCopy {
   layer1Sub: string;
   layer1Continue: string;
   layer1ResultNow: string;
+  /** 2択カード「結果を見る」側の短い説明 */
+  layerQuickDescription: string;
+  /** カード左上タグ（デザイン用・QUICK） */
+  layerTagQuick: string;
+  /** カード左上タグ（デザイン用・DEEPER） */
+  layerTagDeeper: string;
   layer2Heading: string;
   layer2Sub: string;
   layer2Continue: string;
@@ -45,6 +51,12 @@ export interface DiagnosisResultPageCopy {
   rarityRare: string;
   /** スクショ用ゾーンの小さな固定コピー */
   screenshotTagline: string;
+  /** ヒーロー下タブ（結果） */
+  heroTabResult: string;
+  /** ヒーロー下タブ（詳細） */
+  heroTabDetail: string;
+  /** ヒーロー下タブ（AI活用法） */
+  heroTabAiUsage: string;
   shareOnX: string;
   redoDiagnosis: string;
   recommendedAi: string;

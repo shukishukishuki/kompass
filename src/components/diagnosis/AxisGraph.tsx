@@ -25,7 +25,7 @@ const AXES_CONFIG = [
  * 4軸の思考スタイルを横バーで表示する
  */
 export function AxisGraph({ axes, typeId }: Readonly<AxisGraphProps>) {
-  const color = typeColors[typeId] ?? "#7C3AED";
+  const color = typeColors[typeId] ?? "#C9A84C";
 
   return (
     <div className="w-full space-y-3 rounded-xl bg-gray-50 p-4">

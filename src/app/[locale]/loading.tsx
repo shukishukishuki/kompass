@@ -1,9 +1,12 @@
+import { AI_THEME_COLORS, AI_KINDS } from "@/types/ai";
+
 export default function Loading() {
+  const paletteDots = AI_KINDS.map((k) => AI_THEME_COLORS[k]);
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <div className="flex gap-1.5">
-          {["#CC785C", "#10A37F", "#4285F4", "#20B2AA", "#0078D4", "#7C3AED"].map(
+          {paletteDots.map(
             (color, i) => (
               <div
                 key={i}

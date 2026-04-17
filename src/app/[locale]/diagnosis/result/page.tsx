@@ -13,7 +13,6 @@ import {
 import {
   getAiLabelJaForKind,
 } from "@/lib/ai-display";
-import { AFFILIATE_LINKS } from "@/lib/affiliate-links";
 import {
   AI_KIND_TO_PERSONALITY_EN,
   AI_KIND_TO_PERSONALITY_JA,
@@ -44,13 +43,19 @@ import jaMessages from "@/messages/ja.json";
 import type { DiagnosisResult } from "@/types/diagnosis";
 import type { DiagnosisResultPageCopy } from "@/types/diagnosis-messages";
 import type { MessagesFile } from "@/types/diagnosis-messages";
-import { AI_KINDS, AI_THEME_COLORS, type AiKind } from "@/types/ai";
+import {
+  AI_KINDS,
+  AI_KIND_THEMES,
+  AI_THEME_COLORS,
+  type AiKind,
+} from "@/types/ai";
 import type { ScoringResult } from "@/types/scoring";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
 import { AxisGraph } from "@/components/diagnosis/AxisGraph";
 import { PersonalizedPrompts } from "@/components/diagnosis/PersonalizedPrompts";
+import { TypePromptTabs } from "@/components/diagnosis/TypePromptTabs";
 import {
   Card,
   CardContent,
@@ -173,50 +178,39 @@ const TYPE_ROADMAP: Record<string, { steps: string[] }> = {
   },
 };
 
+/** ヒーローの「無料で試す」と重複しないよう、ガイド導線のみ */
 const TYPE_NEXT_ACTIONS: Record<
   string,
   { actions: { label: string; url: string }[] }
 > = {
   claude: {
     actions: [
-      { label: "Claudeを無料で試す", url: "https://claude.ai" },
       { label: "共感ジャンキーのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.claude}` },
-      { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   chatgpt: {
     actions: [
-      { label: "ChatGPTを無料で試す", url: "https://chatgpt.com" },
       { label: "丸投げ屋のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.chatgpt}` },
-      { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   gemini: {
     actions: [
-      { label: "Geminiを無料で試す", url: "https://gemini.google.com" },
       { label: "情報スナイパーのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.gemini}` },
-      { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   perplexity: {
     actions: [
-      { label: "Perplexityを無料で試す", url: "https://perplexity.ai" },
       { label: "裏取りマニアのガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.perplexity}` },
-      { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   copilot: {
     actions: [
-      { label: "Copilotを無料で試す", url: "https://copilot.microsoft.com" },
       { label: "整理の鬼のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.copilot}` },
-      { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
   jiyujin: {
     actions: [
-      { label: "まずClaudeを試す", url: "https://claude.ai" },
       { label: "AI遊牧民のガイドを見る", url: `/guide/${AI_KIND_TO_GUIDE.jiyujin}` },
-      { label: "もう一度診断する", url: "/ja/diagnosis" },
     ],
   },
 };
@@ -239,6 +233,9 @@ const FALLBACK_RESULT_COPY: DiagnosisResultPageCopy = {
   rarityUnusual: "少し珍しいタイプ",
   rarityRare: "レアタイプ",
   screenshotTagline: "",
+  heroTabResult: "結果",
+  heroTabDetail: "詳細",
+  heroTabAiUsage: "AI活用法",
   shareOnX: "Xでシェア",
   redoDiagnosis: "もう一度診断する",
   recommendedAi: "おすすめAI",
@@ -635,6 +632,10 @@ export default function DiagnosisResultPage() {
     "idle" | "saving" | "saved" | "error"
   >("idle");
   const [followupError, setFollowupError] = useState<string | null>(null);
+  /** ヒーロー下タブの見た目用（詳細・AI活用法は該当セクションへスクロール） */
+  const [heroTab, setHeroTab] = useState<"result" | "detail" | "usage">(
+    "result"
+  );
 
   useEffect(() => {
     const raw = sessionStorage.getItem(DIAGNOSIS_RESULT_STORAGE_KEY);
@@ -708,7 +709,14 @@ export default function DiagnosisResultPage() {
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ["#CC785C", "#10A37F", "#4285F4", "#20B2AA", "#0078D4", "#7C3AED"],
+        colors: [
+          "#52B788",
+          "#E8A020",
+          "#F07C2A",
+          "#9B4DCA",
+          "#4A7FC1",
+          "#C9A84C",
+        ],
       });
     }
   }, [hydrated, result?.layerCompleted]);
@@ -892,7 +900,6 @@ export default function DiagnosisResultPage() {
   }
 
   if (result === null) {
-    const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
     return (
       <main className="min-h-screen pb-16">
         <section
@@ -926,18 +933,6 @@ export default function DiagnosisResultPage() {
               <div className="mx-auto mt-6 max-w-md">
                 <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
               </div>
-              {link !== undefined ? (
-                <div className="mx-auto mt-3 max-w-md text-center">
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-gray-600"
-                  >
-                    {link.label} →
-                  </a>
-                </div>
-              ) : null}
             </div>
             {!isDiagnosed ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
@@ -959,6 +954,8 @@ export default function DiagnosisResultPage() {
   }
 
   const advanced = isAdvancedPresentation(result);
+  const heroTheme = AI_KIND_THEMES[resolvedTypeCharacter.aiKind];
+  const heroTypeEnLine = mbtiApplied?.correctedTypeEn ?? result.typeEn;
   const heroCharacterName =
     personalityBlock?.characterName ?? displayPersonalityJa;
   const oppositeTypeId = personalityBlock?.oppositeType.typeJa;
@@ -976,39 +973,76 @@ export default function DiagnosisResultPage() {
     <main className="min-h-screen pb-16">
       {/* 上部ゾーン（スクショ用）：キャラ名・コピー・固定文・推奨AI・シェア */}
       <section
-        className="px-4 pb-12 pt-12 text-center text-white shadow-lg"
-        style={{ backgroundColor: resultHeroBackground }}
+        id="section-hero-result"
+        className="relative overflow-x-clip px-4 pb-4 pt-12 text-center shadow-lg"
+        style={{
+          background: `linear-gradient(180deg, ${heroTheme.cMid} 0%, ${heroTheme.cLight} 55%, #f8fffe 85%, #ffffff 100%)`,
+        }}
         aria-labelledby="hero-heading"
       >
-        <div className="mx-auto max-w-5xl">
-          <p className="text-xs font-medium uppercase tracking-wide opacity-90">
-            {mbtiApplied?.correctedTypeEn ?? result.typeEn}
+        {/* 右上：放射状の光（::before 相当） */}
+        <div
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+          aria-hidden
+        >
+          <div
+            className="absolute right-0 top-0 h-[min(55vh,28rem)] w-full max-w-[720px]"
+            style={{
+              background: `radial-gradient(ellipse 80% 60% at 70% 100%, ${hexToRgba(heroTheme.primary, 0.35)} 0%, transparent 70%)`,
+            }}
+          />
+        </div>
+
+        {/* 背景装飾：英語タイプ名 */}
+        <p
+          className="pointer-events-none absolute bottom-0 left-[-4px] z-0 max-w-[100vw] select-none overflow-hidden text-left text-[clamp(2.25rem,11vw,6rem)] font-medium leading-none tracking-[-4px]"
+          style={{ color: hexToRgba(heroTheme.primary, 0.1) }}
+          aria-hidden
+        >
+          {heroTypeEnLine}
+        </p>
+
+        <div className="relative z-10 mx-auto max-w-5xl">
+          <p
+            className="text-xs font-medium uppercase tracking-wide"
+            style={{ color: heroTheme.cText }}
+          >
+            {heroTypeEnLine}
           </p>
-          <p className="text-center text-xs text-gray-400 mb-4">
+          <p
+            className="mb-4 mt-1 text-center text-xs"
+            style={{ color: `${heroTheme.cText}99` }}
+          >
             診断完了 ✦ あなたのAIタイプが決まりました
           </p>
-          <div
-            className="mx-auto w-full max-w-md rounded-2xl p-8 text-center"
-            style={{ backgroundColor: `${AI_THEME_COLORS[resolvedTypeCharacter.aiKind]}15` }}
-          >
-            <div className="mt-4 flex justify-center">
-              <Image
-                src={resolvedTypeCharacter.imageSrc}
-                alt={`${heroCharacterName} のキャラクター`}
-                width={280}
-                height={280}
-                className="h-[280px] w-[280px] object-contain"
-                priority
-              />
+
+          <div className="mx-auto flex w-full max-w-md flex-col items-center">
+            <div className="relative flex h-[220px] w-full max-w-[280px] items-end justify-center overflow-visible">
+              <div
+                className="relative flex h-[200px] w-[200px] shrink-0 items-end justify-center overflow-visible rounded-full"
+                style={{
+                  backgroundColor: hexToRgba(heroTheme.primary, 0.22),
+                }}
+              >
+                <Image
+                  src={resolvedTypeCharacter.imageSrc}
+                  alt={`${heroCharacterName} のキャラクター`}
+                  width={280}
+                  height={280}
+                  className="h-[280px] w-[280px] max-w-none object-contain object-bottom -translate-y-[26%]"
+                  priority
+                />
+              </div>
             </div>
             <h1
               id="hero-heading"
-              className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl"
+              className="mt-2 text-4xl font-extrabold leading-tight md:text-5xl"
+              style={{ color: heroTheme.cText }}
             >
               {heroCharacterName}
             </h1>
-            {scoringSnapshot && (
-              <div className="flex justify-center gap-2 flex-wrap mt-3">
+            {scoringSnapshot ? (
+              <div className="mt-3 flex flex-wrap justify-center gap-2">
                 {Object.entries(scoringSnapshot.scoresByAi)
                   .sort(([, a], [, b]) => b - a)
                   .slice(0, 3)
@@ -1016,12 +1050,12 @@ export default function DiagnosisResultPage() {
                     <a
                       key={aiKind}
                       href={`/${locale}/guide/${AI_KIND_TO_GUIDE[aiKind as string] ?? aiKind}`}
-                      className="text-xs rounded-full px-3 py-1 font-medium text-white hover:opacity-80 transition-opacity"
+                      className="rounded-full px-3 py-1 text-xs font-medium text-white transition-opacity hover:opacity-80"
                       style={{
                         backgroundColor:
                           AI_THEME_COLORS[
                             aiKind as keyof typeof AI_THEME_COLORS
-                          ] ?? "#7C3AED",
+                          ] ?? "#C9A84C",
                       }}
                     >
                       {AI_LABEL_JA[aiKind as string] ?? (aiKind as string)}{" "}
@@ -1029,28 +1063,43 @@ export default function DiagnosisResultPage() {
                     </a>
                   ))}
               </div>
-            )}
-            <p className="mt-2 text-sm uppercase tracking-wide text-white/90 md:text-base">
+            ) : null}
+            <p
+              className="mt-2 text-sm uppercase tracking-wide md:text-base"
+              style={{ color: `${heroTheme.cText}cc` }}
+            >
               {resolvedTypeCharacter.typeEn}
             </p>
           </div>
         </div>
         {personalityBlock !== null ? (
-          <p className="mx-auto mt-6 max-w-3xl text-2xl font-bold leading-snug md:text-3xl">
+          <p
+            className="relative z-10 mx-auto mt-6 max-w-3xl px-1 text-2xl font-bold leading-snug md:text-3xl"
+            style={{ color: heroTheme.cText }}
+          >
             {personalityBlock.catchCopy}
           </p>
         ) : null}
-        <p className="mt-3 text-xs opacity-90">
+        <p
+          className="relative z-10 mt-3 text-xs"
+          style={{ color: `${heroTheme.cText}aa` }}
+        >
           {resultPageCopy.screenshotTagline}
         </p>
-        <p className="mt-6 text-sm font-medium opacity-95">
+        <p
+          className="relative z-10 mt-6 text-sm font-medium"
+          style={{ color: heroTheme.cText }}
+        >
           {resultPageCopy.recommendedAi}
         </p>
-        <p className="text-xl font-semibold md:text-2xl">
+        <p
+          className="relative z-10 text-xl font-semibold md:text-2xl"
+          style={{ color: heroTheme.cText }}
+        >
           {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
         </p>
-        <div className="mx-auto mt-6 w-full max-w-md">
-          <Card className="text-left bg-white/95 text-gray-900">
+        <div className="relative z-10 mx-auto mt-6 w-full max-w-md">
+          <Card className="text-left bg-white/95 text-gray-900 shadow-md">
             <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 pb-3">
               <CardTitle className="text-base">{resultPageCopy.statsTitle}</CardTitle>
               {statsDisplay.badge !== null ? (
@@ -1063,7 +1112,7 @@ export default function DiagnosisResultPage() {
             </CardContent>
           </Card>
         </div>
-        <div className="relative">
+        <div className="relative z-10">
           <div className={!isDiagnosed ? "blur-sm pointer-events-none select-none" : ""}>
             <div className="mx-auto mt-6 max-w-md">
               <OneClickAIButton typeId={resolvedTypeCharacter.aiKind} />
@@ -1071,7 +1120,7 @@ export default function DiagnosisResultPage() {
           </div>
           {!isDiagnosed ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-              <p className="px-4 text-center text-sm font-medium text-white">
+              <p className="px-4 text-center text-sm font-medium text-[#1a3328]">
                 診断を完了するとプロンプトが解放されます
               </p>
               <Link
@@ -1083,24 +1132,78 @@ export default function DiagnosisResultPage() {
             </div>
           ) : null}
         </div>
-        {(() => {
-          const link = AFFILIATE_LINKS[resolvedTypeCharacter.aiKind];
-          if (!link) {
-            return null;
-          }
-          return (
-            <div className="mx-auto mt-4 max-w-md text-center">
-              <a
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-white underline underline-offset-4 transition-colors hover:text-white/80"
-              >
-                {link.label} →
-              </a>
-            </div>
-          );
-        })()}
+        {/* ヒーロー下部タブ（見た目＋スクロール） */}
+        <nav
+          className="relative z-10 mx-auto mt-10 flex max-w-lg gap-0 overflow-hidden rounded-t-2xl border border-black/[0.06] bg-white/55 backdrop-blur-md"
+          aria-label="結果セクション内ナビ"
+        >
+          <button
+            type="button"
+            className={cn(
+              "flex-1 py-3.5 text-sm font-semibold transition-colors",
+              heroTab === "result"
+                ? "border-b-2 text-[#0a2e18]"
+                : "border-b-2 border-transparent text-zinc-500 hover:text-zinc-800"
+            )}
+            style={
+              heroTab === "result"
+                ? { borderBottomColor: heroTheme.primary }
+                : undefined
+            }
+            onClick={() => {
+              setHeroTab("result");
+              document
+                .getElementById("section-hero-result")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
+            {resultPageCopy.heroTabResult}
+          </button>
+          <button
+            type="button"
+            className={cn(
+              "flex-1 py-3.5 text-sm font-semibold transition-colors",
+              heroTab === "detail"
+                ? "border-b-2 text-[#0a2e18]"
+                : "border-b-2 border-transparent text-zinc-500 hover:text-zinc-800"
+            )}
+            style={
+              heroTab === "detail"
+                ? { borderBottomColor: heroTheme.primary }
+                : undefined
+            }
+            onClick={() => {
+              setHeroTab("detail");
+              document
+                .getElementById("section-detail")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
+            {resultPageCopy.heroTabDetail}
+          </button>
+          <button
+            type="button"
+            className={cn(
+              "flex-1 py-3.5 text-sm font-semibold transition-colors",
+              heroTab === "usage"
+                ? "border-b-2 text-[#0a2e18]"
+                : "border-b-2 border-transparent text-zinc-500 hover:text-zinc-800"
+            )}
+            style={
+              heroTab === "usage"
+                ? { borderBottomColor: heroTheme.primary }
+                : undefined
+            }
+            onClick={() => {
+              setHeroTab("usage");
+              document
+                .getElementById("section-ai-usage")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+          >
+            {resultPageCopy.heroTabAiUsage}
+          </button>
+        </nav>
       </section>
 
       {/* 下部ゾーン：スクロールで詳細 */}
@@ -1108,7 +1211,8 @@ export default function DiagnosisResultPage() {
         {personalityBlock !== null ? (
           <>
             <Card
-              className="text-left"
+              id="section-detail"
+              className="text-left scroll-mt-4"
               style={{
                 backgroundColor: hexToRgba(
                   AI_THEME_COLORS[resolvedTypeCharacter.aiKind],
@@ -1253,7 +1357,7 @@ export default function DiagnosisResultPage() {
                           className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white"
                           style={{
                             backgroundColor:
-                              AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#7C3AED",
+                              AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#C9A84C",
                           }}
                         >
                           {i + 1}
@@ -1269,9 +1373,15 @@ export default function DiagnosisResultPage() {
               <PersonalizedPrompts
                 typeId={resolvedTypeCharacter.aiKind}
                 answers={layer4Answers}
-                accentColor={AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#7C3AED"}
+                accentColor={AI_THEME_COLORS[resolvedTypeCharacter.aiKind] ?? "#C9A84C"}
               />
             ) : null}
+            <div className="mx-auto mt-6 max-w-md">
+              <TypePromptTabs
+                userPersonalityJa={displayPersonalityJa}
+                twitterShareHref={twitterUrl}
+              />
+            </div>
             {(() => {
               const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
               if (!nextActions) return null;
@@ -1466,7 +1576,7 @@ export default function DiagnosisResultPage() {
                     もっと詳しく診断できます
                   </p>
                   <a
-                    href={`/${locale}/diagnosis?resume=true`}
+                    href={`/${locale}/diagnosis?resumeFromLayer=${result.layerCompleted}`}
                     className="inline-block rounded-full bg-gray-800 px-6 py-2.5 text-sm font-bold text-white hover:bg-gray-600 transition-colors"
                   >
                     続きを診断する（残り{remainingQuestions}問）→
@@ -1474,7 +1584,10 @@ export default function DiagnosisResultPage() {
                 </div>
               </div>
             ) : null}
-            <Card className="text-left">
+            <Card
+              id="section-ai-usage"
+              className="text-left scroll-mt-4"
+            >
               <CardHeader>
                 <CardTitle className="text-base">{resultPageCopy.nextStepTitle}</CardTitle>
               </CardHeader>
@@ -1664,14 +1777,6 @@ export default function DiagnosisResultPage() {
                 </p>
               </CardContent>
             </Card>
-            <div className="mx-auto mt-6 max-w-md text-center">
-              <a
-                href={`/${locale}/diagnosis`}
-                className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-4 transition-colors"
-              >
-                もう一度診断する
-              </a>
-            </div>
           </>
         ) : (
           <Card className="text-left">

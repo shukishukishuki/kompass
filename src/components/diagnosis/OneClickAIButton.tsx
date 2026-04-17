@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
+import { AI_THEME_COLORS } from "@/types/ai";
 
 // タイプ別設定
 const AI_CONFIG: Record<
@@ -16,42 +17,42 @@ const AI_CONFIG: Record<
   claude: {
     label: "Claude",
     url: "https://claude.ai",
-    color: "#CC785C",
+    color: AI_THEME_COLORS.claude,
     prompt:
       "あなたは私の思考整理のパートナーです。答えを出すより先に、私が何を感じているかを一緒に言語化してください。",
   },
   chatgpt: {
     label: "ChatGPT",
     url: "https://chatgpt.com",
-    color: "#10A37F",
+    color: AI_THEME_COLORS.chatgpt,
     prompt:
       "以下の内容について、まず最速でアウトプットを出してください。精度より速度優先です。",
   },
   gemini: {
     label: "Gemini",
     url: "https://gemini.google.com",
-    color: "#4285F4",
+    color: AI_THEME_COLORS.gemini,
     prompt:
       "今この瞬間の最新情報を教えてください。情報源も明示してください。",
   },
   perplexity: {
     label: "Perplexity",
     url: "https://perplexity.ai",
-    color: "#20B2AA",
+    color: AI_THEME_COLORS.perplexity,
     prompt:
       "以下の内容について、根拠・出典・反論の余地を含めて教えてください。",
   },
   copilot: {
     label: "Copilot",
     url: "https://copilot.microsoft.com",
-    color: "#0078D4",
+    color: AI_THEME_COLORS.copilot,
     prompt:
       "以下の情報を構造化・整理してください。見やすい形式で出力してください。",
   },
   jiyujin: {
     label: "AI遊牧民",
     url: "",
-    color: "#7C3AED",
+    color: AI_THEME_COLORS.jiyujin,
     prompt:
       "あなたの得意な領域を教えてください。今日のタスクに合わせて使い方を変えます。",
     subUrls: [
@@ -100,7 +101,7 @@ export function OneClickAIButton({ typeId }: OneClickAIButtonProps) {
         style={{ backgroundColor: config.color }}
         className="w-full rounded-xl px-6 py-4 text-white font-bold text-lg shadow-lg hover:opacity-90 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2"
       >
-        {config.label}を今すぐ使う →
+        {config.label}を無料で試す →
       </button>
     );
   }
@@ -122,7 +123,7 @@ export function OneClickAIButton({ typeId }: OneClickAIButtonProps) {
             style={{ backgroundColor: config.color }}
             className="flex-1 rounded-xl px-3 py-3 text-white font-bold text-sm shadow-lg hover:opacity-90 active:scale-95 transition-all duration-150"
           >
-            {label} →
+            {label}を無料で試す →
           </button>
         ))}
       </div>

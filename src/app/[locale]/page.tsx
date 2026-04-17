@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CharacterAvatar } from "@/components/lp/character-avatar";
 import { AI_KIND_TO_GUIDE } from "@/lib/type-id-map";
+import { AI_THEME_COLORS } from "@/types/ai";
 
 const CTA_HREF = "https://kompass-rosy.vercel.app/ja/diagnosis";
 
@@ -38,7 +39,7 @@ const CHARACTER_CARDS: CharacterCard[] = [
     nameJa: "丸投げ屋",
     nameEn: "The Generalist",
     recommendedAi: "ChatGPT",
-    color: "#F5C518",
+    color: "#E8A020",
     imageSrc: "/images/kompass_char_04_generalist.png",
   },
   {
@@ -62,7 +63,7 @@ const TYPE_PREVIEWS = [
     id: "claude",
     name: "共感ジャンキー",
     en: "The Confidant",
-    color: "#CC785C",
+    color: AI_THEME_COLORS.claude,
     catch: "答えより、わかってほしかった。",
     img: "/images/kompass_char_01_empath.png",
   },
@@ -70,7 +71,7 @@ const TYPE_PREVIEWS = [
     id: "copilot",
     name: "整理の鬼",
     en: "The Executive",
-    color: "#0078D4",
+    color: AI_THEME_COLORS.copilot,
     catch: "混沌を見ると、手を動かしたくなる。",
     img: "/images/kompass_char_02_executor.png",
   },
@@ -78,7 +79,7 @@ const TYPE_PREVIEWS = [
     id: "perplexity",
     name: "裏取りマニア",
     en: "The Analyst",
-    color: "#20B2AA",
+    color: AI_THEME_COLORS.perplexity,
     catch: "「たぶん」で動くのは無理。",
     img: "/images/kompass_char_03_analyst.png",
   },
@@ -86,7 +87,7 @@ const TYPE_PREVIEWS = [
     id: "chatgpt",
     name: "丸投げ屋",
     en: "The Generalist",
-    color: "#10A37F",
+    color: AI_THEME_COLORS.chatgpt,
     catch: "考えるより、投げた方が早い。",
     img: "/images/kompass_char_04_generalist.png",
   },
@@ -94,7 +95,7 @@ const TYPE_PREVIEWS = [
     id: "gemini",
     name: "情報スナイパー",
     en: "The Scout",
-    color: "#4285F4",
+    color: AI_THEME_COLORS.gemini,
     catch: "いらない情報、本当にいらない。",
     img: "/images/kompass_char_05_scout.png",
   },
@@ -102,7 +103,7 @@ const TYPE_PREVIEWS = [
     id: "jiyujin",
     name: "AI遊牧民",
     en: "The Orchestrator",
-    color: "#7C3AED",
+    color: AI_THEME_COLORS.jiyujin,
     catch: "1つのAIで満足できたことがない。",
     img: "/images/kompass_char_06_nomad.png",
   },
@@ -241,12 +242,12 @@ export default async function LocaleHomePage({
           </p>
           <div className="mb-8 flex justify-center gap-2">
             {[
-              { src: "/images/kompass_char_01_empath.png", color: "#CC785C" },
-              { src: "/images/kompass_char_02_executor.png", color: "#0078D4" },
-              { src: "/images/kompass_char_03_analyst.png", color: "#20B2AA" },
-              { src: "/images/kompass_char_04_generalist.png", color: "#10A37F" },
-              { src: "/images/kompass_char_05_scout.png", color: "#4285F4" },
-              { src: "/images/kompass_char_06_nomad.png", color: "#7C3AED" },
+              { src: "/images/kompass_char_01_empath.png", color: AI_THEME_COLORS.claude },
+              { src: "/images/kompass_char_02_executor.png", color: AI_THEME_COLORS.copilot },
+              { src: "/images/kompass_char_03_analyst.png", color: AI_THEME_COLORS.perplexity },
+              { src: "/images/kompass_char_04_generalist.png", color: AI_THEME_COLORS.chatgpt },
+              { src: "/images/kompass_char_05_scout.png", color: AI_THEME_COLORS.gemini },
+              { src: "/images/kompass_char_06_nomad.png", color: AI_THEME_COLORS.jiyujin },
             ].map((char, i) => (
               <div
                 key={i}
@@ -276,11 +277,11 @@ export default async function LocaleHomePage({
           </p>
           <div className="flex flex-wrap justify-center gap-2 mt-4 mb-2">
             {[
-              { name: "ChatGPT", color: "#10A37F" },
-              { name: "Claude", color: "#CC785C" },
-              { name: "Gemini", color: "#4285F4" },
-              { name: "Perplexity", color: "#20B2AA" },
-              { name: "Copilot", color: "#0078D4" },
+              { name: "ChatGPT", color: AI_THEME_COLORS.chatgpt },
+              { name: "Claude", color: AI_THEME_COLORS.claude },
+              { name: "Gemini", color: AI_THEME_COLORS.gemini },
+              { name: "Perplexity", color: AI_THEME_COLORS.perplexity },
+              { name: "Copilot", color: AI_THEME_COLORS.copilot },
             ].map((ai) => (
               <span
                 key={ai.name}

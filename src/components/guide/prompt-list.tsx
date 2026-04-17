@@ -2,18 +2,30 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { DIAGNOSIS_RESULT_STORAGE_KEY } from "@/app/[locale]/diagnosis/page";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface PromptListProps {
   prompts: readonly string[];
+  /**
+   * 他タイプ閲覧時など：診断状態に関わらず 6px ブラー＋オーバーレイ
+   * （結果画面の TypePromptTabs 用）
+   */
+  previewLocked?: boolean;
+  /** previewLocked 時に表示するオーバーレイ（未指定なら空） */
+  previewOverlay?: ReactNode;
 }
 
 /**
  * プロンプトを一覧表示し、各行でコピーできるUI
  */
-export function PromptList({ prompts }: Readonly<PromptListProps>) {
+export function PromptList({
+  prompts,
+  previewLocked = false,
+  previewOverlay = null,
+}: Readonly<PromptListProps>) {
   const params = useParams();
   const locale =
     typeof params?.locale === "string" && params.locale.length > 0
@@ -27,9 +39,19 @@ export function PromptList({ prompts }: Readonly<PromptListProps>) {
     setIsDiagnosed(!!stored);
   }, []);
 
+  const showDiagnosisGate = !isDiagnosed && !previewLocked;
+  const blurInner =
+    (!isDiagnosed && !previewLocked) || previewLocked;
+
   return (
-    <div className="relative">
-      <div className={!isDiagnosed ? "pointer-events-none select-none blur-sm" : ""}>
+    <div className="relative min-h-[120px]">
+      <div
+        className={cn(
+          blurInner && "pointer-events-none select-none",
+          !isDiagnosed && !previewLocked && "blur-sm",
+          previewLocked && "blur-[6px]"
+        )}
+      >
         <div className="space-y-3">
           {prompts.map((prompt, index) => (
             <div
@@ -65,7 +87,13 @@ export function PromptList({ prompts }: Readonly<PromptListProps>) {
         </div>
       </div>
 
-      {!isDiagnosed ? (
+      {previewLocked && previewOverlay !== null ? (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-xl bg-white/75 px-4 py-6 backdrop-blur-[2px]">
+          {previewOverlay}
+        </div>
+      ) : null}
+
+      {showDiagnosisGate ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-white/10">
           <p className="px-4 text-center text-sm font-medium text-gray-600">
             診断を完了するとプロンプトが解放されます

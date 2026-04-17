@@ -1,5 +1,12 @@
 import { resolveAiKindFromDisplayName } from "@/lib/ai-display";
-import { AI_THEME_COLORS, type AiKind, type PersonalityTypeEn, type PersonalityTypeJa } from "@/types/ai";
+import {
+  AI_KIND_THEMES,
+  AI_THEME_COLORS,
+  type AiKind,
+  type AiKindTheme,
+  type PersonalityTypeEn,
+  type PersonalityTypeJa,
+} from "@/types/ai";
 
 /** ガイドURL用のタイプID */
 export type TypeId =
@@ -20,6 +27,8 @@ export interface TypeCharacter {
   aiKind: AiKind;
   aiName: string;
   imageSrc: string;
+  /** タイプ別カラー（プライマリ・ライト・ミッド・テキスト） */
+  theme: AiKindTheme;
 }
 
 /** タイプ一覧ページと結果画面で共通利用する6タイプ定義 */
@@ -33,6 +42,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     aiKind: "claude",
     aiName: "Claude",
     imageSrc: "/images/kompass_char_01_empath.png",
+    theme: AI_KIND_THEMES.claude,
   },
   {
     typeId: "executive",
@@ -43,6 +53,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     aiKind: "copilot",
     aiName: "Copilot",
     imageSrc: "/images/kompass_char_02_executor.png",
+    theme: AI_KIND_THEMES.copilot,
   },
   {
     typeId: "analyst",
@@ -53,6 +64,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     aiKind: "perplexity",
     aiName: "Perplexity",
     imageSrc: "/images/kompass_char_03_analyst.png",
+    theme: AI_KIND_THEMES.perplexity,
   },
   {
     typeId: "generalist",
@@ -63,6 +75,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     aiKind: "chatgpt",
     aiName: "ChatGPT",
     imageSrc: "/images/kompass_char_04_generalist.png",
+    theme: AI_KIND_THEMES.chatgpt,
   },
   {
     typeId: "scout",
@@ -73,6 +86,7 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     aiKind: "gemini",
     aiName: "Gemini",
     imageSrc: "/images/kompass_char_05_scout.png",
+    theme: AI_KIND_THEMES.gemini,
   },
   {
     typeId: "orchestrator",
@@ -83,11 +97,15 @@ export const TYPE_CHARACTERS: readonly TypeCharacter[] = [
     aiKind: "jiyujin",
     aiName: "複数のAIの使い分け",
     imageSrc: "/images/kompass_char_06_nomad.png",
+    theme: AI_KIND_THEMES.jiyujin,
   },
 ] as const;
 
-/** AiKind をキーにした表示色（UIコンポーネント向け） */
+/** AiKind をキーにした表示色（UIコンポーネント向け・プライマリ） */
 export const typeColors: Record<AiKind, string> = AI_THEME_COLORS;
+
+/** フルパレット（グラデーション・テキスト色など） */
+export const typeThemePalettes: Record<AiKind, AiKindTheme> = AI_KIND_THEMES;
 
 /**
  * 16進カラーを透過付きrgba文字列に変換する

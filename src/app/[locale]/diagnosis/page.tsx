@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   applyMBTICorrection,
@@ -16,13 +23,165 @@ import type { MessagesFile } from "@/types/diagnosis-messages";
 import type { LayerCompleted } from "@/types/layer-completed";
 import type { QuestionAnswer, ScoringResult } from "@/types/scoring";
 
+/** コンパスSVG＋KOMPASS（絵文字は使わない） */
+function KompassLogo({ className }: Readonly<{ className?: string }>) {
+  return (
+    <div
+      className={`flex items-center justify-center gap-2 ${className ?? ""}`}
+    >
+      <svg
+        width="36"
+        height="36"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className="shrink-0 text-[#1a7a4a]"
+        aria-hidden
+      >
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
+        <path
+          d="M12 4l2.2 8L12 20l-2.2-8L12 4z"
+          fill="currentColor"
+        />
+        <path
+          d="M12 4l8 8h-8l-8-8h8z"
+          fill="currentColor"
+          opacity="0.25"
+        />
+      </svg>
+      <span className="text-xl font-bold tracking-[0.25em] text-[#0a2e18]">
+        KOMPASS
+      </span>
+    </div>
+  );
+}
+
+/** Layer分岐用の円形プログレス（ストローク #52B788） */
+function LayerProgressRing({
+  percent,
+  size = 168,
+}: Readonly<{ percent: 25 | 50 | 75 | 100; size?: number }>) {
+  const stroke = 7;
+  const r = (size - stroke) / 2;
+  const cx = size / 2;
+  const cy = size / 2;
+  const circumference = 2 * Math.PI * r;
+  const dashOffset = circumference * (1 - percent / 100);
+  return (
+    <div className="relative mx-auto" style={{ width: size, height: size }}>
+      <svg
+        width={size}
+        height={size}
+        className="block -rotate-90"
+        aria-hidden
+      >
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="none"
+          stroke="rgba(82,183,136,0.2)"
+          strokeWidth={stroke}
+        />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="none"
+          stroke="#52B788"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={dashOffset}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+        <span className="text-3xl font-bold tabular-nums text-[#0a2e18]">
+          {percent}%
+        </span>
+        <span className="mt-0.5 text-[11px] font-bold tracking-[0.2em] text-[#52B788]">
+          COMPLETE
+        </span>
+      </div>
+    </div>
+  );
+}
+
+const LAYER_BREAK_BG: CSSProperties = {
+  background:
+    "linear-gradient(160deg, #d4f0e2 0%, #eaf8f1 40%, #f5fcf8 100%)",
+};
+
+const LAYER_CARD_QUICK: CSSProperties = {
+  background: "rgba(255,255,255,0.65)",
+  border: "1.5px solid rgba(82,183,136,0.3)",
+};
+
+const LAYER_CARD_DEEP: CSSProperties = {
+  background: "rgba(82,183,136,0.22)",
+  border: "1.5px solid rgba(82,183,136,0.3)",
+};
+
 /** sessionStorage に保存するキー（結果ページと共有） */
 export const DIAGNOSIS_RESULT_STORAGE_KEY = "kompass_diagnosis_result";
 
 /** スコアリング結果（MBTI 補正などで再利用） */
 export const DIAGNOSIS_SCORING_STORAGE_KEY = "kompass_diagnosis_scoring";
 export const DIAGNOSIS_RESUME_FROM_LAYER_KEY = "resumeFromLayer";
+/** 続き診断で復元する、確定済みの回答一覧（結果保存時に書き込む） */
+export const DIAGNOSIS_ANSWERS_STORAGE_KEY = "kompass_diagnosis_answers";
 export const DIAGNOSIS_MBTI_STORAGE_KEY = "kompass_mbti";
+
+/**
+ * sessionStorage の結果 JSON から、続き診断に使う Layer 番号（1〜3）を読む
+ */
+function readResumeLayerFromResultStorage(): "1" | "2" | "3" | null {
+  const raw = sessionStorage.getItem(DIAGNOSIS_RESULT_STORAGE_KEY);
+  if (raw === null || raw === "") {
+    return null;
+  }
+  try {
+    const o: unknown = JSON.parse(raw);
+    if (typeof o !== "object" || o === null) {
+      return null;
+    }
+    const lc = (o as { layerCompleted?: unknown }).layerCompleted;
+    if (lc === 1 || lc === 2 || lc === 3) {
+      return String(lc) as "1" | "2" | "3";
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+/**
+ * 続き診断用：先頭 n 問分の回答が設問順と一致するか
+ */
+function isAnswersPrefixForResume(
+  parsed: unknown,
+  questionDefs: MessagesFile["diagnosis"]["questions"],
+  expectedCount: number
+): parsed is QuestionAnswer[] {
+  if (!Array.isArray(parsed) || parsed.length !== expectedCount) {
+    return false;
+  }
+  for (let i = 0; i < expectedCount; i += 1) {
+    const row = parsed[i];
+    if (typeof row !== "object" || row === null) {
+      return false;
+    }
+    const r = row as Record<string, unknown>;
+    if (typeof r.questionId !== "number" || typeof r.value !== "string") {
+      return false;
+    }
+    const expectedId = questionDefs[i]?.id;
+    if (expectedId === undefined || r.questionId !== expectedId) {
+      return false;
+    }
+  }
+  return true;
+}
 
 const messagesByLocale: Record<string, MessagesFile> = {
   ja: jaMessages as MessagesFile,
@@ -64,6 +223,9 @@ const FALLBACK_FLOW: DiagnosisFlowCopy = {
   layer1Sub: "あと10問で、より精度の高い結果が出ます。続けますか？",
   layer1Continue: "続ける",
   layer1ResultNow: "ここで結果を見る",
+  layerQuickDescription: "今の回答だけで結果ページへ進みます。",
+  layerTagQuick: "QUICK",
+  layerTagDeeper: "DEEPER",
   layer2Heading: "診断精度がグッと上がります",
   layer2Sub: "残り10問で、より詳しい診断になります。",
   layer2Continue: "続ける",
@@ -113,6 +275,8 @@ export default function DiagnosisPage() {
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
+  /** 現在の設問で選択中の値（「次へ」で確定） */
+  const [quizSelection, setQuizSelection] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /** 最終送信の連打防止 */
   const finalSubmitLockRef = useRef(false);
@@ -120,6 +284,14 @@ export default function DiagnosisPage() {
 
   const currentQuestion = questions[step];
   const progressRatio = total > 0 ? (step + 1) / total : 0;
+
+  useEffect(() => {
+    if (currentQuestion === undefined) {
+      return;
+    }
+    const row = answers.find((a) => a.questionId === currentQuestion.id);
+    setQuizSelection(row !== undefined ? row.value : null);
+  }, [step, currentQuestion?.id, answers, currentQuestion]);
 
   const title = useMemo(() => copy.diagnosis.title, [copy.diagnosis.title]);
 
@@ -154,29 +326,64 @@ export default function DiagnosisPage() {
       setHasStoredMbti(false);
     }
 
-    const resume = sessionStorage.getItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
-    if (resume === "1" || resume === "2" || resume === "3") {
-      const defaultsCount =
-        resume === "1" ? 10 : resume === "2" ? 20 : 30;
-      if (defaultsCount >= questions.length) {
-        sessionStorage.removeItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
-        setBootstrapped(true);
-        return;
-      }
-      const defaultAnswers: QuestionAnswer[] = [];
-      for (let i = 0; i < defaultsCount; i += 1) {
-        const q = questions[i];
-        if (q !== undefined) {
-          defaultAnswers.push({ questionId: q.id, value: "A" });
+    const params =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search)
+        : new URLSearchParams();
+
+    let resumeLayerRaw = params.get("resumeFromLayer") ?? params.get("resumeFrom");
+    if (
+      resumeLayerRaw === null &&
+      params.get("resume") === "true"
+    ) {
+      resumeLayerRaw = readResumeLayerFromResultStorage();
+    }
+
+    const storedResume = sessionStorage.getItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
+    const effectiveResume =
+      resumeLayerRaw === "1" || resumeLayerRaw === "2" || resumeLayerRaw === "3"
+        ? resumeLayerRaw
+        : storedResume === "1" || storedResume === "2" || storedResume === "3"
+          ? storedResume
+          : null;
+
+    if (effectiveResume !== null) {
+      const answeredCount =
+        effectiveResume === "1" ? 10 : effectiveResume === "2" ? 20 : 30;
+      let resumed = false;
+      if (answeredCount < questions.length) {
+        const rawAnswers = sessionStorage.getItem(DIAGNOSIS_ANSWERS_STORAGE_KEY);
+        if (rawAnswers !== null && rawAnswers !== "") {
+          try {
+            const parsed: unknown = JSON.parse(rawAnswers);
+            if (
+              isAnswersPrefixForResume(parsed, questions, answeredCount)
+            ) {
+              setAnswers(parsed);
+              setStep(answeredCount);
+              setPhase("quiz");
+              resumed = true;
+              window.history.replaceState(null, "", `/${locale}/diagnosis`);
+            }
+          } catch {
+            // 続き診断の復元に失敗した場合はイントロへ
+          }
         }
       }
-      setAnswers(defaultAnswers);
-      setStep(defaultsCount);
-      setPhase("quiz");
       sessionStorage.removeItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
+      if (
+        !resumed &&
+        typeof window !== "undefined" &&
+        (params.get("resumeFromLayer") !== null ||
+          params.get("resumeFrom") !== null ||
+          params.get("resume") === "true")
+      ) {
+        window.history.replaceState(null, "", `/${locale}/diagnosis`);
+      }
     }
+
     setBootstrapped(true);
-  }, [questions]);
+  }, [questions, locale]);
 
   useEffect(() => {
     return () => {
@@ -229,6 +436,10 @@ export default function DiagnosisPage() {
       }
       const diagnosisResult: DiagnosisResult = await diagnosisRes.json();
 
+      sessionStorage.setItem(
+        DIAGNOSIS_ANSWERS_STORAGE_KEY,
+        JSON.stringify(finalAnswers)
+      );
       sessionStorage.setItem(
         DIAGNOSIS_RESULT_STORAGE_KEY,
         JSON.stringify(diagnosisResult)
@@ -404,57 +615,53 @@ export default function DiagnosisPage() {
 
   if (phase === "intro") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12 bg-gradient-to-b from-gray-50 to-white">
+      <main
+        className="flex min-h-screen flex-col items-center justify-center px-6 py-12"
+        style={{
+          background:
+            "linear-gradient(160deg, #d4f0e2 0%, #eaf8f1 40%, #f5fcf8 100%)",
+        }}
+      >
         <div className="w-full max-w-md space-y-6 text-center">
-          <div className="flex justify-center gap-2 mb-4">
-            {[
-              { src: "/images/kompass_char_01_empath.png", color: "#CC785C" },
-              { src: "/images/kompass_char_02_executor.png", color: "#0078D4" },
-              { src: "/images/kompass_char_03_analyst.png", color: "#20B2AA" },
-              { src: "/images/kompass_char_04_generalist.png", color: "#10A37F" },
-              { src: "/images/kompass_char_05_scout.png", color: "#4285F4" },
-              { src: "/images/kompass_char_06_nomad.png", color: "#7C3AED" },
-            ].map((char, i) => (
-              <div
-                key={i}
-                className="w-10 h-10 rounded-full overflow-hidden"
-                style={{ backgroundColor: `${char.color}33` }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={char.src}
-                  alt=""
-                  width={40}
-                  height={40}
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            ))}
+          <KompassLogo className="mb-2" />
+
+          <div className="flex items-center justify-center gap-3 text-sm font-medium text-[#1a7a4a]">
+            <span>10問</span>
+            <span
+              className="h-4 w-px shrink-0 bg-[#52B788]/40"
+              aria-hidden
+            />
+            <span>6タイプ</span>
+            <span
+              className="h-4 w-px shrink-0 bg-[#52B788]/40"
+              aria-hidden
+            />
+            <span>無料</span>
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+            <p className="text-xs font-bold tracking-widest text-[#52B788] uppercase">
               AI TYPE DIAGNOSIS
             </p>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-[#0a2e18]">
               あなたのベースAIを
               <br />
               見つけよう
             </h1>
-            <p className="text-sm text-gray-500 leading-relaxed">
+            <p className="text-sm text-[#2d4a3e]/80 leading-relaxed">
               思考スタイルに合ったAIを使うと、
               <br />
               仕事も思考も驚くほどラクになる。
             </p>
           </div>
 
-          <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 space-y-2 text-left">
-            <p className="text-xs font-bold text-gray-700">診断について</p>
-            <ul className="space-y-1.5 text-xs text-gray-500">
-              <li>✦ まず10問、深く知りたい人は最大40問</li>
-              <li>✦ 登録不要・完全無料</li>
+          <div className="rounded-xl border border-white/60 bg-white/50 p-4 space-y-2 text-left shadow-sm backdrop-blur-sm">
+            <p className="text-xs font-bold text-[#0a2e18]">診断について</p>
+            <ul className="space-y-1.5 text-xs text-[#2d4a3e]/90">
+              <li>まず10問、深く知りたい人は最大40問</li>
+              <li>登録不要・完全無料</li>
               <li>
-                ✦ ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案
+                ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案
               </li>
             </ul>
           </div>
@@ -462,24 +669,35 @@ export default function DiagnosisPage() {
           <button
             type="button"
             onClick={() => {
+              sessionStorage.removeItem(DIAGNOSIS_ANSWERS_STORAGE_KEY);
+              sessionStorage.removeItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
+              setAnswers([]);
+              setStep(0);
               setStarting(true);
               setTimeout(() => setPhase("quiz"), 300);
             }}
             disabled={starting}
-            className="w-full rounded-full bg-gray-900 py-4 text-sm font-bold text-white hover:bg-gray-700 transition-colors disabled:opacity-70"
+            className="w-full text-sm font-bold transition-opacity disabled:opacity-70"
+            style={{
+              background: "#1a7a4a",
+              color: "#fff",
+              borderRadius: "14px",
+              padding: "15px",
+              boxShadow: "0 4px 20px rgba(26,122,74,0.28)",
+            }}
           >
             {starting ? "読み込み中..." : "診断をはじめる →"}
           </button>
           {hasPrevResult ? (
             <a
               href={`/${locale}/diagnosis/result`}
-              className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
+              className="block text-xs text-[#2d4a3e]/70 hover:text-[#0a2e18] underline underline-offset-2 transition-colors"
             >
               前回の結果を見る →
             </a>
           ) : null}
 
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-[#2d4a3e]/60">
             約1分〜 / 途中で結果を見ることもできます
           </p>
         </div>
@@ -489,32 +707,40 @@ export default function DiagnosisPage() {
 
   if (phase === "layer1-break") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg space-y-8 text-center">
-          <p className="text-xs font-bold text-gray-400 mb-2">25% 完了</p>
-          <h2 className="text-xl font-semibold text-zinc-900">
-            {flow.layer1Heading}
-          </h2>
-          <p className="text-xs text-gray-400">思考スタイルの基本パターンがわかりました</p>
-          <p className="text-base leading-relaxed text-zinc-800">
-            {flow.layer1Sub}
-          </p>
+      <main
+        className="flex min-h-screen flex-col items-center px-4 py-10"
+        style={LAYER_BREAK_BG}
+      >
+        <div className="flex w-full max-w-lg flex-col items-center gap-6 text-center">
+          <KompassLogo />
+          <LayerProgressRing percent={25} />
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold text-[#0a2e18]">
+              {flow.layer1Heading}
+            </h2>
+            <p className="text-xs text-[#2d4a3e]/70">
+              思考スタイルの基本パターンがわかりました
+            </p>
+            <p className="text-base leading-relaxed text-[#1a3328]">
+              {flow.layer1Sub}
+            </p>
+          </div>
           {errorMessage !== null ? (
             <p className="text-sm text-red-600" role="alert">
               {errorMessage}
             </p>
           ) : null}
           {layer1MbtiNotice !== null ? (
-            <p className="text-sm font-medium text-emerald-700">
+            <p className="text-sm font-medium text-emerald-800">
               {layer1MbtiNotice}
             </p>
           ) : null}
           {mbtiValue === null && !hasStoredMbti ? (
-            <div className="space-y-3 text-left">
-              <h2 className="text-base font-semibold text-zinc-900">
+            <div className="w-full space-y-3 rounded-2xl border border-white/60 bg-white/40 p-4 text-left shadow-sm backdrop-blur-sm">
+              <h3 className="text-base font-semibold text-[#0a2e18]">
                 精度を上げますか？（任意）
-              </h2>
-              <p className="text-sm text-zinc-700">
+              </h3>
+              <p className="text-sm text-[#1a3328]">
                 MBTIを入力すると、あなたの性格特性も考慮した診断になります
               </p>
               <input
@@ -532,9 +758,9 @@ export default function DiagnosisPage() {
                   setLayer1MbtiError(null);
                 }}
                 placeholder="例：INFJ、ENTP..."
-                className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-center text-sm font-medium tracking-widest text-zinc-900 shadow-sm focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full rounded-xl border border-[#52B788]/25 bg-white/90 px-4 py-3 text-center text-sm font-medium tracking-widest text-zinc-900 shadow-sm focus:border-[#52B788]/50 focus:outline-none focus:ring-2 focus:ring-[#52B788]/30"
               />
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-[#2d4a3e]/65">
                 わからない場合はスキップしてOK。入力すると診断精度が上がります。
               </p>
               {layer1MbtiError !== null ? (
@@ -542,21 +768,43 @@ export default function DiagnosisPage() {
                   {layer1MbtiError}
                 </p>
               ) : null}
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-[#2d4a3e]/80">
                 <a
                   href="https://www.16personalities.com/ja"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-zinc-700 underline underline-offset-2 hover:text-zinc-900"
+                  className="font-medium text-[#0a2e18] underline underline-offset-2 hover:text-[#52B788]"
                 >
                   MBTIって何？
                 </a>
               </p>
             </div>
           ) : null}
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             <button
               type="button"
+              style={LAYER_CARD_QUICK}
+              onClick={() => {
+                if (!applyLayer1MbtiIfNeeded()) {
+                  return;
+                }
+                void runEarlyExit(1);
+              }}
+              className="flex flex-col gap-2 rounded-2xl p-5 text-left shadow-sm transition hover:brightness-[1.02] active:scale-[0.99]"
+            >
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#52B788]">
+                {flow.layerTagQuick}
+              </span>
+              <span className="text-base font-semibold text-[#0a2e18]">
+                {flow.layer1ResultNow}
+              </span>
+              <span className="text-sm leading-snug text-[#2d4a3e]/85">
+                {flow.layerQuickDescription}
+              </span>
+            </button>
+            <button
+              type="button"
+              style={LAYER_CARD_DEEP}
               onClick={() => {
                 if (!applyLayer1MbtiIfNeeded()) {
                   return;
@@ -565,21 +813,17 @@ export default function DiagnosisPage() {
                 setPhase("quiz");
                 setStep(10);
               }}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+              className="flex flex-col gap-2 rounded-2xl p-5 text-left shadow-sm transition hover:brightness-[1.02] active:scale-[0.99]"
             >
-              {flow.layer1Continue}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!applyLayer1MbtiIfNeeded()) {
-                  return;
-                }
-                void runEarlyExit(1);
-              }}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-            >
-              {flow.layer1ResultNow}
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#3d9a6e]">
+                {flow.layerTagDeeper}
+              </span>
+              <span className="text-base font-semibold text-[#0a2e18]">
+                {flow.layer1Continue}
+              </span>
+              <span className="text-sm leading-snug text-[#2d4a3e]/85">
+                {flow.layer1Sub}
+              </span>
             </button>
           </div>
         </div>
@@ -589,39 +833,65 @@ export default function DiagnosisPage() {
 
   if (phase === "layer2-break") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg space-y-8 text-center">
-          <p className="text-xs font-bold text-gray-400 mb-2">50% 完了</p>
-          <h2 className="text-xl font-semibold text-zinc-900">
-            {flow.layer2Heading}
-          </h2>
-          <p className="text-xs text-gray-400">AIとの相性パターンが明確になりました</p>
-          <p className="text-base leading-relaxed text-zinc-800">
-            {flow.layer2Sub}
-          </p>
+      <main
+        className="flex min-h-screen flex-col items-center px-4 py-10"
+        style={LAYER_BREAK_BG}
+      >
+        <div className="flex w-full max-w-lg flex-col items-center gap-6 text-center">
+          <KompassLogo />
+          <LayerProgressRing percent={50} />
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold text-[#0a2e18]">
+              {flow.layer2Heading}
+            </h2>
+            <p className="text-xs text-[#2d4a3e]/70">
+              AIとの相性パターンが明確になりました
+            </p>
+            <p className="text-base leading-relaxed text-[#1a3328]">
+              {flow.layer2Sub}
+            </p>
+          </div>
           {errorMessage !== null ? (
             <p className="text-sm text-red-600" role="alert">
               {errorMessage}
             </p>
           ) : null}
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             <button
               type="button"
+              style={LAYER_CARD_QUICK}
+              onClick={() => void runEarlyExit(2)}
+              className="flex flex-col gap-2 rounded-2xl p-5 text-left shadow-sm transition hover:brightness-[1.02] active:scale-[0.99]"
+            >
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#52B788]">
+                {flow.layerTagQuick}
+              </span>
+              <span className="text-base font-semibold text-[#0a2e18]">
+                {flow.layer2ResultNow}
+              </span>
+              <span className="text-sm leading-snug text-[#2d4a3e]/85">
+                {flow.layerQuickDescription}
+              </span>
+            </button>
+            <button
+              type="button"
+              style={LAYER_CARD_DEEP}
               onClick={() => {
                 setErrorMessage(null);
                 setPhase("quiz");
                 setStep(20);
               }}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+              className="flex flex-col gap-2 rounded-2xl p-5 text-left shadow-sm transition hover:brightness-[1.02] active:scale-[0.99]"
             >
-              {flow.layer2Continue}
-            </button>
-            <button
-              type="button"
-              onClick={() => void runEarlyExit(2)}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-            >
-              {flow.layer2ResultNow}
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#3d9a6e]">
+                {flow.layerTagDeeper}
+              </span>
+              <span className="text-base font-semibold text-[#0a2e18]">
+                {flow.layer2Continue}
+              </span>
+              <span className="text-sm leading-snug text-[#2d4a3e]/85">
+                {flow.layer2Sub}
+              </span>
             </button>
           </div>
         </div>
@@ -631,39 +901,65 @@ export default function DiagnosisPage() {
 
   if (phase === "layer3-break") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
-        <div className="w-full max-w-lg space-y-8 text-center">
-          <p className="text-xs font-bold text-gray-400 mb-2">75% 完了</p>
-          <h2 className="text-xl font-semibold text-zinc-900">
-            {flow.layer3Heading}
-          </h2>
-          <p className="text-xs text-gray-400">あなたの詳細な活用スタイルが見えてきました</p>
-          <p className="text-base leading-relaxed text-zinc-800">
-            {flow.layer3Sub}
-          </p>
+      <main
+        className="flex min-h-screen flex-col items-center px-4 py-10"
+        style={LAYER_BREAK_BG}
+      >
+        <div className="flex w-full max-w-lg flex-col items-center gap-6 text-center">
+          <KompassLogo />
+          <LayerProgressRing percent={75} />
+          <div className="space-y-2">
+            <h2 className="text-xl font-semibold text-[#0a2e18]">
+              {flow.layer3Heading}
+            </h2>
+            <p className="text-xs text-[#2d4a3e]/70">
+              あなたの詳細な活用スタイルが見えてきました
+            </p>
+            <p className="text-base leading-relaxed text-[#1a3328]">
+              {flow.layer3Sub}
+            </p>
+          </div>
           {errorMessage !== null ? (
             <p className="text-sm text-red-600" role="alert">
               {errorMessage}
             </p>
           ) : null}
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             <button
               type="button"
+              style={LAYER_CARD_QUICK}
+              onClick={() => void runEarlyExit(3)}
+              className="flex flex-col gap-2 rounded-2xl p-5 text-left shadow-sm transition hover:brightness-[1.02] active:scale-[0.99]"
+            >
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#52B788]">
+                {flow.layerTagQuick}
+              </span>
+              <span className="text-base font-semibold text-[#0a2e18]">
+                {flow.layer3ResultNow}
+              </span>
+              <span className="text-sm leading-snug text-[#2d4a3e]/85">
+                {flow.layerQuickDescription}
+              </span>
+            </button>
+            <button
+              type="button"
+              style={LAYER_CARD_DEEP}
               onClick={() => {
                 setErrorMessage(null);
                 setPhase("quiz");
                 setStep(30);
               }}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+              className="flex flex-col gap-2 rounded-2xl p-5 text-left shadow-sm transition hover:brightness-[1.02] active:scale-[0.99]"
             >
-              {flow.layer3Continue}
-            </button>
-            <button
-              type="button"
-              onClick={() => void runEarlyExit(3)}
-              className="inline-flex flex-1 items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
-            >
-              {flow.layer3ResultNow}
+              <span className="text-[10px] font-bold tracking-[0.2em] text-[#3d9a6e]">
+                {flow.layerTagDeeper}
+              </span>
+              <span className="text-base font-semibold text-[#0a2e18]">
+                {flow.layer3Continue}
+              </span>
+              <span className="text-sm leading-snug text-[#2d4a3e]/85">
+                {flow.layer3Sub}
+              </span>
             </button>
           </div>
         </div>
@@ -676,18 +972,26 @@ export default function DiagnosisPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 py-10">
-      <div className="w-full max-w-lg">
-        <h1 className="mb-8 text-center text-xl font-semibold tracking-tight text-zinc-900">
-          {title}
-        </h1>
+    <main
+      className="flex min-h-screen flex-col px-4 py-8"
+      style={{
+        background:
+          "linear-gradient(160deg, #d4f0e2 0%, #eaf8f1 40%, #f5fcf8 100%)",
+      }}
+    >
+      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col">
+        <div className="mb-6 flex shrink-0 justify-center">
+          <KompassLogo />
+        </div>
 
-        <div className="flex justify-between text-xs text-gray-400 mb-1">
+        <p className="sr-only">{title}</p>
+
+        <div className="mb-1 flex justify-between text-xs text-[#2d4a3e]/70">
           <span>Q{step + 1}</span>
           <span>残り {total - step - 1} 問</span>
         </div>
         <div
-          className="mb-2 h-2 w-full overflow-hidden rounded-full bg-zinc-200"
+          className="mb-4 h-1 w-full overflow-hidden rounded-full bg-[#e8f7ef]"
           role="progressbar"
           aria-valuenow={step + 1}
           aria-valuemin={1}
@@ -695,21 +999,32 @@ export default function DiagnosisPage() {
           aria-label="診断の進捗"
         >
           <div
-            className="h-full rounded-full bg-zinc-800 transition-all"
-            style={{ width: `${progressRatio * 100}%` }}
+            className="h-1 rounded-full transition-all"
+            style={{
+              width: `${progressRatio * 100}%`,
+              backgroundColor: "#52B788",
+            }}
           />
         </div>
-        <div className="mb-8 flex justify-start">
+        <div className="mb-6 flex justify-start">
           <button
             type="button"
             onClick={handleBack}
-            className="text-sm font-medium text-zinc-600 underline-offset-2 hover:text-zinc-900 hover:underline"
+            className="text-sm font-medium text-[#2d4a3e] underline-offset-2 hover:text-[#0a2e18] hover:underline"
           >
             {step === 0 ? flow.backQuit : flow.backPrevious}
           </button>
         </div>
 
-        <p className="mb-8 text-center text-lg font-bold leading-relaxed text-zinc-800">
+        <p
+          className="mb-8 text-center leading-relaxed"
+          style={{
+            fontFamily: "Georgia, serif",
+            fontSize: "22px",
+            fontWeight: 700,
+            color: "#0a2e18",
+          }}
+        >
           {currentQuestion.prompt}
         </p>
 
@@ -719,22 +1034,76 @@ export default function DiagnosisPage() {
           </p>
         ) : null}
 
-        <ul className="flex flex-col gap-3">
-          {currentQuestion.options.map((opt) => (
-            <li key={`${currentQuestion.id}-${opt.value}`}>
-              <button
-                type="button"
-                onClick={() => void handleChoose(opt.value)}
-                className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium text-zinc-900 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2"
-              >
-                <span className="mr-2 font-semibold text-zinc-500">
-                  {opt.value}.
-                </span>
-                {opt.label}
-              </button>
-            </li>
-          ))}
+        <ul className="flex flex-1 flex-col gap-3">
+          {currentQuestion.options.map((opt) => {
+            const selected = quizSelection === opt.value;
+            return (
+              <li key={`${currentQuestion.id}-${opt.value}`}>
+                <button
+                  type="button"
+                  onClick={() => setQuizSelection(opt.value)}
+                  className="w-full text-sm font-medium transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-[#52B788] focus-visible:ring-offset-2"
+                  style={
+                    selected
+                      ? {
+                          background: "#52B788",
+                          border: "1.5px solid #52B788",
+                          color: "#fff",
+                          borderRadius: "14px",
+                          padding: "15px 18px",
+                          textAlign: "center",
+                          boxShadow: "0 4px 16px rgba(82,183,136,0.35)",
+                        }
+                      : {
+                          background: "rgba(255,255,255,0.7)",
+                          border: "1.5px solid rgba(82,183,136,0.25)",
+                          borderRadius: "14px",
+                          padding: "15px 18px",
+                          textAlign: "center",
+                          color: "#0a2e18",
+                        }
+                  }
+                >
+                  <span
+                    className="mr-2 font-semibold"
+                    style={{ color: selected ? "rgba(255,255,255,0.9)" : "#6b8a7a" }}
+                  >
+                    {opt.value}.
+                  </span>
+                  {opt.label}
+                </button>
+              </li>
+            );
+          })}
         </ul>
+
+        <div className="mt-8 shrink-0 pb-4">
+          <button
+            type="button"
+            disabled={quizSelection === null}
+            onClick={() => {
+              if (quizSelection === null) {
+                return;
+              }
+              void handleChoose(quizSelection);
+            }}
+            className="w-full rounded-[14px] py-[15px] text-sm font-bold transition-opacity disabled:cursor-not-allowed"
+            style={
+              quizSelection === null
+                ? {
+                    background: "rgba(82,183,136,0.15)",
+                    color: "#aaa",
+                  }
+                : {
+                    background: "#1a7a4a",
+                    color: "#fff",
+                    boxShadow: "0 4px 20px rgba(26,122,74,0.35)",
+                  }
+            }
+          >
+            次へ
+          </button>
+        </div>
       </div>
     </main>
   );

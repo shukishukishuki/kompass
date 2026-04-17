@@ -46,7 +46,7 @@ export default async function TypeResultPage({
     notFound();
   }
 
-  const color = AI_THEME_COLORS[character.aiKind] ?? "#7C3AED";
+  const color = AI_THEME_COLORS[character.aiKind] ?? "#C9A84C";
   const guideTypeId = AI_KIND_TO_GUIDE[typeId] ?? typeId;
 
   return (

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AI_THEME_COLORS } from "@/types/ai";
 
 export async function generateMetadata() {
   return {
@@ -24,7 +25,7 @@ const AI_GUIDES: AiGuide[] = [
   {
     id: "chatgpt",
     name: "ChatGPT",
-    color: "#10A37F",
+    color: AI_THEME_COLORS.chatgpt,
     tagline: "なんでも屋の万能選手",
     readTime: "初心者向け",
     description:
@@ -40,7 +41,7 @@ const AI_GUIDES: AiGuide[] = [
   {
     id: "claude",
     name: "Claude",
-    color: "#CC785C",
+    color: AI_THEME_COLORS.claude,
     tagline: "思考の深さで選ぶなら",
     readTime: "中級者向け",
     description:
@@ -56,7 +57,7 @@ const AI_GUIDES: AiGuide[] = [
   {
     id: "gemini",
     name: "Gemini",
-    color: "#4285F4",
+    color: AI_THEME_COLORS.gemini,
     tagline: "最新情報を即座に",
     readTime: "初心者向け",
     description:
@@ -72,7 +73,7 @@ const AI_GUIDES: AiGuide[] = [
   {
     id: "perplexity",
     name: "Perplexity",
-    color: "#20B2AA",
+    color: AI_THEME_COLORS.perplexity,
     tagline: "根拠付きで調べるなら",
     readTime: "中級者向け",
     description:
@@ -88,7 +89,7 @@ const AI_GUIDES: AiGuide[] = [
   {
     id: "copilot",
     name: "Copilot",
-    color: "#0078D4",
+    color: AI_THEME_COLORS.copilot,
     tagline: "仕事の整理・構造化に",
     readTime: "ビジネス向け",
     description:
@@ -198,12 +199,12 @@ export default async function GuidePage({
         </p>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { id: "claude", name: "共感ジャンキー", color: "#CC785C" },
-            { id: "copilot", name: "整理の鬼", color: "#0078D4" },
-            { id: "perplexity", name: "裏取りマニア", color: "#20B2AA" },
-            { id: "chatgpt", name: "丸投げ屋", color: "#10A37F" },
-            { id: "gemini", name: "情報スナイパー", color: "#4285F4" },
-            { id: "jiyujin", name: "AI遊牧民", color: "#7C3AED" },
+            { id: "claude", name: "共感ジャンキー", color: AI_THEME_COLORS.claude },
+            { id: "copilot", name: "整理の鬼", color: AI_THEME_COLORS.copilot },
+            { id: "perplexity", name: "裏取りマニア", color: AI_THEME_COLORS.perplexity },
+            { id: "chatgpt", name: "丸投げ屋", color: AI_THEME_COLORS.chatgpt },
+            { id: "gemini", name: "情報スナイパー", color: AI_THEME_COLORS.gemini },
+            { id: "jiyujin", name: "AI遊牧民", color: AI_THEME_COLORS.jiyujin },
           ].map((type) => (
             <a
               key={type.id}
