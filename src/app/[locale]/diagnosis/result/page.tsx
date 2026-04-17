@@ -1141,12 +1141,6 @@ export default function DiagnosisResultPage() {
 
         <div className="relative z-10 mx-auto max-w-5xl">
           <p
-            className="text-xs font-medium uppercase tracking-wide"
-            style={{ color: heroTheme.cText }}
-          >
-            {heroTypeEnLine}
-          </p>
-          <p
             className="mb-4 mt-1 text-center text-xs"
             style={{ color: `${heroTheme.cText}99` }}
           >
@@ -1911,7 +1905,8 @@ export default function DiagnosisResultPage() {
                 新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
               </p>
               <form
-                className="flex justify-center items-center gap-2 w-full"
+                className="w-full"
+                style={{ width: "fit-content", margin: "0 auto" }}
                 onSubmit={(e) => {
                   e.preventDefault();
                   void handleFollowupSubmit();
@@ -1931,9 +1926,20 @@ export default function DiagnosisResultPage() {
                   }}
                   placeholder="you@example.com"
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full max-w-[280px] rounded-md border px-3 py-2 text-center text-sm focus-visible:ring-2 focus-visible:outline-none"
+                  style={{
+                    display: "block",
+                    margin: "0 auto",
+                    maxWidth: 280,
+                    width: "100%",
+                    textAlign: "center",
+                  }}
                   required
                 />
-                <Button type="submit" disabled={followupStatus === "saving"}>
+                <Button
+                  type="submit"
+                  disabled={followupStatus === "saving"}
+                  style={{ display: "block", margin: "8px auto 0" }}
+                >
                   {followupStatus === "saving" ? "登録中..." : "無料で受け取る"}
                 </Button>
               </form>
@@ -1984,7 +1990,7 @@ export default function DiagnosisResultPage() {
             <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center flex flex-col items-center">
               <p className={BOTTOM_SECTION_HEADING_CLASS}>MBTI入力</p>
               <p className="mb-3 text-sm text-gray-900">{resultPageCopy.mbtiCardTitle}</p>
-              <div className="flex justify-center items-center gap-2 w-full">
+              <div className="w-full" style={{ width: "fit-content", margin: "0 auto" }}>
                 <label className="block min-w-0">
                   <span className="sr-only">MBTI</span>
                   <input
@@ -2006,12 +2012,20 @@ export default function DiagnosisResultPage() {
                     }}
                     placeholder={resultPageCopy.mbtiPlaceholder}
                     className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full max-w-[160px] rounded-md border px-3 py-2 text-center text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
+                    style={{
+                      display: "block",
+                      margin: "0 auto",
+                      maxWidth: 160,
+                      width: "100%",
+                      textAlign: "center",
+                    }}
                   />
                 </label>
                 <Button
                   type="button"
                   onClick={() => handleMbtiApply()}
                   disabled={scoringSnapshot === null}
+                  style={{ display: "block", margin: "8px auto 0" }}
                 >
                   {resultPageCopy.mbtiApply}
                 </Button>
