@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { buildFollowupEmailTemplate } from "@/lib/email-templates";
+import {
+  buildFollowupEmailTemplate,
+  buildResultSaveEmailTemplate,
+} from "@/lib/email-templates";
+
+type EmailType = "result_save" | "welcome";
 
 interface SendEmailBody {
   email?: unknown;
   ai_type?: unknown;
   layer_completed?: unknown;
+  emailType?: unknown;
 }
 
 function isEmail(value: unknown): value is string {
@@ -15,19 +21,39 @@ function isEmail(value: unknown): value is string {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
+function resolveEmailType(value: unknown): EmailType | null {
+  if (value === undefined) {
+    return "welcome";
+  }
+  if (value === "result_save" || value === "welcome") {
+    return value;
+  }
+  return null;
+}
+
 /**
  * POST: Resendでフォローアップメール1通目を即時送信
  */
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     const body = (await request.json()) as SendEmailBody;
+    const emailType = resolveEmailType(body.emailType);
     if (!isEmail(body.email)) {
       return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
     }
-    if (typeof body.ai_type !== "string" || body.ai_type.trim() === "") {
+    if (emailType === null) {
+      return NextResponse.json({ ok: false, error: "invalid_email_type" }, { status: 400 });
+    }
+    if (
+      emailType === "welcome" &&
+      (typeof body.ai_type !== "string" || body.ai_type.trim() === "")
+    ) {
       return NextResponse.json({ ok: false, error: "invalid_ai_type" }, { status: 400 });
     }
-    if (typeof body.layer_completed !== "number" || Number.isNaN(body.layer_completed)) {
+    if (
+      emailType === "welcome" &&
+      (typeof body.layer_completed !== "number" || Number.isNaN(body.layer_completed))
+    ) {
       return NextResponse.json(
         { ok: false, error: "invalid_layer_completed" },
         { status: 400 }
@@ -40,16 +66,16 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     const resend = new Resend(apiKey);
-    const { subject, html } = buildFollowupEmailTemplate(
-      body.ai_type,
-      body.layer_completed
-    );
+    const template =
+      emailType === "result_save"
+        ? buildResultSaveEmailTemplate()
+        : buildFollowupEmailTemplate(body.ai_type as string, body.layer_completed as number);
 
     await resend.emails.send({
       from: "onboarding@resend.dev",
       to: body.email.trim(),
-      subject,
-      html,
+      subject: template.subject,
+      html: template.html,
     });
 
     return NextResponse.json({ ok: true });

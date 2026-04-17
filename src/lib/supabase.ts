@@ -66,6 +66,8 @@ interface SaveFollowupMeta {
   layerCompleted?: number | null;
 }
 
+type EmailType = "result_save" | "welcome";
+
 /**
  * 診断結果を diagnosis_results に保存する
  * @returns 成功時は挿入行の id、失敗時は null
@@ -219,6 +221,24 @@ function isUsersColumnMissingError(value: unknown): boolean {
   );
 }
 
+async function postFollowupEmail(
+  email: string,
+  aiType: string,
+  layerCompleted: number,
+  emailType: EmailType
+): Promise<void> {
+  await fetch("/api/send-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      ai_type: aiType,
+      layer_completed: layerCompleted,
+      emailType,
+    }),
+  });
+}
+
 /**
  * フォローアップ用メールを users テーブルへ保存する
  * テーブルが未作成の場合のみ warn で握りつぶす
@@ -264,15 +284,12 @@ export async function saveUserFollowupEmail(
     }
 
     try {
-      await fetch("/api/send-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          ai_type: meta?.aiType ?? diagnosisType,
-          layer_completed: meta?.layerCompleted ?? 1,
-        }),
-      });
+      await postFollowupEmail(
+        email,
+        meta?.aiType ?? diagnosisType,
+        meta?.layerCompleted ?? 1,
+        "welcome"
+      );
     } catch {
       // メール送信失敗はUXを止めない
     }
@@ -286,6 +303,73 @@ export async function saveUserFollowupEmail(
       return false;
     }
     console.error("[Supabase] saveUserFollowupEmail で例外が発生しました:", e);
+    return false;
+  }
+}
+
+/**
+ * 結果保存導線用：users 保存後に結果URLメール + タイプ別メールを即時送信する
+ */
+export async function saveUserResultEmail(
+  email: string,
+  diagnosisType: string,
+  meta?: SaveFollowupMeta
+): Promise<boolean> {
+  try {
+    const supabase = createSupabaseClient();
+    const basePayload: UsersInsertPayload = {
+      email,
+      diagnosis_type: diagnosisType,
+    };
+
+    const payloadWithMeta: UsersInsertPayload = {
+      ...basePayload,
+      ai_type: meta?.aiType ?? null,
+      layer_completed: meta?.layerCompleted ?? null,
+      email_sent_at: new Date().toISOString(),
+    };
+
+    let { error } = await supabase.from("users").insert(payloadWithMeta);
+    if (error !== null && isUsersColumnMissingError(error)) {
+      const retry = await supabase.from("users").insert(basePayload);
+      error = retry.error;
+    }
+
+    if (error !== null) {
+      if (isUsersTableMissingError(error)) {
+        console.warn(
+          "[Supabase] users テーブル未作成のため、メール登録をスキップしました。"
+        );
+        return false;
+      }
+      console.error(
+        "[Supabase] メール登録に失敗しました:",
+        error.message,
+        error
+      );
+      return false;
+    }
+
+    try {
+      const aiType = meta?.aiType ?? diagnosisType;
+      const layerCompleted = meta?.layerCompleted ?? 1;
+      await Promise.all([
+        postFollowupEmail(email, aiType, layerCompleted, "result_save"),
+        postFollowupEmail(email, aiType, layerCompleted, "welcome"),
+      ]);
+    } catch {
+      // メール送信失敗はUXを止めない
+    }
+
+    return true;
+  } catch (e) {
+    if (isUsersTableMissingError(e)) {
+      console.warn(
+        "[Supabase] users テーブル未作成のため、メール登録をスキップしました。"
+      );
+      return false;
+    }
+    console.error("[Supabase] saveUserResultEmail で例外が発生しました:", e);
     return false;
   }
 }

@@ -36,6 +36,7 @@ import {
 import {
   getDiagnosisStats,
   saveUserFollowupEmail,
+  saveUserResultEmail,
   type DiagnosisTypeStats,
 } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
@@ -663,6 +664,12 @@ export default function DiagnosisResultPage() {
     "idle" | "saving" | "saved" | "error"
   >("idle");
   const [followupError, setFollowupError] = useState<string | null>(null);
+  const [resultSaveExpanded, setResultSaveExpanded] = useState(false);
+  const [resultSaveEmail, setResultSaveEmail] = useState("");
+  const [resultSaveStatus, setResultSaveStatus] = useState<
+    "idle" | "saving" | "saved" | "error"
+  >("idle");
+  const [resultSaveError, setResultSaveError] = useState<string | null>(null);
   /** ヒーロー下タブの見た目用（詳細・AI活用法は該当セクションへスクロール） */
   const [heroTab, setHeroTab] = useState<"result" | "detail" | "usage">(
     "result"
@@ -970,6 +977,36 @@ export default function DiagnosisResultPage() {
     setFollowupStatus("error");
     setFollowupError("現在は登録できません。時間をおいて再度お試しください。");
   }, [result, followupEmail, displayPersonalityJa, resolvedTypeCharacter.aiKind]);
+
+  const handleResultSaveSubmit = useCallback(async () => {
+    if (result === null) {
+      return;
+    }
+    const email = resultSaveEmail.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setResultSaveError("有効なメールアドレスを入力してください。");
+      setResultSaveStatus("error");
+      return;
+    }
+
+    setResultSaveStatus("saving");
+    setResultSaveError(null);
+    const saved = await saveUserResultEmail(email, displayPersonalityJa, {
+      aiType: resolvedTypeCharacter.aiKind,
+      layerCompleted: result.layerCompleted,
+    });
+
+    if (saved) {
+      setResultSaveStatus("saved");
+      setResultSaveEmail("");
+      toast.success("保存しました。メールを確認してください");
+      return;
+    }
+
+    setResultSaveStatus("error");
+    setResultSaveError("現在は保存できません。時間をおいて再度お試しください。");
+  }, [result, resultSaveEmail, displayPersonalityJa, resolvedTypeCharacter.aiKind]);
 
   if (!hydrated) {
     return (
@@ -1548,6 +1585,66 @@ export default function DiagnosisResultPage() {
           </div>
         </div>
       </section>
+
+      {result.layerCompleted >= 1 ? (
+        <div className="mx-auto mt-6 w-full max-w-2xl px-6">
+          <Card className="text-left border-none shadow-md">
+            <CardContent className="space-y-4 pt-6">
+              <button
+                type="button"
+                aria-label="この診断結果を保存して、後から見返す"
+                onClick={() => {
+                  setResultSaveExpanded((prev) => !prev);
+                  setResultSaveError(null);
+                  if (resultSaveStatus !== "idle") {
+                    setResultSaveStatus("idle");
+                  }
+                }}
+                className="w-full rounded-xl px-5 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90"
+                style={{
+                  backgroundColor: heroTheme.primary,
+                }}
+              >
+                この診断結果を保存して、後から見返す
+              </button>
+              {resultSaveExpanded ? (
+                <form
+                  className="flex flex-col gap-3 sm:flex-row sm:items-center"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void handleResultSaveSubmit();
+                  }}
+                >
+                  <input
+                    type="email"
+                    name="result-save-email"
+                    autoComplete="email"
+                    value={resultSaveEmail}
+                    onChange={(e) => {
+                      setResultSaveEmail(e.target.value);
+                      setResultSaveError(null);
+                      if (resultSaveStatus !== "idle") {
+                        setResultSaveStatus("idle");
+                      }
+                    }}
+                    placeholder="you@example.com"
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                    required
+                  />
+                  <Button type="submit" disabled={resultSaveStatus === "saving"}>
+                    {resultSaveStatus === "saving" ? "保存中..." : "保存する"}
+                  </Button>
+                </form>
+              ) : null}
+              {resultSaveError !== null ? (
+                <p className="text-sm text-destructive" role="alert">
+                  {resultSaveError}
+                </p>
+              ) : null}
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
 
       {result.layerCompleted < 4 && remainingQuestions > 0 ? (
         <div className="mx-auto mt-8 w-full max-w-2xl px-6">

@@ -7,6 +7,26 @@ export interface FollowupEmailTemplate {
   html: string;
 }
 
+/**
+ * 結果保存時に送る結果URLメールを作成する
+ */
+export function buildResultSaveEmailTemplate(): FollowupEmailTemplate {
+  const subject = "【Kompass】あなたの診断結果を保存しました";
+  const html = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1f2937; line-height: 1.75; padding: 16px;">
+      <h1 style="font-size: 20px; margin: 0 0 14px;">${escapeHtml(subject)}</h1>
+      <p style="margin: 0 0 10px;">診断結果はこちらから確認できます：</p>
+      <p style="margin: 0 0 14px;">
+        <a href="https://kompass-rosy.vercel.app/ja/diagnosis/result">https://kompass-rosy.vercel.app/ja/diagnosis/result</a>
+      </p>
+      <p style="margin: 0 0 16px; color: #4b5563;">
+        いつでも見返せるようブックマークもおすすめです。
+      </p>
+    </div>
+  `;
+  return { subject, html };
+}
+
 function resolveTypeId(aiType: string): TypeId | null {
   const raw = aiType.trim();
   if (raw === "") {
