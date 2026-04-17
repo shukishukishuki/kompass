@@ -261,6 +261,18 @@ export default async function LocaleHomePage({
               </div>
             ))}
           </div>
+          <p
+            style={{
+              textAlign: "center",
+              fontSize: 13,
+              letterSpacing: "0.25em",
+              color: "#888",
+              marginTop: 12,
+              fontFamily: "Georgia, serif",
+            }}
+          >
+            — KOMPASS —
+          </p>
           <h1
             className="mt-6 whitespace-pre-line text-4xl leading-tight text-slate-900 md:text-6xl"
             style={{ fontWeight: 400, fontFamily: "Georgia, serif" }}
