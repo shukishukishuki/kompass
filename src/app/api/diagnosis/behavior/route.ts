@@ -47,6 +47,24 @@ export async function POST(request: Request): Promise<NextResponse> {
     if (o.clicked_share === true) {
       patch.clicked_share = true;
     }
+    if (
+      typeof o.ai_execution_feedback === "string" &&
+      (o.ai_execution_feedback === "good" ||
+        o.ai_execution_feedback === "meh" ||
+        o.ai_execution_feedback === "bad")
+    ) {
+      patch.ai_execution_feedback = o.ai_execution_feedback;
+    }
+    if (
+      typeof o.task_type === "string" &&
+      (o.task_type === "writing" ||
+        o.task_type === "coding" ||
+        o.task_type === "research" ||
+        o.task_type === "idea" ||
+        o.task_type === "other")
+    ) {
+      patch.task_type = o.task_type;
+    }
     if (o.visited_at === true) {
       patch.visited_at = new Date().toISOString();
     }

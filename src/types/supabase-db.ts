@@ -20,6 +20,8 @@ export interface DiagnosisResultsBehaviorPatch {
   clicked_ai_button?: string | null;
   clicked_prompt_copy?: boolean | null;
   clicked_share?: boolean | null;
+  ai_execution_feedback?: string | null;
+  task_type?: string | null;
   visited_at?: string | null;
 }
 

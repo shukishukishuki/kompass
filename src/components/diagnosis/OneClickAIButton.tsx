@@ -1,6 +1,11 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { toast } from "sonner";
 import { enqueueDiagnosisBehaviorLog } from "@/lib/diagnosis-behavior-log";
 import { AI_THEME_COLORS, type AiKind } from "@/types/ai";
@@ -80,6 +85,17 @@ const ORCHESTRATOR_PARALLEL_BUTTONS: readonly { label: string; url: string }[] =
   { label: "ChatGPT", url: AI_URLS.chatgpt },
 ] as const;
 
+const TASK_TYPE_OPTIONS = [
+  { value: "writing", label: "📝 文章" },
+  { value: "coding", label: "💻 コード" },
+  { value: "research", label: "🔍 調査" },
+  { value: "idea", label: "💡 アイデア" },
+  { value: "other", label: "その他" },
+] as const;
+
+type TaskType = (typeof TASK_TYPE_OPTIONS)[number]["value"];
+type AiExecutionFeedback = "good" | "meh" | "bad";
+
 interface OneClickAIButtonProps {
   /** 診断・ガイド共通の AiKind（jiyujin は遊牧民） */
   typeId: AiKind;
@@ -108,6 +124,22 @@ export function OneClickAIButton({
   const introPrompt = INTRO_PROMPTS[typeId];
   const label = AI_LABELS[typeId];
   const primaryUrl = PRIMARY_URLS[typeId];
+  const [taskType, setTaskType] = useState<TaskType | null>(null);
+  const [showFeedbackPrompt, setShowFeedbackPrompt] = useState(false);
+  const [showFeedbackThanks, setShowFeedbackThanks] = useState(false);
+  const feedbackTimerRef = useRef<number | null>(null);
+  const thanksTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (feedbackTimerRef.current !== null) {
+        window.clearTimeout(feedbackTimerRef.current);
+      }
+      if (thanksTimerRef.current !== null) {
+        window.clearTimeout(thanksTimerRef.current);
+      }
+    };
+  }, []);
 
   /**
    * モバイルのポップアップブロック回避のため a 要素で遷移する
@@ -122,6 +154,18 @@ export function OneClickAIButton({
 
   const handleMainUse = async (url: string, aiNameForLog: string) => {
     openUrlInNewTab(url);
+    if (feedbackTimerRef.current !== null) {
+      window.clearTimeout(feedbackTimerRef.current);
+    }
+    if (thanksTimerRef.current !== null) {
+      window.clearTimeout(thanksTimerRef.current);
+    }
+    setShowFeedbackPrompt(false);
+    setShowFeedbackThanks(false);
+    feedbackTimerRef.current = window.setTimeout(() => {
+      setShowFeedbackPrompt(true);
+    }, 3000);
+
     try {
       await navigator.clipboard.writeText(copyPrompt);
       toast.success("プロンプトをコピーしました。貼り付けてすぐ使えます");
@@ -130,11 +174,34 @@ export function OneClickAIButton({
           recordId: diagnosisRecordId.trim(),
           clicked_ai_button: aiNameForLog,
           clicked_prompt_copy: true,
+          task_type: taskType ?? undefined,
         });
       }
     } catch {
       toast.error("コピーに失敗しました。ブラウザの設定を確認してください。");
     }
+  };
+
+  const handleFeedback = (feedback: AiExecutionFeedback) => {
+    setShowFeedbackPrompt(false);
+    setShowFeedbackThanks(true);
+    if (thanksTimerRef.current !== null) {
+      window.clearTimeout(thanksTimerRef.current);
+    }
+    thanksTimerRef.current = window.setTimeout(() => {
+      setShowFeedbackThanks(false);
+    }, 2000);
+    if (diagnosisRecordId !== null && diagnosisRecordId.trim() !== "") {
+      enqueueDiagnosisBehaviorLog({
+        recordId: diagnosisRecordId.trim(),
+        ai_execution_feedback: feedback,
+      });
+    }
+  };
+
+  const handleFeedbackSkip = () => {
+    setShowFeedbackPrompt(false);
+    setShowFeedbackThanks(false);
   };
 
   const handleIntroOnly = async () => {
@@ -177,9 +244,53 @@ export function OneClickAIButton({
     cursor: "pointer",
   };
 
+  const feedbackChoiceStyle: CSSProperties = {
+    padding: "6px 14px",
+    borderRadius: 20,
+    border: "1px solid #ddd",
+    background: "#fff",
+    fontSize: 13,
+    cursor: "pointer",
+  };
+
   return (
     <div className="w-full space-y-3">
       <p style={actionTextStyle}>💡 今日のアクション：{todayLine}</p>
+      <div style={{ marginBottom: 10 }}>
+        <p
+          style={{
+            fontSize: 12,
+            color: "#666",
+            marginBottom: 6,
+          }}
+        >
+          今日の用途は？
+        </p>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {TASK_TYPE_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setTaskType(option.value)}
+              style={{
+                fontSize: 12,
+                padding: "4px 12px",
+                borderRadius: 20,
+                border:
+                  taskType === option.value
+                    ? `1px solid ${accentColor}`
+                    : "1px solid #ddd",
+                backgroundColor:
+                  taskType === option.value ? accentColor : "#fff",
+                color: taskType === option.value ? "#fff" : "#666",
+                cursor: "pointer",
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      </div>
       {typeId === "jiyujin" ? (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {ORCHESTRATOR_PARALLEL_BUTTONS.map((entry) => (
@@ -205,6 +316,55 @@ export function OneClickAIButton({
       <button type="button" onClick={() => void handleIntroOnly()} style={introButtonStyle}>
         自分の性格に合った使い方をAIに指示する
       </button>
+      {showFeedbackPrompt ? (
+        <div
+          style={{
+            marginTop: 12,
+            padding: "10px 16px",
+            background: "rgba(255,255,255,0.8)",
+            borderRadius: 12,
+            fontSize: 13,
+            textAlign: "center",
+            position: "relative",
+          }}
+        >
+          <button
+            type="button"
+            aria-label="フィードバックを閉じる"
+            onClick={handleFeedbackSkip}
+            style={{
+              position: "absolute",
+              top: 6,
+              right: 8,
+              border: "none",
+              background: "transparent",
+              color: "#888",
+              cursor: "pointer",
+              fontSize: 14,
+              lineHeight: 1,
+            }}
+          >
+            ×
+          </button>
+          <p style={{ marginBottom: 8, color: "#444" }}>使ってみてどうでしたか？</p>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+            <button type="button" onClick={() => handleFeedback("good")} style={feedbackChoiceStyle}>
+              👍 よかった
+            </button>
+            <button type="button" onClick={() => handleFeedback("meh")} style={feedbackChoiceStyle}>
+              😐 まあまあ
+            </button>
+            <button type="button" onClick={() => handleFeedback("bad")} style={feedbackChoiceStyle}>
+              👎 いまいち
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {showFeedbackThanks ? (
+        <p style={{ marginTop: 12, textAlign: "center", fontSize: 13, color: "#444" }}>
+          ありがとうございました！
+        </p>
+      ) : null}
     </div>
   );
 }

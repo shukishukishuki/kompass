@@ -8,6 +8,8 @@ export interface DiagnosisBehaviorLogPayload {
   clicked_ai_button?: string;
   clicked_prompt_copy?: boolean;
   clicked_share?: boolean;
+  ai_execution_feedback?: "good" | "meh" | "bad";
+  task_type?: "writing" | "coding" | "research" | "idea" | "other";
   /** true のとき API 側で visited_at を現在時刻に更新する */
   markVisited?: boolean;
 }
@@ -32,6 +34,8 @@ export function enqueueDiagnosisBehaviorLog(
           clicked_ai_button: payload.clicked_ai_button,
           clicked_prompt_copy: payload.clicked_prompt_copy,
           clicked_share: payload.clicked_share,
+          ai_execution_feedback: payload.ai_execution_feedback,
+          task_type: payload.task_type,
           visited_at: payload.markVisited === true,
         }),
       });

@@ -38,6 +38,8 @@ alter table diagnosis_results add column if not exists clicked_ai_button text;
 alter table diagnosis_results add column if not exists clicked_prompt_copy boolean;
 alter table diagnosis_results add column if not exists clicked_share boolean;
 alter table diagnosis_results add column if not exists visited_at timestamptz;
+alter table diagnosis_results add column if not exists ai_execution_feedback text;
+alter table diagnosis_results add column if not exists task_type text;
 
 drop policy if exists "allow update diagnosis_results behavior" on diagnosis_results;
 create policy "allow update diagnosis_results behavior" on diagnosis_results
