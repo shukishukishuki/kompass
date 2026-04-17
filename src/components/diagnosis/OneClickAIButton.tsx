@@ -56,15 +56,6 @@ const AI_LABELS: Record<AiKind, string> = {
   jiyujin: "Claude",
 };
 
-const CHARACTER_NAMES: Record<AiKind, string> = {
-  claude: "共感ジャンキー",
-  chatgpt: "丸投げ屋",
-  gemini: "情報スナイパー",
-  perplexity: "裏取りマニア",
-  copilot: "整理の鬼",
-  jiyujin: "AI遊牧民",
-};
-
 const AI_URLS: Record<Exclude<AiKind, "jiyujin">, string> = {
   claude: "https://claude.ai",
   chatgpt: "https://chatgpt.com",
@@ -111,7 +102,6 @@ export function OneClickAIButton({
   const introPrompt = INTRO_PROMPTS[typeId];
   const label = AI_LABELS[typeId];
   const primaryUrl = PRIMARY_URLS[typeId];
-  const characterName = CHARACTER_NAMES[typeId];
 
   /**
    * モバイルのポップアップブロック回避のため a 要素で遷移する
@@ -150,17 +140,11 @@ export function OneClickAIButton({
     }
   };
 
-  const handleXShare = () => {
-    const shareText = `診断したら「${characterName}」だった。\n\nあなたのベースAIは何？ → https://kompass-rosy.vercel.app\n#Kompass #AI診断`;
-    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-    openUrlInNewTab(shareUrl);
-  };
-
   const actionTextStyle: CSSProperties = {
     color: actionLineColor,
-    fontSize: 13,
-    opacity: 0.8,
-    marginBottom: 8,
+    fontSize: 14,
+    fontWeight: 600,
+    marginBottom: 12,
   };
 
   const mainButtonStyle: CSSProperties = {
@@ -187,21 +171,9 @@ export function OneClickAIButton({
     cursor: "pointer",
   };
 
-  const shareButtonStyle: CSSProperties = {
-    backgroundColor: "#000",
-    color: "#fff",
-    padding: "14px 24px",
-    fontSize: 15,
-    fontWeight: 700,
-    width: "100%",
-    border: "none",
-    borderRadius: 12,
-    cursor: "pointer",
-  };
-
   return (
     <div className="w-full space-y-3">
-      <p style={actionTextStyle}>今日のアクション：{todayLine}</p>
+      <p style={actionTextStyle}>💡 今日のアクション：{todayLine}</p>
       <button
         type="button"
         onClick={() => void handleMainUse(primaryUrl, label)}
@@ -211,9 +183,6 @@ export function OneClickAIButton({
       </button>
       <button type="button" onClick={() => void handleIntroOnly()} style={introButtonStyle}>
         自分の性格に合った使い方をAIに指示する
-      </button>
-      <button type="button" onClick={handleXShare} style={shareButtonStyle}>
-        Xでシェアする
       </button>
     </div>
   );

@@ -1275,8 +1275,8 @@ export default function DiagnosisResultPage() {
         </nav>
       </section>
 
-      <section className="mx-auto mt-8 w-full max-w-5xl px-4 md:px-6">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-[3fr_2fr]">
+      <section className="mx-auto mt-8 w-full max-w-2xl px-6">
+        <div className="space-y-8">
           <div className="space-y-6">
             {personalityDetailSections.length > 0 ? (
               <section className="space-y-3">
@@ -1519,7 +1519,7 @@ export default function DiagnosisResultPage() {
       </section>
 
       {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-        <div className="mx-auto mt-8 w-full max-w-5xl px-4 md:px-6">
+        <div className="mx-auto mt-8 w-full max-w-2xl px-6">
           <div
             style={{
               background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
@@ -1577,7 +1577,7 @@ export default function DiagnosisResultPage() {
       ) : null}
 
       {result.layerCompleted >= 1 ? (
-      <div className="mx-auto mt-8 w-full max-w-5xl px-4 md:px-6">
+      <div className="mx-auto mt-8 w-full max-w-2xl px-6">
         <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
           SHARE YOUR TYPE
         </p>
@@ -1651,7 +1651,7 @@ export default function DiagnosisResultPage() {
       ) : null}
 
       {/* 下部ゾーン：スクロールで詳細 */}
-      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-10 md:px-6">
+      <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-10">
         {personalityBlock !== null ? (
           <>
             {result.layerCompleted >= 4 ? (
