@@ -71,12 +71,16 @@ export async function POST(request: Request): Promise<NextResponse> {
         ? buildResultSaveEmailTemplate()
         : buildFollowupEmailTemplate(body.ai_type as string, body.layer_completed as number);
 
-    await resend.emails.send({
+    const sendResult = await resend.emails.send({
       from: "onboarding@resend.dev",
       to: body.email.trim(),
       subject: template.subject,
       html: template.html,
     });
+    if (sendResult.error !== null) {
+      console.error("[API /api/send-email] Resend送信エラー:", sendResult.error);
+      return NextResponse.json({ ok: false, error: "send_failed" }, { status: 500 });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

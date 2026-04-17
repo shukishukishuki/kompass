@@ -221,6 +221,28 @@ function isUsersColumnMissingError(value: unknown): boolean {
   );
 }
 
+/**
+ * users.email の一意制約違反か
+ */
+function isUsersDuplicateEmailError(value: unknown): boolean {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const o = value as Record<string, unknown>;
+  const code = o.code;
+  const message = o.message;
+  if (code === "23505") {
+    return true;
+  }
+  if (typeof message !== "string") {
+    return false;
+  }
+  return (
+    message.includes("duplicate key value violates unique constraint") &&
+    message.includes("users_email_key")
+  );
+}
+
 async function postFollowupEmail(
   email: string,
   aiType: string,
@@ -342,12 +364,18 @@ export async function saveUserResultEmail(
         );
         return false;
       }
+      if (isUsersDuplicateEmailError(error)) {
+        console.warn(
+          "[Supabase] 既存メールのため users 追加入力をスキップし、メール送信のみ継続します。"
+        );
+      } else {
       console.error(
         "[Supabase] メール登録に失敗しました:",
         error.message,
         error
       );
-      return false;
+        return false;
+      }
     }
 
     try {
@@ -357,7 +385,8 @@ export async function saveUserResultEmail(
         postFollowupEmail(email, aiType, layerCompleted, "result_save"),
         postFollowupEmail(email, aiType, layerCompleted, "welcome"),
       ]);
-    } catch {
+    } catch (emailError) {
+      console.error("[Supabase] 結果保存メール送信に失敗しました:", emailError);
       // メール送信失敗はUXを止めない
     }
 
