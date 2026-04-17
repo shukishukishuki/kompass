@@ -251,14 +251,14 @@ export default async function LocaleHomePage({
             ].map((char, i) => (
               <div
                 key={i}
-                className="h-12 w-12 overflow-hidden rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
+                className="h-16 w-16 overflow-visible rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
                 style={{ backgroundColor: `${char.color}33` }}
               >
                 <img
                   src={char.src}
                   alt=""
-                  width={48}
-                  height={48}
+                  width={64}
+                  height={64}
                   className="h-full w-full object-contain"
                 />
               </div>
@@ -460,8 +460,8 @@ export default async function LocaleHomePage({
               <img
                 src={type.img}
                 alt={type.name}
-                width={56}
-                height={56}
+                width={78}
+                height={78}
                 className="shrink-0 rounded-full object-contain"
                 style={{ backgroundColor: `${type.color}33` }}
               />

@@ -104,13 +104,13 @@ export default function GuideTypeDetailPage() {
           className="rounded-3xl border p-6 text-white shadow-sm md:p-10"
           style={{ backgroundColor: accentColor, borderColor: accentColor }}
         >
-          <div className="flex flex-col items-center gap-4 text-center">
+          <div className="flex flex-col items-center gap-4 overflow-visible text-center">
             <Image
               src={character.imageSrc}
               alt={character.characterName}
-              width={180}
-              height={180}
-              className="h-[180px] w-[180px] object-contain"
+              width={252}
+              height={252}
+              className="h-[252px] w-[252px] max-w-full object-contain"
               priority
             />
             <p className="text-sm uppercase tracking-wide text-white/90">{character.typeEn}</p>

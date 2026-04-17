@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { AI_THEME_COLORS } from "@/types/ai";
 
@@ -199,23 +200,74 @@ export default async function GuidePage({
         </p>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { id: "claude", name: "共感ジャンキー", color: AI_THEME_COLORS.claude },
-            { id: "copilot", name: "整理の鬼", color: AI_THEME_COLORS.copilot },
-            { id: "perplexity", name: "裏取りマニア", color: AI_THEME_COLORS.perplexity },
-            { id: "chatgpt", name: "丸投げ屋", color: AI_THEME_COLORS.chatgpt },
-            { id: "gemini", name: "情報スナイパー", color: AI_THEME_COLORS.gemini },
-            { id: "jiyujin", name: "AI遊牧民", color: AI_THEME_COLORS.jiyujin },
+            {
+              id: "claude",
+              name: "共感ジャンキー",
+              color: AI_THEME_COLORS.claude,
+              img: "/images/kompass_char_01_empath.png",
+            },
+            {
+              id: "copilot",
+              name: "整理の鬼",
+              color: AI_THEME_COLORS.copilot,
+              img: "/images/kompass_char_02_executor.png",
+            },
+            {
+              id: "perplexity",
+              name: "裏取りマニア",
+              color: AI_THEME_COLORS.perplexity,
+              img: "/images/kompass_char_03_analyst.png",
+            },
+            {
+              id: "chatgpt",
+              name: "丸投げ屋",
+              color: AI_THEME_COLORS.chatgpt,
+              img: "/images/kompass_char_04_generalist.png",
+            },
+            {
+              id: "gemini",
+              name: "情報スナイパー",
+              color: AI_THEME_COLORS.gemini,
+              img: "/images/kompass_char_05_scout.png",
+            },
+            {
+              id: "jiyujin",
+              name: "AI遊牧民",
+              color: AI_THEME_COLORS.jiyujin,
+              img: "/images/kompass_char_06_nomad.png",
+            },
           ].map((type) => (
             <a
               key={type.id}
               href={`/${locale}/guide/${type.id}`}
-              className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:bg-gray-50"
+              className="flex items-center gap-3 overflow-visible rounded-xl border border-gray-200 bg-white px-4 py-3 transition-colors hover:bg-gray-50"
             >
-              <div
+              <div className="relative h-[72px] w-[72px] shrink-0 overflow-visible rounded-full">
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{ backgroundColor: `${type.color}33` }}
+                />
+                <Image
+                  src={type.img}
+                  alt={type.name}
+                  width={92}
+                  height={92}
+                  className="absolute bottom-0 left-1/2 h-[92px] w-[92px] -translate-x-1/2 object-contain"
+                />
+              </div>
+              <div className="min-w-0">
+                <span className="block text-sm font-medium text-gray-800">{type.name}</span>
+                <span
+                  className="mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold text-white"
+                  style={{ backgroundColor: type.color }}
+                >
+                  TYPE GUIDE
+                </span>
+              </div>
+              <span
                 className="h-2.5 w-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: type.color }}
               />
-              <span className="text-sm font-medium text-gray-800">{type.name}</span>
               <span className="ml-auto text-xs text-gray-400">→</span>
             </a>
           ))}

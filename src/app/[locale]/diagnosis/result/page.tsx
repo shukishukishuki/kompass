@@ -1036,8 +1036,8 @@ export default function DiagnosisResultPage() {
             <div
               style={{
                 position: "relative",
-                width: 160,
-                height: 160,
+                width: 220,
+                height: 220,
                 margin: "0 auto 16px",
                 overflow: "visible",
               }}
@@ -1059,8 +1059,8 @@ export default function DiagnosisResultPage() {
                 alt={resolvedTypeCharacterView.nameJa}
                 style={{
                   position: "absolute",
-                  width: 180,
-                  height: 180,
+                  width: 260,
+                  height: 260,
                   objectFit: "contain",
                   bottom: 0,
                   left: "50%",
@@ -1659,44 +1659,6 @@ export default function DiagnosisResultPage() {
                 {personalityBlock.shareText}
               </p>
             ) : null}
-            <Card
-              id="section-ai-usage"
-              className="text-left scroll-mt-4"
-            >
-              <CardHeader>
-                <CardTitle className="text-base">{resultPageCopy.nextStepTitle}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-sm leading-relaxed text-muted-foreground">
-                {advanced ? (
-                  <>
-                    {result.subAI.map((entry, idx) => (
-                      <div key={`sub-${idx}-${entry.name}`} className="space-y-2">
-                        <p>
-                          <span className="font-semibold text-foreground">
-                            {resultPageCopy.subAiLabel}
-                          </span>
-                          ：{entry.name}
-                        </p>
-                        {entry.usage !== "" ? <p>{entry.usage}</p> : null}
-                      </div>
-                    ))}
-                    <Separator />
-                    {result.expertView !== "" ? (
-                      <p className="border-l-4 border-border pl-3 text-foreground">
-                        {result.expertView}
-                      </p>
-                    ) : null}
-                  </>
-                ) : (
-                  <div className="space-y-3">
-                    <p className="font-medium text-foreground">
-                      {resultPageCopy.setupOkTitle}
-                    </p>
-                    <p>{result.baseAI.setup}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
             <Card className="text-left">
               <CardHeader>
                 <CardTitle className="text-base">{resultPageCopy.mbtiCardTitle}</CardTitle>
@@ -1762,6 +1724,44 @@ export default function DiagnosisResultPage() {
                     {resultPageCopy.mbtiWhatLink}
                   </a>
                 </p>
+              </CardContent>
+            </Card>
+            <Card
+              id="section-ai-usage"
+              className="text-left scroll-mt-4"
+            >
+              <CardHeader>
+                <CardTitle className="text-base">{resultPageCopy.nextStepTitle}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+                {advanced ? (
+                  <>
+                    {result.subAI.map((entry, idx) => (
+                      <div key={`sub-${idx}-${entry.name}`} className="space-y-2">
+                        <p>
+                          <span className="font-semibold text-foreground">
+                            {resultPageCopy.subAiLabel}
+                          </span>
+                          ：{entry.name}
+                        </p>
+                        {entry.usage !== "" ? <p>{entry.usage}</p> : null}
+                      </div>
+                    ))}
+                    <Separator />
+                    {result.expertView !== "" ? (
+                      <p className="border-l-4 border-border pl-3 text-foreground">
+                        {result.expertView}
+                      </p>
+                    ) : null}
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="font-medium text-foreground">
+                      {resultPageCopy.setupOkTitle}
+                    </p>
+                    <p>{result.baseAI.setup}</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
             <Card className="text-left">

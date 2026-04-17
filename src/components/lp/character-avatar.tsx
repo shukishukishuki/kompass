@@ -20,7 +20,7 @@ export function CharacterAvatar({
 
   return (
     <div
-      className="relative mx-auto h-24 w-24 overflow-hidden rounded-full shadow-sm"
+      className="relative mx-auto h-[132px] w-[132px] overflow-visible rounded-full shadow-sm"
       style={{ backgroundColor: color }}
       aria-label={alt}
     >
@@ -28,7 +28,7 @@ export function CharacterAvatar({
         <img
           src={src}
           alt={alt}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-contain"
           onError={() => {
             setHasError(true);
           }}

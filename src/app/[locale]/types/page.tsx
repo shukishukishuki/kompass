@@ -67,7 +67,7 @@ export default async function TypesPage({
                 className="block transition-opacity hover:opacity-90"
               >
                 <article
-                  className="rounded-2xl border border-zinc-200 p-5 shadow-sm"
+                  className="overflow-visible rounded-2xl border border-zinc-200 p-5 shadow-sm"
                   style={{
                     backgroundColor: hexToRgba(color, 0.12),
                     borderLeft: `4px solid ${color}`,
@@ -76,9 +76,9 @@ export default async function TypesPage({
                   <Image
                     src={character.imageSrc}
                     alt={character.characterName}
-                    width={160}
-                    height={160}
-                    className="mx-auto h-[160px] w-[160px] object-contain"
+                    width={220}
+                    height={220}
+                    className="mx-auto h-[220px] w-[220px] max-w-full object-contain"
                   />
                   <p className="mt-4 text-lg font-bold text-slate-900">
                     {character.characterName}
