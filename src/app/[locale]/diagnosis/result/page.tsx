@@ -178,7 +178,7 @@ const TYPE_ROADMAP: Record<string, { steps: string[] }> = {
   },
 };
 
-const CHARACTER_ANIMATION_BY_KIND: Record<AiKind, string> = {
+const CHAR_ANIMATIONS: Record<string, string> = {
   claude: "sway 3s ease-in-out infinite",
   copilot: "snap 2.5s ease-in-out infinite",
   perplexity: "scrutinize 4s ease-in-out infinite",
@@ -1074,9 +1074,7 @@ export default function DiagnosisResultPage() {
                   bottom: 0,
                   left: "50%",
                   animation:
-                    CHARACTER_ANIMATION_BY_KIND[resolvedTypeCharacter.aiKind] ??
-                    "none",
-                  transform: "translateX(-50%)",
+                    CHAR_ANIMATIONS[result.type] ?? "float 5s ease-in-out infinite",
                   transformOrigin: "50% 90%",
                   willChange: "transform",
                   zIndex: 10,
