@@ -125,6 +125,9 @@ const LAYER_CARD_DEEP: CSSProperties = {
 /** sessionStorage に保存するキー（結果ページと共有） */
 export const DIAGNOSIS_RESULT_STORAGE_KEY = "kompass_diagnosis_result";
 
+/** Layer1 直後の年代設問の回答（続き診断の復元用） */
+const DIAGNOSIS_AGE_RANGE_STORAGE_KEY = "kompass_diagnosis_age_range";
+
 /** スコアリング結果（MBTI 補正などで再利用） */
 export const DIAGNOSIS_SCORING_STORAGE_KEY = "kompass_diagnosis_scoring";
 export const DIAGNOSIS_RESUME_FROM_LAYER_KEY = "resumeFromLayer";
@@ -241,10 +244,25 @@ const FALLBACK_FLOW: DiagnosisFlowCopy = {
 type Phase =
   | "intro"
   | "quiz"
+  | "layer1-age"
   | "layer1-break"
   | "layer2-break"
   | "layer3-break"
   | "loading";
+
+/** Q10（インフラ系）の回答値のみ取り出す（スコアリングとは無関係） */
+function extractInfrastructureValue(answers: QuestionAnswer[]): string | null {
+  const row = answers.find((a) => a.questionId === 10);
+  return row?.value ?? null;
+}
+
+const AGE_RANGE_OPTIONS: readonly { value: string; label: string }[] = [
+  { value: "10代", label: "10代" },
+  { value: "20代", label: "20代" },
+  { value: "30代", label: "30代" },
+  { value: "40代", label: "40代" },
+  { value: "50代以上", label: "50代以上" },
+] as const;
 
 /**
  * ベースAI診断：1問ずつ回答 → Layer 区切り → 結果
@@ -275,6 +293,8 @@ export default function DiagnosisPage() {
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
+  /** Layer1 完了直後の年代（スコアに影響しない） */
+  const [ageRange, setAgeRange] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /** 最終送信の連打防止 */
   const finalSubmitLockRef = useRef(false);
@@ -290,6 +310,8 @@ export default function DiagnosisPage() {
       document.title = "AI診断をはじめる | Kompass";
     } else if (phase === "quiz") {
       document.title = `Q${step + 1} | AI診断 | Kompass`;
+    } else if (phase === "layer1-age") {
+      document.title = "年代 | AI診断 | Kompass";
     } else if (phase === "layer1-break") {
       document.title = "Layer 1 完了 | AI診断 | Kompass";
     } else if (phase === "layer2-break") {
@@ -352,6 +374,12 @@ export default function DiagnosisPage() {
               setAnswers(parsed);
               setStep(answeredCount);
               setPhase("quiz");
+              const ageStored = sessionStorage.getItem(
+                DIAGNOSIS_AGE_RANGE_STORAGE_KEY
+              );
+              if (ageStored !== null && ageStored !== "") {
+                setAgeRange(ageStored);
+              }
               resumed = true;
               window.history.replaceState(null, "", `/${locale}/diagnosis`);
             }
@@ -419,6 +447,8 @@ export default function DiagnosisPage() {
           scoringResult,
           userLayer: scoringResult.userLayer,
           layer4Answers: buildLayer4Answers(finalAnswers, questions),
+          age_range: ageRange ?? "",
+          infrastructure: extractInfrastructureValue(finalAnswers) ?? "",
         }),
       });
       if (!diagnosisRes.ok) {
@@ -439,12 +469,20 @@ export default function DiagnosisPage() {
         JSON.stringify(scoringResult)
       );
       sessionStorage.removeItem(DIAGNOSIS_MBTI_STORAGE_KEY);
+      sessionStorage.removeItem(DIAGNOSIS_AGE_RANGE_STORAGE_KEY);
       router.push(`/${locale}/diagnosis/result`);
     },
-    [locale, mbtiValue, questions, router]
+    [locale, mbtiValue, questions, router, ageRange]
   );
 
   const handleBack = useCallback(() => {
+    if (phase === "layer1-age") {
+      setErrorMessage(null);
+      setAnswers((prev) => prev.slice(0, -1));
+      setStep(9);
+      setPhase("quiz");
+      return;
+    }
     if (phase !== "quiz") {
       return;
     }
@@ -456,6 +494,12 @@ export default function DiagnosisPage() {
     setAnswers((prev) => prev.slice(0, -1));
     setStep((s) => s - 1);
   }, [phase, step, router, locale]);
+
+  const handleAgePick = useCallback((value: string) => {
+    setAgeRange(value);
+    sessionStorage.setItem(DIAGNOSIS_AGE_RANGE_STORAGE_KEY, value);
+    setPhase("layer1-break");
+  }, []);
 
   const handleChoose = useCallback(
     async (value: string) => {
@@ -475,7 +519,7 @@ export default function DiagnosisPage() {
 
       if (answeredCount === 10) {
         setAnswers(nextAnswers);
-        setPhase("layer1-break");
+        setPhase("layer1-age");
         return;
       }
       if (answeredCount === 20) {
@@ -661,8 +705,10 @@ export default function DiagnosisPage() {
             onClick={() => {
               sessionStorage.removeItem(DIAGNOSIS_ANSWERS_STORAGE_KEY);
               sessionStorage.removeItem(DIAGNOSIS_RESUME_FROM_LAYER_KEY);
+              sessionStorage.removeItem(DIAGNOSIS_AGE_RANGE_STORAGE_KEY);
               setAnswers([]);
               setStep(0);
+              setAgeRange(null);
               setStarting(true);
               setTimeout(() => setPhase("quiz"), 300);
             }}
@@ -690,6 +736,65 @@ export default function DiagnosisPage() {
           <p className="text-xs text-[#2d4a3e]/60">
             約1分〜 / 途中で結果を見ることもできます
           </p>
+        </div>
+      </main>
+    );
+  }
+
+  if (phase === "layer1-age") {
+    return (
+      <main
+        className="flex min-h-screen flex-col px-4 py-8"
+        style={{
+          background:
+            "linear-gradient(160deg, #d4f0e2 0%, #eaf8f1 40%, #f5fcf8 100%)",
+        }}
+      >
+        <div className="mx-auto flex w-full max-w-lg flex-1 flex-col">
+          <div className="mb-6 flex shrink-0 justify-center">
+            <KompassLogo />
+          </div>
+          <div className="mb-6 flex justify-start">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="text-sm font-medium text-[#2d4a3e] underline-offset-2 hover:text-[#0a2e18] hover:underline"
+            >
+              {flow.backPrevious}
+            </button>
+          </div>
+          <p
+            className="mb-8 text-center leading-relaxed"
+            style={{
+              fontFamily: "Georgia, serif",
+              fontSize: "22px",
+              fontWeight: 700,
+              color: "#0a2e18",
+            }}
+          >
+            最後に、あなたの年代を教えてください
+          </p>
+          <ul className="flex flex-1 flex-col gap-3">
+            {AGE_RANGE_OPTIONS.map((opt) => (
+              <li key={opt.value}>
+                <button
+                  type="button"
+                  onClick={() => handleAgePick(opt.value)}
+                  className="w-full text-sm font-medium transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-[#52B788] focus-visible:ring-offset-2"
+                  style={{
+                    background: "rgba(255,255,255,0.7)",
+                    border: "1.5px solid rgba(82,183,136,0.25)",
+                    borderRadius: "14px",
+                    padding: "15px 18px",
+                    textAlign: "center",
+                    color: "#0a2e18",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       </main>
     );

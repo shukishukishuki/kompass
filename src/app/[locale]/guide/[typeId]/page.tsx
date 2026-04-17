@@ -199,7 +199,11 @@ export default function GuideTypeDetailPage() {
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="space-y-2">
             <h2 className="text-sm font-bold text-gray-700">今すぐ使う</h2>
-            <OneClickAIButton typeId={aiKind} />
+            <OneClickAIButton
+              typeId={aiKind}
+              accentColor={character.theme.primary}
+              actionLabelColor={character.theme.cText}
+            />
           </div>
         </section>
 

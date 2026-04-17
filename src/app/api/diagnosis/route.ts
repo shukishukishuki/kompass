@@ -117,6 +117,8 @@ function isDiagnosisRequestBody(
   scoringResult: ScoringResult;
   userLayer: UserLayer;
   layer4Answers?: Record<string, string>;
+  age_range?: string;
+  infrastructure?: string;
 } {
   if (typeof value !== "object" || value === null) {
     return false;
@@ -136,6 +138,16 @@ function isDiagnosisRequestBody(
     if (!entries.every(([k, v]) => typeof k === "string" && typeof v === "string")) {
       return false;
     }
+  }
+  if ("age_range" in o && o.age_range !== undefined && typeof o.age_range !== "string") {
+    return false;
+  }
+  if (
+    "infrastructure" in o &&
+    o.infrastructure !== undefined &&
+    typeof o.infrastructure !== "string"
+  ) {
+    return false;
   }
   return true;
 }
@@ -259,6 +271,17 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     const { scoringResult, userLayer, layer4Answers } = parsed;
 
+    const ageRangeRaw = parsed.age_range;
+    const infraRaw = parsed.infrastructure;
+    const ageRange =
+      typeof ageRangeRaw === "string" && ageRangeRaw.trim() !== ""
+        ? ageRangeRaw.trim()
+        : null;
+    const infrastructure =
+      typeof infraRaw === "string" && infraRaw.trim() !== ""
+        ? infraRaw.trim()
+        : null;
+
     const texts = await generateDiagnosisTexts(scoringResult, userLayer);
     const diagnosis = buildDiagnosisResult(
       scoringResult,
@@ -267,7 +290,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       layer4Answers
     );
 
-    const savedId = await saveDiagnosisResult(diagnosis);
+    const savedId = await saveDiagnosisResult(diagnosis, {
+      ageRange,
+      infrastructure,
+    });
     if (savedId === null) {
       // Supabase 未設定などで保存できない開発環境でも、診断本文は返す
       console.warn(
@@ -275,7 +301,9 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    return NextResponse.json(diagnosis);
+    const withId =
+      savedId !== null ? { ...diagnosis, recordId: savedId } : diagnosis;
+    return NextResponse.json(withId);
   } catch (e) {
     console.error("[API /api/diagnosis] 処理中にエラーが発生しました:", e);
     return NextResponse.json(

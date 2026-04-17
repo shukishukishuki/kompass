@@ -59,4 +59,6 @@ export interface DiagnosisResult {
   personalityDescription?: PersonalityDescription;
   /** Layer4（Q31〜Q40）の回答（パーソナライズプロンプト生成用） */
   answers?: Record<string, string>;
+  /** Supabase `diagnosis_results.id`（保存成功時のみ API が付与） */
+  recordId?: string;
 }

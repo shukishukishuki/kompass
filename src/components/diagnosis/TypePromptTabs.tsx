@@ -9,9 +9,15 @@ import type { TypeId } from "@/lib/type-characters";
 type Props = {
   userTypeId: string;
   twitterShareHref: string;
+  /** Xシェアリンククリック時（行動ログ用・任意） */
+  onXShareClick?: () => void;
 };
 
-export function TypePromptTabs({ userTypeId, twitterShareHref }: Props) {
+export function TypePromptTabs({
+  userTypeId,
+  twitterShareHref,
+  onXShareClick,
+}: Props) {
   const [activeTab, setActiveTab] = useState(userTypeId);
 
   return (
@@ -79,6 +85,9 @@ export function TypePromptTabs({ userTypeId, twitterShareHref }: Props) {
                 href={twitterShareHref}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  onXShareClick?.();
+                }}
                 style={{
                   background: "#000",
                   color: "#fff",

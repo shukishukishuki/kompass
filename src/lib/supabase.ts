@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { DiagnosisResult } from "@/types/diagnosis";
 import type {
+  DiagnosisResultsBehaviorPatch,
   DiagnosisResultsInsertPayload,
   UsersInsertPayload,
 } from "@/types/supabase-db";
@@ -54,12 +55,19 @@ function isTypeRow(value: unknown): value is { type: string } {
   return typeof o.type === "string";
 }
 
+/** 診断結果保存時の付帯メタ（スコアリング非依存） */
+export interface SaveDiagnosisResultMeta {
+  ageRange: string | null;
+  infrastructure: string | null;
+}
+
 /**
  * 診断結果を diagnosis_results に保存する
  * @returns 成功時は挿入行の id、失敗時は null
  */
 export async function saveDiagnosisResult(
-  result: DiagnosisResult
+  result: DiagnosisResult,
+  meta?: SaveDiagnosisResultMeta
 ): Promise<string | null> {
   try {
     const supabase = createSupabaseClient();
@@ -68,6 +76,8 @@ export async function saveDiagnosisResult(
       type_en: result.typeEn,
       base_ai_name: result.baseAI.name,
       display_mode: result.displayMode,
+      age_range: meta?.ageRange ?? null,
+      infrastructure: meta?.infrastructure ?? null,
     };
 
     const { data, error } = await supabase
@@ -96,6 +106,34 @@ export async function saveDiagnosisResult(
   } catch (e) {
     console.error("[Supabase] saveDiagnosisResult で例外が発生しました:", e);
     return null;
+  }
+}
+
+/**
+ * 診断1行に対する行動ログをマージ更新する（失敗しても呼び出し元は無視してよい）
+ */
+export async function patchDiagnosisResultBehavior(
+  recordId: string,
+  patch: DiagnosisResultsBehaviorPatch
+): Promise<void> {
+  try {
+    const supabase = createSupabaseClient();
+    const { error } = await supabase
+      .from("diagnosis_results")
+      .update(patch)
+      .eq("id", recordId);
+    if (error !== null) {
+      console.error(
+        "[Supabase] 行動ログの更新に失敗しました:",
+        error.message,
+        error
+      );
+    }
+  } catch (e) {
+    console.error(
+      "[Supabase] patchDiagnosisResultBehavior で例外が発生しました:",
+      e
+    );
   }
 }
 

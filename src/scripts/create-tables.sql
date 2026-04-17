@@ -30,3 +30,15 @@ create policy "allow insert users" on users
 -- 集計用のselectを許可（全件）
 create policy "allow select diagnosis_results" on diagnosis_results
   for select using (true);
+
+-- 手動実行用マイグレーション（既存 DB にカラム／UPDATE ポリシーが無い場合）
+alter table diagnosis_results add column if not exists age_range text;
+alter table diagnosis_results add column if not exists infrastructure text;
+alter table diagnosis_results add column if not exists clicked_ai_button text;
+alter table diagnosis_results add column if not exists clicked_prompt_copy boolean;
+alter table diagnosis_results add column if not exists clicked_share boolean;
+alter table diagnosis_results add column if not exists visited_at timestamptz;
+
+drop policy if exists "allow update diagnosis_results behavior" on diagnosis_results;
+create policy "allow update diagnosis_results behavior" on diagnosis_results
+  for update using (true) with check (true);
