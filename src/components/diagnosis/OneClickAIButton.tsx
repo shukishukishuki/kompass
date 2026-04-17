@@ -218,6 +218,7 @@ export function OneClickAIButton({
     fontSize: 14,
     fontWeight: 600,
     marginBottom: 12,
+    textAlign: "center",
   };
 
   const mainButtonStyle: CSSProperties = {
@@ -235,9 +236,9 @@ export function OneClickAIButton({
   const introButtonStyle: CSSProperties = {
     background: "none",
     color: actionLineColor,
-    padding: "4px 0",
-    fontSize: 13,
-    fontWeight: 500,
+    padding: "8px 0",
+    fontSize: 15,
+    fontWeight: 600,
     width: "fit-content",
     border: "none",
     textDecoration: "underline",
@@ -255,7 +256,7 @@ export function OneClickAIButton({
   };
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full space-y-3 text-center">
       <p style={actionTextStyle}>💡 今日のアクション：{todayLine}</p>
       <div style={{ marginBottom: 10 }}>
         <p
@@ -263,11 +264,12 @@ export function OneClickAIButton({
             fontSize: 12,
             color: "#666",
             marginBottom: 6,
+            textAlign: "center",
           }}
         >
           今日の用途は？
         </p>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
           {TASK_TYPE_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -315,7 +317,7 @@ export function OneClickAIButton({
         </button>
       )}
       <button type="button" onClick={() => void handleIntroOnly()} style={introButtonStyle}>
-        自分の性格に合った使い方をAIに指示する
+        「 自分の性格に合った使い方をAIに指示する 」
       </button>
       {showFeedbackPrompt ? (
         <div

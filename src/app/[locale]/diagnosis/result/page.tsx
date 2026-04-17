@@ -1869,7 +1869,10 @@ export default function DiagnosisResultPage() {
                 </Card>
               </>
             ) : null}
-            <section id="section-ai-usage" className="scroll-mt-4 border-t border-[#f0f0f0] bg-white pt-6">
+            <section
+              id="section-ai-usage"
+              className="scroll-mt-4 border-t border-[#f0f0f0] bg-white pt-6 text-center"
+            >
               <p className={BOTTOM_SECTION_HEADING_CLASS}>次の一歩 / まずこれだけOK</p>
               <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
                 {advanced ? (
@@ -1894,15 +1897,12 @@ export default function DiagnosisResultPage() {
                   </>
                 ) : (
                   <div className="space-y-3">
-                    <p className="font-medium text-foreground">
-                      {resultPageCopy.setupOkTitle}
-                    </p>
                     <p>{result.baseAI.setup}</p>
                   </div>
                 )}
               </div>
             </section>
-            <section className="border-t border-[#f0f0f0] bg-white pt-6">
+            <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
               <p className={BOTTOM_SECTION_HEADING_CLASS}>WEEKLY UPDATE</p>
               <p className="mb-1 text-sm font-bold text-gray-900">
                 毎週、あなたのタイプ向けAI活用法を届けます
@@ -1953,7 +1953,7 @@ export default function DiagnosisResultPage() {
                   const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
                   if (!nextActions) return null;
                   return (
-                    <section className="border-t border-[#f0f0f0] bg-white pt-6">
+                    <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
                       <p className={BOTTOM_SECTION_HEADING_CLASS}>次のアクション</p>
                       <div className="space-y-2">
                         {nextActions.actions.map((action, i) => (
@@ -1970,7 +1970,7 @@ export default function DiagnosisResultPage() {
                                 ? "noopener noreferrer"
                                 : undefined
                             }
-                            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                            className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
                           >
                             <span>{action.label}</span>
                             <span className="text-gray-400">→</span>
@@ -1981,10 +1981,10 @@ export default function DiagnosisResultPage() {
                   );
                 })()
               : null}
-            <section className="border-t border-[#f0f0f0] bg-white pt-6">
+            <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
               <p className={BOTTOM_SECTION_HEADING_CLASS}>MBTI入力</p>
               <p className="mb-3 text-sm text-gray-900">{resultPageCopy.mbtiCardTitle}</p>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-center">
                 <label className="block min-w-0 flex-1">
                   <span className="sr-only">MBTI</span>
                   <input
