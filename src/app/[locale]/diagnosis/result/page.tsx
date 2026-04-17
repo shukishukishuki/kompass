@@ -1718,30 +1718,18 @@ export default function DiagnosisResultPage() {
             </svg>
             LINE
           </a>
-          <button
-            type="button"
-            onClick={async () => {
-              await navigator.clipboard.writeText(
-                `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
-              );
-              toast.success("リンクをコピーしました ✓");
+          <a
+            href={twitterUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              logXShareClicked();
             }}
             className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: "#333", border: "none" }}
+            style={{ background: "#000000", border: "none" }}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-            </svg>
-            コピー
-          </button>
+            𝕏 でシェア
+          </a>
           <a
             href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
             target="_blank"
@@ -2099,30 +2087,18 @@ export default function DiagnosisResultPage() {
                 </svg>
                 LINE
               </a>
-              <button
-                type="button"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(
-                    `https://kompass-rosy.vercel.app/${locale}/result/${resolvedTypeCharacter.typeId ?? resolvedTypeCharacter.aiKind}`
-                  );
-                  toast.success("リンクをコピーしました ✓");
+              <a
+                href={twitterUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  logXShareClicked();
                 }}
                 className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ background: "#333", border: "none" }}
+                style={{ background: "#000000", border: "none" }}
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-                </svg>
-                コピー
-              </button>
+                𝕏 でシェア
+              </a>
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
                 target="_blank"
