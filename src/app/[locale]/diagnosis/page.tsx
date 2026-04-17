@@ -275,8 +275,6 @@ export default function DiagnosisPage() {
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
-  /** 現在の設問で選択中の値（「次へ」で確定） */
-  const [quizSelection, setQuizSelection] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   /** 最終送信の連打防止 */
   const finalSubmitLockRef = useRef(false);
@@ -284,14 +282,6 @@ export default function DiagnosisPage() {
 
   const currentQuestion = questions[step];
   const progressRatio = total > 0 ? (step + 1) / total : 0;
-
-  useEffect(() => {
-    if (currentQuestion === undefined) {
-      return;
-    }
-    const row = answers.find((a) => a.questionId === currentQuestion.id);
-    setQuizSelection(row !== undefined ? row.value : null);
-  }, [step, currentQuestion?.id, answers, currentQuestion]);
 
   const title = useMemo(() => copy.diagnosis.title, [copy.diagnosis.title]);
 
@@ -1036,12 +1026,16 @@ export default function DiagnosisPage() {
 
         <ul className="flex flex-1 flex-col gap-3">
           {currentQuestion.options.map((opt) => {
-            const selected = quizSelection === opt.value;
+            const selected =
+              answers.find((a) => a.questionId === currentQuestion.id)?.value ===
+              opt.value;
             return (
               <li key={`${currentQuestion.id}-${opt.value}`}>
                 <button
                   type="button"
-                  onClick={() => setQuizSelection(opt.value)}
+                  onClick={() => {
+                    void handleChoose(opt.value);
+                  }}
                   className="w-full text-sm font-medium transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-[#52B788] focus-visible:ring-offset-2"
                   style={
                     selected
@@ -1076,34 +1070,6 @@ export default function DiagnosisPage() {
             );
           })}
         </ul>
-
-        <div className="mt-8 shrink-0 pb-4">
-          <button
-            type="button"
-            disabled={quizSelection === null}
-            onClick={() => {
-              if (quizSelection === null) {
-                return;
-              }
-              void handleChoose(quizSelection);
-            }}
-            className="w-full rounded-[14px] py-[15px] text-sm font-bold transition-opacity disabled:cursor-not-allowed"
-            style={
-              quizSelection === null
-                ? {
-                    background: "rgba(82,183,136,0.15)",
-                    color: "#aaa",
-                  }
-                : {
-                    background: "#1a7a4a",
-                    color: "#fff",
-                    boxShadow: "0 4px 20px rgba(26,122,74,0.35)",
-                  }
-            }
-          >
-            次へ
-          </button>
-        </div>
       </div>
     </main>
   );

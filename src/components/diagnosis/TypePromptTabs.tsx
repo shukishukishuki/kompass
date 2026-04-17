@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { PromptList } from "@/components/guide/prompt-list";
 import { GUIDE_DETAILS } from "@/lib/guide-details";
 import {
@@ -26,10 +26,19 @@ export function TypePromptTabs({
   twitterShareHref,
 }: Readonly<TypePromptTabsProps>) {
   const [activeTypeId, setActiveTypeId] = useState<TypeId>(userTypeId);
+  const isLockedTab = activeTypeId !== userTypeId;
+
+  useEffect(() => {
+    console.log("[TypePromptTabs] tab state", {
+      userTypeId,
+      activeTypeId,
+      isLockedTab,
+    });
+  }, [activeTypeId, isLockedTab, userTypeId]);
 
   const shareOverlay = (
     <>
-      <p className="max-w-md text-center text-sm font-medium leading-relaxed text-gray-800">
+      <p style={{ fontSize: 14, textAlign: "center" }}>
         他のタイプのプロンプトを見るには、友達にKompassを試してもらおう 👉
       </p>
       <a
@@ -101,11 +110,35 @@ export function TypePromptTabs({
       </div>
 
       <div className="mt-4" role="tabpanel">
-        <PromptList
-          prompts={GUIDE_DETAILS[activeTypeId].prompts}
-          previewLocked={activeTypeId !== userTypeId}
-          previewOverlay={activeTypeId !== userTypeId ? shareOverlay : null}
-        />
+        {isLockedTab ? (
+          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden" }}>
+            <div
+              style={{
+                filter: "blur(6px)",
+                pointerEvents: "none",
+                userSelect: "none",
+              }}
+            >
+              <PromptList prompts={GUIDE_DETAILS[activeTypeId].prompts} />
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "rgba(255,255,255,0.5)",
+                gap: 12,
+              }}
+            >
+              {shareOverlay}
+            </div>
+          </div>
+        ) : (
+          <PromptList prompts={GUIDE_DETAILS[activeTypeId].prompts} />
+        )}
       </div>
     </section>
   );

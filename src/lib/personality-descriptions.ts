@@ -169,7 +169,7 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "複数のAIを目的なく使い回すのは、かえって習熟を遅らせます。用途ごとに『これはこのAI』とルールを決めると力が出ます。",
     literacyAnalysis:
       "あなたは特定のAIへの依存を避ける、メタ的なAI活用スタイルを持っています。最適化思考が強い上級者タイプです。",
-    shareText: "一つに決められない仲間を探してる。",
+    shareText: "複数AIを使い分ける仲間を探してる。",
   },
 };
 
