@@ -845,9 +845,17 @@ export default function DiagnosisResultPage() {
     return (
       resolvedTypeCharacter.aiKind === "jiyujin" ||
       resolvedTypeCharacter.typeId === "orchestrator" ||
-      result.type === "jiyujin"
+      result.type === "jiyujin" ||
+      result.type === "自由人タイプ" ||
+      displayPersonalityJa === "自由人タイプ" ||
+      result.typeEn.toLowerCase() === "orchestrator"
     );
-  }, [result, resolvedTypeCharacter.aiKind, resolvedTypeCharacter.typeId]);
+  }, [
+    result,
+    resolvedTypeCharacter.aiKind,
+    resolvedTypeCharacter.typeId,
+    displayPersonalityJa
+  ]);
 
   const axisScores = useMemo(() => {
     const baseScores = mbtiAppliedScores ?? scoringSnapshot?.scoresByAi ?? null;
@@ -1200,33 +1208,26 @@ export default function DiagnosisResultPage() {
             {personalityBlock.catchCopy}
           </p>
         ) : null}
-        {isOrchestratorDisplay ? (
-          <>
-            <p
-              className="relative z-10 mt-6 text-xl font-semibold md:text-2xl"
-              style={{ color: heroTheme.cText }}
-            >
-              メインAI: Claude（深掘り・思考整理）
-            </p>
-            <p className="relative z-10 mt-2 text-[13px] text-[#666]">
-              サブAI: Perplexity（調査・裏取り）/ ChatGPT（整理・アウトプット）
-            </p>
-          </>
-        ) : (
-          <>
-            <p
-              className="relative z-10 mt-6 text-sm font-medium"
-              style={{ color: heroTheme.cText }}
-            >
-              {resultPageCopy.recommendedAi}
-            </p>
-            <p
-              className="relative z-10 text-xl font-semibold md:text-2xl"
-              style={{ color: heroTheme.cText }}
-            >
-              {mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}
-            </p>
-          </>
+        {isOrchestratorDisplay ? null : (
+          <p
+            className="relative z-10 mt-6 text-sm font-medium"
+            style={{ color: heroTheme.cText }}
+          >
+            {resultPageCopy.recommendedAi}
+          </p>
+        )}
+        <p
+          className="relative z-10 text-xl font-semibold md:text-2xl"
+          style={{ color: heroTheme.cText, marginTop: isOrchestratorDisplay ? 24 : undefined }}
+        >
+          {isOrchestratorDisplay
+            ? "メインAI: Claude（深掘り・思考整理）"
+            : (mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name)}
+        </p>
+        {isOrchestratorDisplay && (
+          <p style={{ fontSize: 13, color: "#666", marginTop: 4 }}>
+            サブAI: Perplexity（調査・裏取り）/ ChatGPT（整理・アウトプット）
+          </p>
         )}
         {/* ヒーロー下部タブ（見た目＋スクロール） */}
         <nav
