@@ -1710,7 +1710,7 @@ export default function DiagnosisResultPage() {
             href={`https://social-plugins.line.me/lineit/share?url=${shareUrl}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "#06C755", border: "none" }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -1726,7 +1726,7 @@ export default function DiagnosisResultPage() {
               );
               toast.success("リンクをコピーしました ✓");
             }}
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "#333", border: "none" }}
           >
             <svg
@@ -1746,7 +1746,7 @@ export default function DiagnosisResultPage() {
             href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "#1877F2", border: "none" }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -1766,7 +1766,7 @@ export default function DiagnosisResultPage() {
                 "画像をダウンロードしました。Instagramストーリーに使えます ✓"
               );
             }}
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{
               background:
                 "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
@@ -2091,7 +2091,7 @@ export default function DiagnosisResultPage() {
                 href={`https://social-plugins.line.me/lineit/share?url=${shareUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ background: "#06C755", border: "none" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -2107,7 +2107,7 @@ export default function DiagnosisResultPage() {
                   );
                   toast.success("リンクをコピーしました ✓");
                 }}
-                className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ background: "#333", border: "none" }}
               >
                 <svg
@@ -2127,7 +2127,7 @@ export default function DiagnosisResultPage() {
                 href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ background: "#1877F2", border: "none" }}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -2147,7 +2147,7 @@ export default function DiagnosisResultPage() {
                     "画像をダウンロードしました。Instagramストーリーに使えます ✓"
                   );
                 }}
-                className="flex cursor-pointer items-center justify-center gap-2 rounded-[10px] px-5 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{
                   background:
                     "linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)",
