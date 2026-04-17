@@ -1591,11 +1591,7 @@ export default function DiagnosisResultPage() {
 
       {result.layerCompleted >= 1 ? (
         <div className="mx-auto mt-6 w-full max-w-2xl px-6">
-          <Card className="text-left border-none shadow-md">
-            <CardContent className="space-y-4 pt-6">
-              <p className={BOTTOM_SECTION_HEADING_CLASS}>
-                この診断結果を保存して、後から見返す
-              </p>
+          <div className="space-y-4 rounded-2xl bg-[#fafafa] p-5 text-left">
               <button
                 type="button"
                 aria-label="この診断結果を保存して、後から見返す"
@@ -1647,13 +1643,12 @@ export default function DiagnosisResultPage() {
                   {resultSaveError}
                 </p>
               ) : null}
-            </CardContent>
-          </Card>
+          </div>
         </div>
       ) : null}
 
       {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-        <div className="mx-auto mt-8 w-full max-w-2xl px-6">
+        <div className="mx-auto mt-6 w-full max-w-2xl px-6">
           <div
             style={{
               background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,

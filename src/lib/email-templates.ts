@@ -11,16 +11,18 @@ export interface FollowupEmailTemplate {
  * 結果保存時に送る結果URLメールを作成する
  */
 export function buildResultSaveEmailTemplate(): FollowupEmailTemplate {
-  const subject = "【Kompass】あなたの診断結果を保存しました";
+  const subject = "【Kompass】診断結果を保存しました";
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1f2937; line-height: 1.75; padding: 16px;">
       <h1 style="font-size: 20px; margin: 0 0 14px;">${escapeHtml(subject)}</h1>
-      <p style="margin: 0 0 10px;">診断結果はこちらから確認できます：</p>
+      <p style="margin: 0 0 10px;">診断お疲れ様でした！</p>
+      <p style="margin: 0 0 6px;">あなたの診断結果はこちらから確認できます：</p>
       <p style="margin: 0 0 14px;">
-        <a href="https://kompass-rosy.vercel.app/ja/diagnosis/result">https://kompass-rosy.vercel.app/ja/diagnosis/result</a>
+        → <a href="https://kompass-rosy.vercel.app/ja/diagnosis/result">https://kompass-rosy.vercel.app/ja/diagnosis/result</a>
       </p>
       <p style="margin: 0 0 16px; color: #4b5563;">
-        いつでも見返せるようブックマークもおすすめです。
+        スマホやPCを変えたときもこのリンクから見返せます。<br />
+        ブックマークしておくと便利です。
       </p>
     </div>
   `;
@@ -81,13 +83,17 @@ export function buildFollowupEmailTemplate(
       ? Math.min(4, Math.floor(layerCompleted))
       : 1;
   const prompts = content.prompts.slice(0, 3).map((p) => escapeHtml(p));
-  const subject = `【Kompass】${typeLabel}のあなたへ：今すぐ使えるプロンプト`;
+  const subject = `【Kompass】${typeLabel}のあなたへ：今日から使えるAI活用法`;
 
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1f2937; line-height: 1.75; padding: 16px;">
       <h1 style="font-size: 20px; margin: 0 0 14px;">${escapeHtml(subject)}</h1>
       <p style="margin: 0 0 10px;">${escapeHtml(typeLabel)}診断、お疲れ様でした。</p>
       <p style="margin: 0 0 16px; color: #4b5563;">Layer ${safeLayer}までの回答内容をもとに、今すぐ使えるプロンプトを3つお届けします。</p>
+      <p style="margin: 0 0 16px; color: #4b5563;">
+        プロンプトとは、AIへの「話しかけ方」のことです。<br />
+        下にあるテキストをコピーして、そのままAIに貼り付けるだけで使えます。
+      </p>
       <h2 style="font-size: 16px; margin: 0 0 10px;">今すぐ使えるプロンプト3つ</h2>
       <ol style="margin: 0 0 16px; padding-left: 20px;">
         ${prompts
