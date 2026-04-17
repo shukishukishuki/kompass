@@ -1002,6 +1002,7 @@ export default function DiagnosisResultPage() {
         className="relative overflow-x-clip px-4 pb-4 pt-12 text-center shadow-lg"
         style={{
           background: `linear-gradient(180deg, ${heroTheme.cMid} 0%, ${heroTheme.cLight} 55%, #f8fffe 85%, #ffffff 100%)`,
+          boxShadow: `0 4px 20px ${hexToRgba(heroTheme.primary, 0.15)}`,
         }}
         aria-labelledby="hero-heading"
       >
@@ -1083,8 +1084,12 @@ export default function DiagnosisResultPage() {
             </div>
             <h1
               id="hero-heading"
-              className="mt-2 text-4xl font-extrabold leading-tight md:text-5xl"
-              style={{ color: heroTheme.cText }}
+              className="mt-2 leading-tight"
+              style={{
+                color: heroTheme.cText,
+                fontWeight: 500,
+                fontSize: 36,
+              }}
             >
               {heroCharacterName}
             </h1>
@@ -1121,8 +1126,15 @@ export default function DiagnosisResultPage() {
         </div>
         {personalityBlock !== null ? (
           <p
-            className="relative z-10 mx-auto mt-6 max-w-3xl px-1 text-2xl font-bold leading-snug md:text-3xl"
-            style={{ color: heroTheme.cText }}
+            className="relative z-10 mx-auto mt-6 max-w-3xl px-1 leading-snug"
+            style={{
+              fontFamily: 'Georgia, "游明朝", "Yu Mincho", serif',
+              fontWeight: 400,
+              fontSize: 22,
+              fontStyle: "italic",
+              letterSpacing: "0.02em",
+              color: heroTheme.cText,
+            }}
           >
             {personalityBlock.catchCopy}
           </p>
@@ -1248,17 +1260,15 @@ export default function DiagnosisResultPage() {
       </section>
 
       {result.layerCompleted < 4 && remainingQuestions > 0 ? (
-        <div className="mx-auto mt-4 w-full max-w-lg px-4">
+        <div className="mx-auto mt-8 w-full max-w-lg px-4">
           <div
             style={{
               background: `linear-gradient(135deg, ${hexToRgba(heroTheme.primary, 0.12)} 0%, ${hexToRgba(heroTheme.primary, 0.06)} 100%)`,
-              border: `2px solid ${hexToRgba(heroTheme.primary, 0.4)}`,
               borderRadius: 16,
               padding: 24,
               textAlign: "center",
               animation: "ctaPulse 2.5s ease-in-out infinite",
-              ["--cta-shadow-low" as string]: `0 4px 20px ${hexToRgba(heroTheme.primary, 0.2)}`,
-              ["--cta-shadow-high" as string]: `0 8px 32px ${hexToRgba(heroTheme.primary, 0.45)}`,
+              boxShadow: `0 4px 20px ${hexToRgba(heroTheme.primary, 0.15)}`,
             }}
             className="space-y-3"
           >
@@ -1311,7 +1321,7 @@ export default function DiagnosisResultPage() {
         const nextActions = TYPE_NEXT_ACTIONS[resolvedTypeCharacter.aiKind];
         if (!nextActions) return null;
         return (
-          <div className="mx-auto mt-6 w-full max-w-lg px-4 space-y-3">
+          <div className="mx-auto mt-8 w-full max-w-lg px-4 space-y-3">
             <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
               次のアクション
             </p>
@@ -1340,7 +1350,7 @@ export default function DiagnosisResultPage() {
           </div>
         );
       })()}
-      <div className="mx-auto mt-4 w-full max-w-lg px-4">
+      <div className="mx-auto mt-8 w-full max-w-lg px-4">
         <p className="text-center text-xs font-bold tracking-widest text-gray-400 uppercase mb-1">
           SHARE YOUR TYPE
         </p>
@@ -1424,17 +1434,16 @@ export default function DiagnosisResultPage() {
       </div>
 
       {/* 下部ゾーン：スクロールで詳細 */}
-      <div className="mx-auto flex max-w-lg flex-col gap-6 px-4 py-10">
+      <div className="mx-auto flex max-w-lg flex-col gap-8 px-4 py-10">
         {personalityBlock !== null ? (
           <>
             <Card
               id="section-detail"
               className="text-left scroll-mt-4"
               style={{
-                backgroundColor: hexToRgba(
-                  AI_THEME_COLORS[resolvedTypeCharacter.aiKind],
-                  0.1
-                ),
+                backgroundColor: "#fff",
+                border: `1.5px solid ${hexToRgba(AI_THEME_COLORS[resolvedTypeCharacter.aiKind], 0.2)}`,
+                borderRadius: 16,
               }}
             >
               <CardHeader>
@@ -1482,12 +1491,12 @@ export default function DiagnosisResultPage() {
               const badChar = TYPE_CHARACTERS.find((c) => c.aiKind === compat?.bad);
               if (!compat || !goodChar || !badChar) return null;
               return (
-                <div className="mx-auto mt-6 max-w-md space-y-3">
-                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                <div className="mx-auto mb-8 max-w-md space-y-3">
+                  <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
                     タイプ相性
                   </p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-green-100 bg-green-50 p-3 text-center">
+                  <div className="grid grid-cols-2 gap-3 rounded-xl bg-[#f9f9f9] p-3">
+                    <div className="rounded-xl bg-green-50 p-3 text-center">
                       <p className="text-xs text-green-600 font-bold mb-1">相性◎</p>
                       <p className="text-sm font-bold text-gray-800">{goodChar.characterName}</p>
                       <p className="text-xs text-gray-400">{goodChar.aiName}</p>
@@ -1498,7 +1507,7 @@ export default function DiagnosisResultPage() {
                         使い方を見る →
                       </a>
                     </div>
-                    <div className="rounded-xl border border-red-100 bg-red-50 p-3 text-center">
+                    <div className="rounded-xl bg-red-50 p-3 text-center">
                       <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
                       <p className="text-sm font-bold text-gray-800">{badChar.characterName}</p>
                       <p className="text-xs text-gray-400">{badChar.aiName}</p>
@@ -1517,11 +1526,11 @@ export default function DiagnosisResultPage() {
               const famous = TYPE_FAMOUS[resolvedTypeCharacter.aiKind];
               if (!famous) return null;
               return (
-                <div className="mx-auto mt-6 max-w-md space-y-3">
-                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                <div className="mx-auto mb-8 max-w-md space-y-3">
+                  <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
                     同じタイプの有名人
                   </p>
-                  <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
+                  <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
                     <div className="flex flex-wrap gap-2">
                       {famous.names.map((name) => (
                         <span
@@ -1541,9 +1550,11 @@ export default function DiagnosisResultPage() {
               const companies = TYPE_COMPANIES[resolvedTypeCharacter.aiKind];
               if (!companies) return null;
               return (
-                <div className="mx-auto mt-4 max-w-md space-y-2">
-                  <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
-                    <p className="text-xs font-bold text-gray-500">同じタイプの企業・職種</p>
+                <div className="mx-auto mb-8 max-w-md space-y-2">
+                  <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
+                    <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
+                      同じタイプの企業・職種
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {companies.companies.map((name) => (
                         <span
@@ -1563,11 +1574,16 @@ export default function DiagnosisResultPage() {
               const roadmap = TYPE_ROADMAP[resolvedTypeCharacter.aiKind];
               if (!roadmap) return null;
               return (
-                <div className="mx-auto mt-6 max-w-md space-y-3">
-                  <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
+                <div className="mx-auto mb-8 max-w-md space-y-3">
+                  <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
                     活用ロードマップ
                   </p>
-                  <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+                  <div
+                    className="rounded-2xl bg-white p-4 space-y-3"
+                    style={{
+                      border: `1.5px solid ${hexToRgba(AI_THEME_COLORS[resolvedTypeCharacter.aiKind], 0.2)}`,
+                    }}
+                  >
                     {roadmap.steps.map((step, i) => (
                       <div key={i} className="flex items-start gap-3">
                         <span
@@ -1665,11 +1681,6 @@ export default function DiagnosisResultPage() {
                   </CardContent>
                 </Card>
               </>
-            ) : null}
-            {personalityBlock !== null && result.layerCompleted === 1 ? (
-              <p className="text-left text-xs text-muted-foreground">
-                {personalityBlock.shareText}
-              </p>
             ) : null}
             <Card className="text-left">
               <CardHeader>
