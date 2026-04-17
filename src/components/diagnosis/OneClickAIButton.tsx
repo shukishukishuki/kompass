@@ -255,67 +255,90 @@ export function OneClickAIButton({
     cursor: "pointer",
   };
 
+  const toRgbaFromHex = (hex: string, alpha: number): string => {
+    const normalized = hex.replace("#", "");
+    if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+      return `rgba(0,0,0,${alpha})`;
+    }
+    const r = Number.parseInt(normalized.slice(0, 2), 16);
+    const g = Number.parseInt(normalized.slice(2, 4), 16);
+    const b = Number.parseInt(normalized.slice(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  const summaryCardStyle: CSSProperties = {
+    background: "#fff",
+    border: `1.5px solid ${toRgbaFromHex(actionLineColor, 0.25)}`,
+    borderRadius: 16,
+    padding: 20,
+    textAlign: "center",
+  };
+
   return (
     <div className="w-full space-y-3 text-center">
-      <p style={actionTextStyle}>💡 今日のアクション：{todayLine}</p>
-      <div style={{ marginBottom: 10 }}>
-        <p
-          style={{
-            fontSize: 12,
-            color: "#666",
-            marginBottom: 6,
-            textAlign: "center",
-          }}
-        >
-          今日の用途は？
-        </p>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-          {TASK_TYPE_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setTaskType(option.value)}
+      <div style={summaryCardStyle}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <p style={actionTextStyle}>💡 今日のアクション：{todayLine}</p>
+          <div>
+            <p
               style={{
                 fontSize: 12,
-                padding: "4px 12px",
-                borderRadius: 20,
-                border:
-                  taskType === option.value
-                    ? `1px solid ${accentColor}`
-                    : "1px solid #ddd",
-                backgroundColor:
-                  taskType === option.value ? accentColor : "#fff",
-                color: taskType === option.value ? "#fff" : "#666",
-                cursor: "pointer",
+                color: "#666",
+                marginBottom: 6,
+                textAlign: "center",
               }}
             >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      </div>
-      {typeId === "jiyujin" ? (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          {ORCHESTRATOR_PARALLEL_BUTTONS.map((entry) => (
+              今日の用途は？
+            </p>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+              {TASK_TYPE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setTaskType(option.value)}
+                  style={{
+                    fontSize: 12,
+                    padding: "4px 12px",
+                    borderRadius: 20,
+                    border:
+                      taskType === option.value
+                        ? `1px solid ${accentColor}`
+                        : "1px solid #ddd",
+                    backgroundColor:
+                      taskType === option.value ? accentColor : "#fff",
+                    color: taskType === option.value ? "#fff" : "#666",
+                    cursor: "pointer",
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {typeId === "jiyujin" ? (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {ORCHESTRATOR_PARALLEL_BUTTONS.map((entry) => (
+                <button
+                  key={entry.label}
+                  type="button"
+                  onClick={() => void handleMainUse(entry.url, entry.label)}
+                  style={mainButtonStyle}
+                >
+                  {entry.label}を使う →
+                </button>
+              ))}
+            </div>
+          ) : (
             <button
-              key={entry.label}
               type="button"
-              onClick={() => void handleMainUse(entry.url, entry.label)}
+              onClick={() => void handleMainUse(primaryUrl, label)}
               style={mainButtonStyle}
             >
-              {entry.label}を使う →
+              {label}を今すぐ使う →
             </button>
-          ))}
+          )}
         </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => void handleMainUse(primaryUrl, label)}
-          style={mainButtonStyle}
-        >
-          {label}を今すぐ使う →
-        </button>
-      )}
+      </div>
       <button type="button" onClick={() => void handleIntroOnly()} style={introButtonStyle}>
         「 自分の性格に合った使い方をAIに指示する 」
       </button>

@@ -1630,7 +1630,7 @@ export default function DiagnosisResultPage() {
                       }
                     }}
                     placeholder="you@example.com"
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-center text-sm focus-visible:ring-2 focus-visible:outline-none"
                     required
                   />
                   <Button type="submit" disabled={resultSaveStatus === "saving"}>
@@ -1930,7 +1930,7 @@ export default function DiagnosisResultPage() {
                     }
                   }}
                   placeholder="you@example.com"
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-center text-sm focus-visible:ring-2 focus-visible:outline-none"
                   required
                 />
                 <Button type="submit" disabled={followupStatus === "saving"}>
@@ -2005,7 +2005,7 @@ export default function DiagnosisResultPage() {
                       setMbtiAppliedScores(null);
                     }}
                     placeholder={resultPageCopy.mbtiPlaceholder}
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-center text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
                   />
                 </label>
                 <Button
