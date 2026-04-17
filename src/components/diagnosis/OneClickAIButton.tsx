@@ -74,6 +74,12 @@ const PRIMARY_URLS: Record<AiKind, string> = {
   jiyujin: AI_URLS.claude,
 };
 
+const ORCHESTRATOR_PARALLEL_BUTTONS: readonly { label: string; url: string }[] = [
+  { label: "Claude", url: AI_URLS.claude },
+  { label: "Perplexity", url: AI_URLS.perplexity },
+  { label: "ChatGPT", url: AI_URLS.chatgpt },
+] as const;
+
 interface OneClickAIButtonProps {
   /** 診断・ガイド共通の AiKind（jiyujin は遊牧民） */
   typeId: AiKind;
@@ -174,13 +180,28 @@ export function OneClickAIButton({
   return (
     <div className="w-full space-y-3">
       <p style={actionTextStyle}>💡 今日のアクション：{todayLine}</p>
-      <button
-        type="button"
-        onClick={() => void handleMainUse(primaryUrl, label)}
-        style={mainButtonStyle}
-      >
-        {label}を今すぐ使う →
-      </button>
+      {typeId === "jiyujin" ? (
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          {ORCHESTRATOR_PARALLEL_BUTTONS.map((entry) => (
+            <button
+              key={entry.label}
+              type="button"
+              onClick={() => void handleMainUse(entry.url, entry.label)}
+              style={mainButtonStyle}
+            >
+              {entry.label}を使う →
+            </button>
+          ))}
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => void handleMainUse(primaryUrl, label)}
+          style={mainButtonStyle}
+        >
+          {label}を今すぐ使う →
+        </button>
+      )}
       <button type="button" onClick={() => void handleIntroOnly()} style={introButtonStyle}>
         自分の性格に合った使い方をAIに指示する
       </button>
