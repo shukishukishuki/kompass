@@ -233,15 +233,16 @@ export function OneClickAIButton({
   };
 
   const introButtonStyle: CSSProperties = {
-    backgroundColor: "transparent",
+    background: "none",
     color: actionLineColor,
-    padding: "14px 24px",
-    fontSize: 15,
-    fontWeight: 600,
-    width: "100%",
-    border: `1.5px solid ${actionLineColor}`,
-    borderRadius: 12,
+    padding: "4px 0",
+    fontSize: 13,
+    fontWeight: 500,
+    width: "fit-content",
+    border: "none",
+    textDecoration: "underline",
     cursor: "pointer",
+    marginTop: 8,
   };
 
   const feedbackChoiceStyle: CSSProperties = {
