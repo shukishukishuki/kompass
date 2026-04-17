@@ -237,7 +237,7 @@ export default async function LocaleHomePage({
     <main className="bg-[#f8f7ff] text-slate-900">
       <section className="bg-[#fafafa] px-4 py-20 text-center opacity-0 animate-[fadeIn_0.5s_ease-in_forwards]">
         <div className="mx-auto max-w-3xl">
-          <div className="mb-8 flex justify-center gap-2">
+          <div className="flex justify-center gap-2">
             {[
               { src: "/images/kompass_char_01_empath.png", color: AI_THEME_COLORS.claude },
               { src: "/images/kompass_char_02_executor.png", color: AI_THEME_COLORS.copilot },
@@ -248,14 +248,14 @@ export default async function LocaleHomePage({
             ].map((char, i) => (
               <div
                 key={i}
-                className="h-16 w-16 overflow-visible rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
+                className="h-20 w-20 overflow-visible rounded-full hover:scale-110 transition-transform duration-200 cursor-pointer"
                 style={{ backgroundColor: `${char.color}33` }}
               >
                 <img
                   src={char.src}
                   alt=""
-                  width={64}
-                  height={64}
+                  width={80}
+                  height={80}
                   className="h-full w-full object-contain"
                 />
               </div>
@@ -264,30 +264,36 @@ export default async function LocaleHomePage({
           <p
             style={{
               textAlign: "center",
-              fontSize: 13,
-              letterSpacing: "0.25em",
-              color: "#888",
-              marginTop: 12,
+              fontSize: 18,
+              letterSpacing: "0.3em",
+              color: "#555",
+              fontWeight: 600,
+              marginTop: 16,
+              marginBottom: 20,
               fontFamily: "Georgia, serif",
             }}
           >
             — KOMPASS —
           </p>
           <h1
-            className="mt-6 whitespace-pre-line text-4xl leading-tight text-slate-900 md:text-6xl"
-            style={{ fontWeight: 400, fontFamily: "Georgia, serif" }}
+            className="whitespace-pre-line leading-tight text-slate-900"
+            style={{
+              fontWeight: 400,
+              fontFamily: "Georgia, serif",
+              fontSize: "clamp(28px, 4vw, 48px)",
+            }}
           >
             {copy.heroTitle}
           </h1>
-          <p className="mt-3 mb-6 text-center text-sm leading-relaxed text-gray-500">
+          <p className="mb-4 mt-4 text-center text-sm leading-relaxed text-gray-500">
             ChatGPT・Claude・Gemini・Perplexity・Copilot——
             <br />
             あなたの思考スタイルに合うAIを、診断で見つける。
           </p>
-          <p className="text-xs text-gray-400 text-center mt-2">
+          <p className="mt-0 text-center text-xs text-gray-400">
             深く知りたい人は最大40問まで
           </p>
-          <div className="flex flex-wrap justify-center gap-2 mt-4 mb-2">
+          <div className="mb-4 mt-4 flex flex-wrap justify-center gap-2">
             {[
               { name: "ChatGPT", color: AI_THEME_COLORS.chatgpt },
               { name: "Claude", color: AI_THEME_COLORS.claude },
@@ -304,17 +310,17 @@ export default async function LocaleHomePage({
               </span>
             ))}
           </div>
-          <p className="mx-auto mt-6 max-w-2xl text-base text-slate-700 md:text-xl">
+          <p className="mx-auto mb-4 mt-0 max-w-2xl text-base text-slate-700 md:text-xl">
             {copy.heroSub}
           </p>
-          <div className="flex items-center justify-center gap-4 mb-4 text-xs text-gray-400">
+          <div className="mb-4 flex items-center justify-center gap-4 text-xs text-gray-400">
             <span>✦ まず10問から</span>
             <span>✦ 約1分〜</span>
             <span>✦ 登録不要</span>
           </div>
           <a
             href={CTA_HREF}
-            className="mt-8 inline-flex rounded-full bg-[#52B788] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#52B788]/30 transition hover:brightness-95 md:text-base"
+            className="inline-flex rounded-full bg-[#52B788] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#52B788]/30 transition hover:brightness-95 md:text-base"
           >
             {copy.heroCta}
           </a>
