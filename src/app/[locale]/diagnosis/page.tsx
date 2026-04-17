@@ -725,51 +725,6 @@ export default function DiagnosisPage() {
               {layer1MbtiNotice}
             </p>
           ) : null}
-          {mbtiValue === null && !hasStoredMbti ? (
-            <div className="w-full space-y-3 rounded-2xl border border-white/60 bg-white/40 p-4 text-left shadow-sm backdrop-blur-sm">
-              <h3 className="text-base font-semibold text-[#0a2e18]">
-                精度を上げますか？（任意）
-              </h3>
-              <p className="text-sm text-[#1a3328]">
-                MBTIを入力すると、あなたの性格特性も考慮した診断になります
-              </p>
-              <input
-                type="text"
-                maxLength={4}
-                autoCapitalize="characters"
-                autoComplete="off"
-                value={layer1MbtiDraft}
-                onChange={(e) => {
-                  const v = e.target.value
-                    .toUpperCase()
-                    .replace(/[^A-Z]/g, "")
-                    .slice(0, 4);
-                  setLayer1MbtiDraft(v);
-                  setLayer1MbtiError(null);
-                }}
-                placeholder="例：INFJ、ENTP..."
-                className="w-full rounded-xl border border-[#52B788]/25 bg-white/90 px-4 py-3 text-center text-sm font-medium tracking-widest text-zinc-900 shadow-sm focus:border-[#52B788]/50 focus:outline-none focus:ring-2 focus:ring-[#52B788]/30"
-              />
-              <p className="text-xs text-[#2d4a3e]/65">
-                わからない場合はスキップしてOK。入力すると診断精度が上がります。
-              </p>
-              {layer1MbtiError !== null ? (
-                <p className="text-sm text-red-600" role="alert">
-                  {layer1MbtiError}
-                </p>
-              ) : null}
-              <p className="text-xs text-[#2d4a3e]/80">
-                <a
-                  href="https://www.16personalities.com/ja"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-[#0a2e18] underline underline-offset-2 hover:text-[#52B788]"
-                >
-                  MBTIって何？
-                </a>
-              </p>
-            </div>
-          ) : null}
           <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
             <button
               type="button"
@@ -816,6 +771,48 @@ export default function DiagnosisPage() {
               </span>
             </button>
           </div>
+          {mbtiValue === null && !hasStoredMbti ? (
+            <div className="w-full space-y-2 rounded-2xl border border-white/60 bg-white/35 p-3.5 text-left shadow-sm backdrop-blur-sm">
+              <h3 className="text-sm font-semibold text-[#0a2e18]">
+                精度を上げますか？（任意）
+              </h3>
+              <p className="text-xs text-[#1a3328]/85">
+                MBTI入力で診断精度が上がります。わからなければスキップでOKです。
+              </p>
+              <input
+                type="text"
+                maxLength={4}
+                autoCapitalize="characters"
+                autoComplete="off"
+                value={layer1MbtiDraft}
+                onChange={(e) => {
+                  const v = e.target.value
+                    .toUpperCase()
+                    .replace(/[^A-Z]/g, "")
+                    .slice(0, 4);
+                  setLayer1MbtiDraft(v);
+                  setLayer1MbtiError(null);
+                }}
+                placeholder="例：INFJ、ENTP..."
+                className="w-full rounded-xl border border-[#52B788]/25 bg-white/90 px-4 py-2.5 text-center text-sm font-medium tracking-widest text-zinc-900 shadow-sm focus:border-[#52B788]/50 focus:outline-none focus:ring-2 focus:ring-[#52B788]/30"
+              />
+              {layer1MbtiError !== null ? (
+                <p className="text-xs text-red-600" role="alert">
+                  {layer1MbtiError}
+                </p>
+              ) : null}
+              <p className="text-[11px] text-[#2d4a3e]/80">
+                <a
+                  href="https://www.16personalities.com/ja"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-[#0a2e18] underline underline-offset-2 hover:text-[#52B788]"
+                >
+                  MBTIって何？
+                </a>
+              </p>
+            </div>
+          ) : null}
         </div>
       </main>
     );

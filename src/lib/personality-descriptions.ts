@@ -115,7 +115,7 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
       "Perplexityでアイデア出しや感情の整理をしようとすると、出典のない回答に物足りなさを感じるはずです。調査・検証の場面だけに使うのが正解です。",
     literacyAnalysis:
       "あなたは情報の『量』より『根拠の質』にバイアスがかかっています。検証プロセスを持つ、信頼性の高いAI活用者です。",
-    shareText: "うちの上司、絶対これ。",
+    shareText: "これ、わかる人には刺さる。",
   },
   秘書タイプ: {
     characterName: "整理の鬼",
