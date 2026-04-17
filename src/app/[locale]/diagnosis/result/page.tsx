@@ -1902,7 +1902,7 @@ export default function DiagnosisResultPage() {
                 )}
               </div>
             </section>
-            <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
+            <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center flex flex-col items-center">
               <p className={BOTTOM_SECTION_HEADING_CLASS}>WEEKLY UPDATE</p>
               <p className="mb-1 text-sm font-bold text-gray-900">
                 毎週、あなたのタイプ向けAI活用法を届けます
@@ -1911,7 +1911,7 @@ export default function DiagnosisResultPage() {
                 新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
               </p>
               <form
-                className="flex flex-col gap-3 sm:flex-row sm:items-center"
+                className="flex justify-center items-center gap-2 w-full"
                 onSubmit={(e) => {
                   e.preventDefault();
                   void handleFollowupSubmit();
@@ -1930,7 +1930,7 @@ export default function DiagnosisResultPage() {
                     }
                   }}
                   placeholder="you@example.com"
-                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-center text-sm focus-visible:ring-2 focus-visible:outline-none"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full max-w-[280px] rounded-md border px-3 py-2 text-center text-sm focus-visible:ring-2 focus-visible:outline-none"
                   required
                 />
                 <Button type="submit" disabled={followupStatus === "saving"}>
@@ -1981,11 +1981,11 @@ export default function DiagnosisResultPage() {
                   );
                 })()
               : null}
-            <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
+            <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center flex flex-col items-center">
               <p className={BOTTOM_SECTION_HEADING_CLASS}>MBTI入力</p>
               <p className="mb-3 text-sm text-gray-900">{resultPageCopy.mbtiCardTitle}</p>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-center">
-                <label className="block min-w-0 flex-1">
+              <div className="flex justify-center items-center gap-2 w-full">
+                <label className="block min-w-0">
                   <span className="sr-only">MBTI</span>
                   <input
                     type="text"
@@ -2005,7 +2005,7 @@ export default function DiagnosisResultPage() {
                       setMbtiAppliedScores(null);
                     }}
                     placeholder={resultPageCopy.mbtiPlaceholder}
-                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-center text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
+                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full max-w-[160px] rounded-md border px-3 py-2 text-center text-sm font-medium tracking-widest focus-visible:ring-2 focus-visible:outline-none"
                   />
                 </label>
                 <Button
