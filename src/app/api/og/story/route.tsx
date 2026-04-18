@@ -1,6 +1,5 @@
 import { ImageResponse } from "next/og";
-
-export const runtime = "edge";
+import { Buffer } from "node:buffer";
 
 const TYPE_DATA: Record<string, {
   nameJa: string;
@@ -69,6 +68,11 @@ export async function GET(request: Request) {
   const typeKey = TYPE_ID_MAP[typeParam] ?? "empath";
   const d = TYPE_DATA[typeKey];
 
+  const charImgRes = await fetch(d.charImg);
+  const charImgBuf = await charImgRes.arrayBuffer();
+  const charImgBase64 = Buffer.from(charImgBuf).toString("base64");
+  const charImgSrc = `data:image/png;base64,${charImgBase64}`;
+
   return new ImageResponse(
     (
       <div style={{
@@ -107,7 +111,7 @@ export async function GET(request: Request) {
           background: d.accent + "33",
           overflow: "hidden",
         }}>
-          <img src={d.charImg} width={520} height={520} style={{ objectFit: "contain" }} />
+          <img src={charImgSrc} width={520} height={520} style={{ objectFit: "contain" }} />
         </div>
 
         {/* キャッチコピー */}
