@@ -2,22 +2,146 @@ import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
 
-export async function GET() {
+const TYPE_DATA: Record<string, {
+  nameJa: string;
+  nameEn: string;
+  catch: string;
+  ai: string;
+  percent: number;
+  accent: string;
+  bg: string;
+  charImg: string;
+}> = {
+  empath: {
+    nameJa: "共感ジャンキー", nameEn: "The Confidant",
+    catch: "答えじゃなくて、わかってほしかっただけ。",
+    ai: "Claude", percent: 24, accent: "#52B788",
+    bg: "linear-gradient(175deg, #c8eeda 0%, #e8f7ef 45%, #f5fcf8 75%, #ffffff 100%)",
+    charImg: "https://kompass-rosy.vercel.app/images/kompass_char_01_empath.png",
+  },
+  executor: {
+    nameJa: "整理の鬼", nameEn: "The Executive",
+    catch: "整理されてないと、息ができない。",
+    ai: "Copilot", percent: 19, accent: "#4A7FC1",
+    bg: "linear-gradient(175deg, #b8d0f0 0%, #e8f0fb 45%, #f5f8ff 75%, #ffffff 100%)",
+    charImg: "https://kompass-rosy.vercel.app/images/kompass_char_02_executor.png",
+  },
+  analyst: {
+    nameJa: "裏取りマニア", nameEn: "The Analyst",
+    catch: "「たぶん」で動くの、無理かも。",
+    ai: "Perplexity", percent: 13, accent: "#9B4DCA",
+    bg: "linear-gradient(175deg, #e8d8f8 0%, #f5eeff 45%, #fdfaff 75%, #ffffff 100%)",
+    charImg: "https://kompass-rosy.vercel.app/images/kompass_char_03_analyst.png",
+  },
+  generalist: {
+    nameJa: "丸投げ屋", nameEn: "The Generalist",
+    catch: "考えるより、投げた方が早い。",
+    ai: "ChatGPT", percent: 28, accent: "#E8A020",
+    bg: "linear-gradient(175deg, #fde8a8 0%, #fef8e8 45%, #fffdf5 75%, #ffffff 100%)",
+    charImg: "https://kompass-rosy.vercel.app/images/kompass_char_04_generalist.png",
+  },
+  scout: {
+    nameJa: "情報スナイパー", nameEn: "The Scout",
+    catch: "いらない情報、本当にいらない。",
+    ai: "Gemini", percent: 9, accent: "#F07C2A",
+    bg: "linear-gradient(175deg, #fdd0a8 0%, #fef2e8 45%, #fffaf5 75%, #ffffff 100%)",
+    charImg: "https://kompass-rosy.vercel.app/images/kompass_char_05_scout.png",
+  },
+  nomad: {
+    nameJa: "AI遊牧民", nameEn: "The Orchestrator",
+    catch: "1つのAIで満足できたことが、ない。",
+    ai: "Multi-AI", percent: 7, accent: "#C9A84C",
+    bg: "linear-gradient(175deg, #f0e8c8 0%, #f8f2e0 45%, #fdfaf2 75%, #ffffff 100%)",
+    charImg: "https://kompass-rosy.vercel.app/images/kompass_char_06_nomad.png",
+  },
+};
+
+const TYPE_ID_MAP: Record<string, string> = {
+  claude: "empath", copilot: "executor", perplexity: "analyst",
+  chatgpt: "generalist", gemini: "scout", jiyujin: "nomad",
+  empath: "empath", executor: "executor", analyst: "analyst",
+  generalist: "generalist", scout: "scout", nomad: "nomad",
+};
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const typeParam = searchParams.get("type") ?? "empath";
+  const typeKey = TYPE_ID_MAP[typeParam] ?? "empath";
+  const d = TYPE_DATA[typeKey];
+
   return new ImageResponse(
     (
-      <div
-        style={{
-          width: "1080px",
-          height: "1920px",
-          background: "linear-gradient(175deg, #c8eeda 0%, #e8f7ef 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 60,
-          color: "#1a1a2e",
-        }}
-      >
-        KOMPASS TEST
+      <div style={{
+        width: 1080, height: 1920,
+        background: d.bg,
+        display: "flex", flexDirection: "column",
+        alignItems: "center",
+        fontFamily: "sans-serif",
+        color: "#1a1a2e",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        {/* ヘッダー */}
+        <div style={{ display: "flex", width: "100%", justifyContent: "space-between", padding: "60px 80px 0", alignItems: "flex-start" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <span style={{ fontSize: 32, fontWeight: 700 }}>🧭 KOMPASS</span>
+            <span style={{ fontSize: 18, opacity: 0.6, marginTop: 4 }}>AIタイプ診断サービス</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+            <span style={{ fontSize: 16, opacity: 0.5 }}>全体の</span>
+            <span style={{ fontSize: 28, fontWeight: 700, color: d.accent }}>{d.percent}%</span>
+          </div>
+        </div>
+
+        {/* タイプ名 */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 80 }}>
+          <span style={{ fontSize: 52, fontWeight: 700, color: d.accent }}>{d.nameJa}</span>
+          <span style={{ fontSize: 20, opacity: 0.5, marginTop: 8 }}>{d.nameEn}</span>
+        </div>
+
+        {/* キャラ画像 */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          width: 400, height: 400, borderRadius: "50%",
+          background: d.accent + "33",
+          marginTop: 60,
+          overflow: "hidden",
+        }}>
+          <img src={d.charImg} width={420} height={420} style={{ objectFit: "contain" }} />
+        </div>
+
+        {/* キャッチコピー */}
+        <div style={{ fontSize: 24, marginTop: 48, opacity: 0.7, textAlign: "center", padding: "0 100px" }}>
+          {d.catch}
+        </div>
+
+        {/* AIブロック */}
+        <div style={{
+          display: "flex", flexDirection: "column", alignItems: "center",
+          background: d.accent + "22",
+          borderRadius: 24, padding: "40px 80px",
+          marginTop: 60,
+        }}>
+          {typeKey === "nomad" ? (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontSize: 16, opacity: 0.5 }}>BASE AI</span>
+              <span style={{ fontSize: 36, fontWeight: 700, color: d.accent, marginTop: 8 }}>Claude</span>
+              <div style={{ width: 120, height: 1, background: d.accent + "44", margin: "16px 0" }} />
+              <span style={{ fontSize: 14, opacity: 0.4 }}>SUB AI</span>
+              <span style={{ fontSize: 20, marginTop: 4, opacity: 0.7 }}>Perplexity / ChatGPT</span>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <span style={{ fontSize: 16, opacity: 0.5 }}>RECOMMENDED AI</span>
+              <span style={{ fontSize: 48, fontWeight: 700, color: d.accent, marginTop: 8 }}>{d.ai}</span>
+            </div>
+          )}
+        </div>
+
+        {/* フッター */}
+        <div style={{ position: "absolute", bottom: 60, fontSize: 18, opacity: 0.4 }}>
+          kompass-rosy.vercel.app
+        </div>
       </div>
     ),
     { width: 1080, height: 1920 }
