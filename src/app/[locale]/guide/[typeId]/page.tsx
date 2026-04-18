@@ -8,6 +8,7 @@ import { DIAGNOSIS_RESULT_STORAGE_KEY } from "@/app/[locale]/diagnosis/page";
 import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
 import { PromptList } from "@/components/guide/prompt-list";
 import { GUIDE_DETAILS } from "@/lib/guide-details";
+import { AI_KIND_TO_PERSONALITY_JA } from "@/lib/mbti-correction";
 import { AI_KIND_TO_GUIDE, GUIDE_TO_AI_KIND } from "@/lib/type-id-map";
 import { getTypeCharacterByTypeId, hexToRgba, type TypeId } from "@/lib/type-characters";
 import { AI_THEME_COLORS, type AiKind } from "@/types/ai";
@@ -25,11 +26,29 @@ const OTHER_TYPES: Record<TypeId, string> = {
   orchestrator: "AI遊牧民",
 };
 
+const JA_LABEL_TO_GUIDE_TYPE: Record<string, TypeId> = (
+  Object.entries(OTHER_TYPES) as [TypeId, string][]
+).reduce<Record<string, TypeId>>((acc, [id, ja]) => {
+  acc[ja] = id;
+  return acc;
+}, {});
+
+/** 診断 API の type（例: 相談相手タイプ）→ ガイド slug */
+const PERSONALITY_JA_TO_GUIDE_TYPE: Record<string, TypeId> = {
+  [AI_KIND_TO_PERSONALITY_JA.claude]: "empath",
+  [AI_KIND_TO_PERSONALITY_JA.chatgpt]: "generalist",
+  [AI_KIND_TO_PERSONALITY_JA.gemini]: "scout",
+  [AI_KIND_TO_PERSONALITY_JA.perplexity]: "analyst",
+  [AI_KIND_TO_PERSONALITY_JA.copilot]: "executive",
+  [AI_KIND_TO_PERSONALITY_JA.jiyujin]: "orchestrator",
+};
+
 /**
- * localStorageの診断結果から自分のガイドtypeIdを取り出す
+ * sessionStorage の診断結果から、ユーザーのガイド typeId を取り出す
+ *（type が AI 種別キー・キャラ名日本語・診断タイプ日本語のいずれでも解決）
  */
 function resolveUserTypeIdFromStorage(raw: string | null): TypeId | null {
-  if (raw === null) {
+  if (raw === null || raw === "") {
     return null;
   }
   try {
@@ -37,11 +56,20 @@ function resolveUserTypeIdFromStorage(raw: string | null): TypeId | null {
     if (typeof parsed.type !== "string") {
       return null;
     }
-    const mapped = AI_KIND_TO_GUIDE[parsed.type];
-    if (mapped === undefined || !(mapped in GUIDE_DETAILS)) {
-      return null;
+    const t = parsed.type;
+    const fromAiKind = AI_KIND_TO_GUIDE[t];
+    if (fromAiKind !== undefined && fromAiKind in GUIDE_DETAILS) {
+      return fromAiKind as TypeId;
     }
-    return mapped as TypeId;
+    const fromCharJa = JA_LABEL_TO_GUIDE_TYPE[t];
+    if (fromCharJa !== undefined) {
+      return fromCharJa;
+    }
+    const fromPersonalityJa = PERSONALITY_JA_TO_GUIDE_TYPE[t];
+    if (fromPersonalityJa !== undefined) {
+      return fromPersonalityJa;
+    }
+    return null;
   } catch {
     return null;
   }
@@ -171,35 +199,63 @@ export default function GuideTypeDetailPage() {
             borderColor: hexToRgba(accentColor, 0.35),
           }}
         >
-          <h2 className="text-xl font-bold text-slate-900">プロンプト5個</h2>
-          <p className="mt-2 text-sm text-slate-600">右のボタンでそのままコピーして使えます。</p>
-          <div className="mb-2 space-y-2">
-            <h2 className="text-sm font-bold text-gray-700">すぐ使えるプロンプト</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            自分の性格に合った使い方をAIに指示する
+          </h2>
+          <p className="mt-2 text-sm text-slate-600">
+            右のボタンでそのままコピーして使えます。
+          </p>
+          <div className="mb-2 mt-3 space-y-2">
+            <h3 className="text-sm font-bold text-gray-700">すぐ使えるプロンプト</h3>
             <p className="text-xs text-gray-400">
               コピーしてそのままAIに貼り付けて使えます。診断済みの方はあなた専用プロンプトが結果画面に表示されます。
             </p>
           </div>
           <div className="relative mt-4">
-            <div className={previewLocked ? "pointer-events-none blur-sm" : ""}>
-              <PromptList prompts={content.prompts} previewLocked={previewLocked} />
-            </div>
-            {previewLocked ? (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Link
-                  href={`/${locale}/diagnosis`}
-                  className="inline-block rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
-                >
-                  診断してプロンプトを解放する
-                </Link>
-              </div>
-            ) : null}
+            <PromptList
+              prompts={content.prompts}
+              previewLocked={previewLocked}
+              previewOverlay={
+                <>
+                  <p
+                    className="max-w-sm px-2 text-center text-slate-700"
+                    style={{ fontSize: 14, textAlign: "center" }}
+                  >
+                    診断すると、あなた専用のプロンプトが解放されます
+                  </p>
+                  <Link
+                    href={`/${locale}/diagnosis`}
+                    className="font-semibold text-white transition-opacity hover:opacity-90"
+                    style={{
+                      background: "#1a7a4a",
+                      color: "white",
+                      padding: "12px 24px",
+                      borderRadius: 10,
+                    }}
+                  >
+                    診断してプロンプトを解放する →
+                  </Link>
+                </>
+              }
+            />
           </div>
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900">NGな使い方</h2>
           <div className="relative mt-3">
-            <ul className={userTypeId === null ? "space-y-2 blur-sm pointer-events-none" : "space-y-2"}>
+            <ul
+              className="space-y-2"
+              style={
+                previewLocked
+                  ? {
+                      filter: "blur(6px)",
+                      pointerEvents: "none",
+                      userSelect: "none",
+                    }
+                  : undefined
+              }
+            >
               {content.ngUsages.map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
                   <span className="mt-0.5 shrink-0 text-red-400">✕</span>
@@ -207,13 +263,16 @@ export default function GuideTypeDetailPage() {
                 </li>
               ))}
             </ul>
-            {userTypeId === null ? (
-              <div className="absolute inset-0 flex items-center justify-center">
+            {previewLocked ? (
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{ background: "rgba(255,255,255,0.6)" }}
+              >
                 <Link
                   href={`/${locale}/diagnosis`}
                   className="inline-block rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
                 >
-                  診断してプロンプトを解放する
+                  診断してプロンプトを解放する →
                 </Link>
               </div>
             ) : null}
@@ -221,10 +280,7 @@ export default function GuideTypeDetailPage() {
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="space-y-2">
-            <h2 className="text-sm font-bold text-gray-700">
-              自分の性格に合った使い方をAIに指示する
-            </h2>
+          <div className="space-y-3">
             <OneClickAIButton
               typeId={aiKind}
               accentColor={character.theme.primary}

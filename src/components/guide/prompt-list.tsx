@@ -99,7 +99,13 @@ export function PromptList({
       </div>
 
       {previewLocked && previewOverlay !== null ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-xl bg-white/75 px-4 py-6 backdrop-blur-[2px]">
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center rounded-xl px-4 py-6"
+          style={{
+            background: "rgba(255,255,255,0.65)",
+            gap: 12,
+          }}
+        >
           {previewOverlay}
         </div>
       ) : null}
