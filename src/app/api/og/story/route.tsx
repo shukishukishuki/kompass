@@ -80,8 +80,8 @@ export async function GET(request: Request) {
         background: d.bg,
         display: "flex", flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-between",
-        padding: "80px 80px",
+        gap: 0,
+        padding: "80px 60px",
         fontFamily: "sans-serif",
         color: "#1a1a2e",
         overflow: "hidden",
@@ -99,23 +99,24 @@ export async function GET(request: Request) {
         </div>
 
         {/* タイプ名 */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <span style={{ fontSize: 52, fontWeight: 700, color: d.accent }}>{d.nameJa}</span>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 40 }}>
+          <span style={{ fontSize: 64, fontWeight: 700, color: d.accent }}>{d.nameJa}</span>
           <span style={{ fontSize: 20, opacity: 0.5, marginTop: 8 }}>{d.nameEn}</span>
         </div>
 
         {/* キャラ画像 */}
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "center",
-          width: 500, height: 500, borderRadius: "50%",
+          width: 560, height: 560, borderRadius: "50%",
           background: d.accent + "33",
+          marginTop: 40,
           overflow: "hidden",
         }}>
-          <img src={charImgSrc} width={520} height={520} style={{ objectFit: "contain" }} />
+          <img src={charImgSrc} width={580} height={580} style={{ objectFit: "contain" }} />
         </div>
 
         {/* キャッチコピー */}
-        <div style={{ fontSize: 24, opacity: 0.7, textAlign: "center", padding: "0 100px" }}>
+        <div style={{ fontSize: 24, opacity: 0.7, textAlign: "center", padding: "0 100px", marginTop: 32 }}>
           {d.catch}
         </div>
 
@@ -124,6 +125,7 @@ export async function GET(request: Request) {
           display: "flex", flexDirection: "column", alignItems: "center",
           background: d.accent + "22",
           borderRadius: 24, padding: "40px 80px",
+          marginTop: 40,
         }}>
           {typeKey === "nomad" ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -136,13 +138,13 @@ export async function GET(request: Request) {
           ) : (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <span style={{ fontSize: 16, opacity: 0.5 }}>RECOMMENDED AI</span>
-              <span style={{ fontSize: 48, fontWeight: 700, color: d.accent, marginTop: 8 }}>{d.ai}</span>
+              <span style={{ fontSize: 56, fontWeight: 700, color: d.accent, marginTop: 8 }}>{d.ai}</span>
             </div>
           )}
         </div>
 
         {/* フッター */}
-        <div style={{ fontSize: 18, opacity: 0.4 }}>
+        <div style={{ fontSize: 18, opacity: 0.4, marginTop: "auto" }}>
           kompass-rosy.vercel.app
         </div>
       </div>

@@ -1756,7 +1756,7 @@ export default function DiagnosisResultPage() {
           <button
             type="button"
             onClick={() => {
-              const imageUrl = `https://kompass-rosy.vercel.app/api/og?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
+              const imageUrl = `https://kompass-rosy.vercel.app/api/og/story?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
               const link = document.createElement("a");
               link.href = imageUrl;
               link.download = `kompass_${resolvedTypeCharacter.aiKind}.png`;
@@ -2125,7 +2125,7 @@ export default function DiagnosisResultPage() {
               <button
                 type="button"
                 onClick={() => {
-                  const imageUrl = `https://kompass-rosy.vercel.app/api/og?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
+                  const imageUrl = `https://kompass-rosy.vercel.app/api/og/story?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
                   const link = document.createElement("a");
                   link.href = imageUrl;
                   link.download = `kompass_${resolvedTypeCharacter.aiKind}.png`;
