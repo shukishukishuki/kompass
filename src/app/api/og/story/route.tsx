@@ -25,7 +25,7 @@ const FONT_SUBSET_TEXT = [
   "全体の",
   "Overall",
   "あなたに合ったAIが見つかりました",
-  "We found the right AI for you.",
+  "We found the right AI for you",
   "AIタイプ診断サービス",
   "AI type diagnosis",
   "🧭KOMPASS ",
@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
   const foundLine =
     lang === "ja"
       ? "あなたに合ったAIが見つかりました"
-      : "We found the right AI for you.";
+      : "We found the right AI for you";
 
   const watermark = data.en.label.toUpperCase();
 
