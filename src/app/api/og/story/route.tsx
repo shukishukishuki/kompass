@@ -10,6 +10,9 @@ import {
 
 export const runtime = "edge";
 
+/** next/og では画像は絶対 URL 必須（相対パス不可） */
+const OGP_ASSET_ORIGIN = "https://kompass-rosy.vercel.app";
+
 const TEXT = "#1a1a2e";
 const SUB_TEXT = "rgba(26,26,46,0.55)";
 
@@ -80,9 +83,17 @@ export async function GET(req: NextRequest) {
 
   const watermark = data.en.label.toUpperCase();
 
-  const charImgSrc = `https://kompass-rosy.vercel.app${data.charImg}`;
+  const charImgSrc = new URL(
+    data.charImg.startsWith("/") ? data.charImg : `/${data.charImg}`,
+    `${OGP_ASSET_ORIGIN}/`
+  ).href;
 
-  const fonts = await loadNotoSansJpForText(FONT_SUBSET_TEXT);
+  let fonts: Awaited<ReturnType<typeof loadNotoSansJpForText>> = [];
+  try {
+    fonts = await loadNotoSansJpForText(FONT_SUBSET_TEXT);
+  } catch {
+    fonts = [];
+  }
 
   const accentSoft = hexToRgba(data.accent, 0.14);
   const radialAccent = hexToRgba(data.accent, 0.3);
@@ -354,7 +365,7 @@ export async function GET(req: NextRequest) {
     {
       width: 1080,
       height: 1920,
-      fonts,
+      ...(fonts.length > 0 ? { fonts } : {}),
     }
   );
 
