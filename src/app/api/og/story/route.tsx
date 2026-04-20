@@ -26,6 +26,29 @@ export async function GET(request: Request) {
   const typeParam = searchParams.get("type") ?? "empath";
   const typeKey = TYPE_ID_MAP[typeParam] ?? "empath";
   const d = TYPE_DATA[typeKey];
+  type OgOptions = NonNullable<ConstructorParameters<typeof ImageResponse>[1]>;
+  type OgFont = NonNullable<OgOptions["fonts"]>[number];
+  let fonts: OgFont[] = [];
+
+  try {
+    const [notoSansJpBold, notoSansJpBlack] = await Promise.all([
+      fetch(
+        "https://fonts.gstatic.com/s/notosansjp/v52/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEi75vY0rw-oME.woff2"
+      ).then((r) => r.arrayBuffer()),
+      fetch(
+        "https://fonts.gstatic.com/s/notosansjp/v52/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFJEj75vY0rw-oME.woff2"
+      ).then((r) => r.arrayBuffer()),
+    ]);
+
+    fonts = [
+      { name: "NotoSansJP", data: notoSansJpBold, weight: 700 },
+      { name: "NotoSansJP", data: notoSansJpBlack, weight: 900 },
+    ];
+  } catch (error) {
+    // フォント取得に失敗してもOGP生成自体は継続する
+    console.error("[API /api/og/story] フォント取得エラー:", error);
+    fonts = [];
+  }
 
   const charImgRes = await fetch(d.charImg);
   const charImgBuf = await charImgRes.arrayBuffer();
@@ -40,24 +63,24 @@ export async function GET(request: Request) {
         display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "space-between",
         padding: "80px 60px 100px",
-        fontFamily: "sans-serif", color: "#1a1a2e",
+        fontFamily: "NotoSansJP", color: "#1a1a2e",
       }}>
         {/* ヘッダー */}
         <div style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontSize: 44, fontWeight: 700 }}>🧭 KOMPASS</span>
-            <span style={{ fontSize: 28, opacity: 0.55, marginTop: 6 }}>AIタイプ診断サービス</span>
+            <span style={{ fontSize: 44, fontWeight: 900, letterSpacing: "2.5px", fontFamily: "NotoSansJP" }}>🧭 KOMPASS</span>
+            <span style={{ fontSize: 28, opacity: 0.55, marginTop: 6, fontWeight: 500, fontFamily: "NotoSansJP" }}>AIタイプ診断サービス</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-            <span style={{ fontSize: 22, opacity: 0.5 }}>全体の</span>
-            <span style={{ fontSize: 64, fontWeight: 700, color: d.accent, lineHeight: 1.1 }}>{d.percent}%</span>
+            <span style={{ fontSize: 22, opacity: 0.5, fontWeight: 500, fontFamily: "NotoSansJP" }}>全体の</span>
+            <span style={{ fontSize: 64, fontWeight: 900, color: d.accent, lineHeight: 1.1, letterSpacing: "-0.5px", fontFamily: "NotoSansJP" }}>{d.percent}%</span>
           </div>
         </div>
 
         {/* タイプ名 */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <span style={{ fontSize: 120, fontWeight: 700, color: d.accent, letterSpacing: "-2px" }}>{d.nameJa}</span>
-          <span style={{ fontSize: 40, opacity: 0.45, marginTop: 8 }}>{d.nameEn}</span>
+          <span style={{ fontSize: 120, fontWeight: 900, color: d.accent, letterSpacing: "-1px", fontFamily: "NotoSansJP" }}>{d.nameJa}</span>
+          <span style={{ fontSize: 40, opacity: 0.45, marginTop: 8, fontWeight: 500, letterSpacing: "2.5px", fontFamily: "NotoSansJP" }}>{d.nameEn.toUpperCase()}</span>
         </div>
 
         {/* キャラ画像 */}
@@ -70,7 +93,7 @@ export async function GET(request: Request) {
         </div>
 
         {/* あなたに合ったAI */}
-        <div style={{ fontSize: 44, opacity: 0.6, textAlign: "center" }}>
+        <div style={{ fontSize: 44, opacity: 0.6, textAlign: "center", fontWeight: 500, fontFamily: "NotoSansJP" }}>
           あなたに合ったAIが見つかりました
         </div>
 
@@ -82,21 +105,25 @@ export async function GET(request: Request) {
         }}>
           {typeKey === "nomad" ? (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <span style={{ fontSize: 24, opacity: 0.5 }}>BASE AI</span>
-              <span style={{ fontSize: 72, fontWeight: 700, color: d.accent, marginTop: 8 }}>Claude</span>
+              <span style={{ fontSize: 24, opacity: 0.5, fontWeight: 500, fontFamily: "NotoSansJP" }}>BASE AI</span>
+              <span style={{ fontSize: 72, fontWeight: 900, color: d.accent, marginTop: 8, letterSpacing: "-0.3px", fontFamily: "NotoSansJP" }}>Claude</span>
               <div style={{ width: 160, height: 2, background: d.accent + "44", margin: "20px 0" }} />
-              <span style={{ fontSize: 22, opacity: 0.4 }}>SUB AI</span>
-              <span style={{ fontSize: 32, marginTop: 8, opacity: 0.7 }}>Perplexity / ChatGPT</span>
+              <span style={{ fontSize: 22, opacity: 0.4, fontWeight: 500, fontFamily: "NotoSansJP" }}>SUB AI</span>
+              <span style={{ fontSize: 32, marginTop: 8, opacity: 0.7, fontWeight: 900, letterSpacing: "-0.3px", fontFamily: "NotoSansJP" }}>Perplexity / ChatGPT</span>
             </div>
           ) : (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <span style={{ fontSize: 32, opacity: 0.5, letterSpacing: "0.1em" }}>RECOMMENDED AI</span>
-              <span style={{ fontSize: 100, fontWeight: 700, color: d.accent, marginTop: 12 }}>{d.ai}</span>
+              <span style={{ fontSize: 32, opacity: 0.5, letterSpacing: "0.1em", fontWeight: 500, fontFamily: "NotoSansJP" }}>RECOMMENDED AI</span>
+              <span style={{ fontSize: 100, fontWeight: 900, color: d.accent, marginTop: 12, letterSpacing: "-0.3px", fontFamily: "NotoSansJP" }}>{d.ai}</span>
             </div>
           )}
         </div>
       </div>
     ),
-    { width: 1080, height: 1920 }
+    {
+      width: 1080,
+      height: 1920,
+      fonts,
+    }
   );
 }
