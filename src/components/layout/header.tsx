@@ -28,11 +28,12 @@ function isActivePath(pathname: string, href: string): boolean {
  */
 export function Header({ locale }: Readonly<HeaderProps>) {
   const pathname = usePathname();
+  const isEn = locale === "en";
   const navItems: NavItem[] = [
-    { label: "診断", href: `/${locale}/diagnosis` },
-    { label: "タイプ", href: `/${locale}/types` },
-    { label: "AI活用ガイド", href: `/${locale}/guide` },
-    { label: "マイ結果", href: `/${locale}/diagnosis/result` },
+    { label: isEn ? "Diagnosis" : "診断", href: `/${locale}/diagnosis` },
+    { label: isEn ? "Types" : "タイプ", href: `/${locale}/types` },
+    { label: isEn ? "AI Guide" : "AI活用ガイド", href: `/${locale}/guide` },
+    { label: isEn ? "My Results" : "マイ結果", href: `/${locale}/diagnosis/result` },
   ];
 
   return (
@@ -57,7 +58,7 @@ export function Header({ locale }: Readonly<HeaderProps>) {
           </svg>
           Kompass
         </Link>
-        <nav aria-label="メインナビゲーション" className="flex items-center gap-2">
+        <nav aria-label={isEn ? "Main navigation" : "メインナビゲーション"} className="flex items-center gap-2">
           {navItems.map((item) => {
             const active = isActivePath(pathname, item.href);
             return (
@@ -80,7 +81,7 @@ export function Header({ locale }: Readonly<HeaderProps>) {
           href={`/${locale}/diagnosis`}
           className="rounded-full bg-[#52B788] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-95"
         >
-          診断を始める
+          {isEn ? "Start" : "診断を始める"}
         </Link>
       </div>
     </header>

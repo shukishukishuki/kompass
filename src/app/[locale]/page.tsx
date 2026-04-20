@@ -3,8 +3,6 @@ import { CharacterAvatar } from "@/components/lp/character-avatar";
 import { AI_KIND_TO_GUIDE } from "@/lib/type-id-map";
 import { AI_THEME_COLORS } from "@/types/ai";
 
-const CTA_HREF = "https://kompass-rosy.vercel.app/ja/diagnosis";
-
 interface CharacterCard {
   nameJa: string;
   nameEn: string;
@@ -115,10 +113,12 @@ interface LandingCopy {
   logo: string;
   headerCta: string;
   heroTag: string;
+  heroLead: string;
   heroTitle: string;
   heroSub: string;
   heroCta: string;
   heroNote: string;
+  heroBadge: string;
   empathyTitle: string;
   empathyItems: string[];
   typesTitle: string;
@@ -136,10 +136,13 @@ const COPY_BY_LOCALE: Record<LocaleCode, LandingCopy> = {
     logo: "Kompass",
     headerCta: "無料で診断する",
     heroTag: "AIをもっと自分らしく",
+    heroLead:
+      "ChatGPT・Claude・Gemini・Perplexity・Copilot——あなたの思考スタイルに合うAIを、診断で見つける。",
     heroTitle: "AI使ってるのに、\nなんかしっくりこない人へ",
     heroSub: "10問でわかる、あなたに合うAIの使い方",
     heroCta: "無料で診断する（30秒）",
     heroNote: "登録不要ですぐ無料公開",
+    heroBadge: "✦ まず10問から ✦ 約1分〜 ✦ 登録不要",
     empathyTitle: "こんなこと、ありませんか？",
     empathyItems: [
       "毎回「それっぽい答え」しか返ってこない",
@@ -170,16 +173,19 @@ const COPY_BY_LOCALE: Record<LocaleCode, LandingCopy> = {
     logo: "Kompass",
     headerCta: "Start Free Diagnosis",
     heroTag: "Find your AI fit",
-    heroTitle: "Using AI already,\nbut it still feels off?",
-    heroSub: "10 quick questions to find your best AI style",
-    heroCta: "Start Free Diagnosis (30 sec)",
+    heroLead:
+      "ChatGPT, Claude, Gemini, Perplexity, and Copilot - find the AI that matches your thinking style.",
+    heroTitle: "Stop settling.\nFind the AI that fits how you think.",
+    heroSub: "You're not using the wrong AI. You're using it wrong.",
+    heroCta: "Find your Base AI",
     heroNote: "No signup required",
+    heroBadge: "Free · No sign-up · 10 questions to start",
     empathyTitle: "Does this sound familiar?",
     empathyItems: [
-      "I use AI, but it still doesn't click",
-      "I only get generic “sounds-right” answers",
-      "Others seem ahead while I feel behind",
-      "I honestly can't tell ChatGPT from Claude",
+      'The AI always gives "pretty good" answers — nothing more',
+      "You tried it for a work task. The output was unusable.",
+      "You asked it to research something. It mixed in outdated info.",
+      "You ended up doing it yourself anyway.",
     ],
     typesTitle: "6 AI Thinking Types",
     typesSub: "Which AI brings out your real strengths?",
@@ -232,6 +238,7 @@ export default async function LocaleHomePage({
   const { locale } = await params;
   const lc: LocaleCode = locale === "en" ? "en" : "ja";
   const copy = COPY_BY_LOCALE[lc];
+  const ctaHref = `https://kompass-rosy.vercel.app/${lc}/diagnosis`;
 
   return (
     <main className="bg-[#f8f7ff] text-slate-900">
@@ -285,13 +292,9 @@ export default async function LocaleHomePage({
           >
             {copy.heroTitle}
           </h1>
-          <p className="mb-4 mt-4 text-center text-sm leading-relaxed text-gray-500">
-            ChatGPT・Claude・Gemini・Perplexity・Copilot——
-            <br />
-            あなたの思考スタイルに合うAIを、診断で見つける。
-          </p>
+          <p className="mb-4 mt-4 text-center text-sm leading-relaxed text-gray-500">{copy.heroLead}</p>
           <p className="mt-0 text-center text-xs text-gray-400">
-            深く知りたい人は最大40問まで
+            {lc === "en" ? "Up to 40 questions if you want to go deeper" : "深く知りたい人は最大40問まで"}
           </p>
           <div className="mb-4 mt-4 flex flex-wrap justify-center gap-2">
             {[
@@ -313,13 +316,11 @@ export default async function LocaleHomePage({
           <p className="mx-auto mb-4 mt-0 max-w-2xl text-base text-slate-700 md:text-xl">
             {copy.heroSub}
           </p>
-          <div className="mb-4 flex items-center justify-center gap-4 text-xs text-gray-400">
-            <span>✦ まず10問から</span>
-            <span>✦ 約1分〜</span>
-            <span>✦ 登録不要</span>
+          <div className="mb-4 flex items-center justify-center text-xs text-gray-400">
+            <span>{copy.heroBadge}</span>
           </div>
           <a
-            href={CTA_HREF}
+            href={ctaHref}
             className="inline-flex rounded-full bg-[#52B788] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#52B788]/30 transition hover:brightness-95 md:text-base"
           >
             {copy.heroCta}
@@ -380,7 +381,7 @@ export default async function LocaleHomePage({
           </div>
           <div className="mt-10 text-center">
             <a
-              href={CTA_HREF}
+              href={ctaHref}
               className="inline-flex rounded-full bg-[#52B788] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#52B788]/30 transition hover:brightness-95 md:text-base"
             >
               {copy.heroCta}
@@ -422,7 +423,7 @@ export default async function LocaleHomePage({
           </h2>
           <p className="mt-4 text-slate-600">{copy.bottomCtaSub}</p>
           <a
-            href={CTA_HREF}
+            href={ctaHref}
             className="mt-8 inline-flex rounded-full bg-[#52B788] px-8 py-3 text-sm font-semibold text-white shadow-lg shadow-[#52B788]/30 transition hover:brightness-95 md:text-base"
           >
             {copy.bottomCtaButton}

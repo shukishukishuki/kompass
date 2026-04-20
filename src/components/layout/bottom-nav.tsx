@@ -31,17 +31,18 @@ function isActivePath(pathname: string, href: string): boolean {
  */
 export function BottomNav({ locale }: Readonly<BottomNavProps>) {
   const pathname = usePathname();
+  const isEn = locale === "en";
   const items: BottomNavItem[] = [
-    { label: "診断", href: `/${locale}/diagnosis`, icon: Compass },
-    { label: "タイプ", href: `/${locale}/types`, icon: Users },
-    { label: "AI活用ガイド", href: `/${locale}/guide`, icon: BookOpen },
-    { label: "マイ結果", href: `/${locale}/diagnosis/result`, icon: BarChart2 },
+    { label: isEn ? "Diagnosis" : "診断", href: `/${locale}/diagnosis`, icon: Compass },
+    { label: isEn ? "Types" : "タイプ", href: `/${locale}/types`, icon: Users },
+    { label: isEn ? "AI Guide" : "AI活用ガイド", href: `/${locale}/guide`, icon: BookOpen },
+    { label: isEn ? "My Results" : "マイ結果", href: `/${locale}/diagnosis/result`, icon: BarChart2 },
   ];
 
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200 bg-white md:hidden"
-      aria-label="下部ナビゲーション"
+      aria-label={isEn ? "Bottom navigation" : "下部ナビゲーション"}
     >
       <ul className="grid h-16 grid-cols-4">
         {items.map((item) => {
