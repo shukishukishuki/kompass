@@ -43,13 +43,23 @@ const INTRO_PROMPTS: Record<AiKind, string> = {
 };
 
 /** ヒーロー直上の「今日のアクション」本文 */
-const TODAY_ACTION_LINES: Record<AiKind, string> = {
-  claude: "今日モヤモヤしていることを1つClaudeに話してみる",
-  chatgpt: "今日手が止まっているタスクをそのままChatGPTに投げてみる",
-  gemini: "今日気になっているニュースをGeminiで調べてみる",
-  perplexity: "最近「本当かな？」と思ったことをPerplexityで裏取りしてみる",
-  copilot: "今日の頭の中にある情報をCopilotに整理させてみる",
-  jiyujin: "今日のタスクをどのAIに投げるか振り分けることから始める",
+const TODAY_ACTION_LINES: Record<"ja" | "en", Record<AiKind, string>> = {
+  ja: {
+    claude: "今日モヤモヤしていることを1つClaudeに話してみる",
+    chatgpt: "今日手が止まっているタスクをそのままChatGPTに投げてみる",
+    gemini: "今日気になっているニュースをGeminiで調べてみる",
+    perplexity: "最近「本当かな？」と思ったことをPerplexityで裏取りしてみる",
+    copilot: "今日の頭の中にある情報をCopilotに整理させてみる",
+    jiyujin: "今日のタスクをどのAIに投げるか振り分けることから始める",
+  },
+  en: {
+    claude: "Talk through one thing on your mind with Claude today.",
+    chatgpt: "Drop one stuck task into ChatGPT and get moving.",
+    gemini: "Look up one trend you're curious about with Gemini.",
+    perplexity: "Fact-check one thing you've been unsure about with Perplexity.",
+    copilot: "Have Copilot organize what’s currently in your head.",
+    jiyujin: "Start by routing today's tasks to the best AI for each one.",
+  },
 };
 
 const AI_LABELS: Record<AiKind, string> = {
@@ -85,7 +95,7 @@ const ORCHESTRATOR_PARALLEL_BUTTONS: readonly { label: string; url: string }[] =
   { label: "ChatGPT", url: AI_URLS.chatgpt },
 ] as const;
 
-const TASK_TYPE_OPTIONS = [
+const TASK_TYPE_OPTIONS_JA = [
   { value: "writing", label: "📝 文章" },
   { value: "coding", label: "💻 コード" },
   { value: "research", label: "🔍 調査" },
@@ -93,7 +103,15 @@ const TASK_TYPE_OPTIONS = [
   { value: "other", label: "その他" },
 ] as const;
 
-type TaskType = (typeof TASK_TYPE_OPTIONS)[number]["value"];
+const TASK_TYPE_OPTIONS_EN = [
+  { value: "writing", label: "📝 Writing" },
+  { value: "coding", label: "💻 Code" },
+  { value: "research", label: "🔍 Research" },
+  { value: "idea", label: "💡 Ideas" },
+  { value: "other", label: "Other" },
+] as const;
+
+type TaskType = (typeof TASK_TYPE_OPTIONS_JA)[number]["value"];
 type AiExecutionFeedback = "good" | "meh" | "bad";
 
 interface OneClickAIButtonProps {
@@ -105,6 +123,8 @@ interface OneClickAIButtonProps {
   actionLabelColor?: string;
   /** Supabase 診断行 ID（あるときのみ行動ログを送る） */
   diagnosisRecordId?: string | null;
+  /** 画面ロケール（未指定時は日本語） */
+  locale?: string;
 }
 
 /**
@@ -116,14 +136,17 @@ export function OneClickAIButton({
   accentColor: accentColorProp,
   actionLabelColor: actionLabelColorProp,
   diagnosisRecordId = null,
+  locale = "ja",
 }: Readonly<OneClickAIButtonProps>) {
+  const isEn = locale === "en";
   const accentColor = accentColorProp ?? AI_THEME_COLORS[typeId];
   const actionLineColor = actionLabelColorProp ?? "#1a1a2e";
-  const todayLine = TODAY_ACTION_LINES[typeId];
+  const todayLine = (isEn ? TODAY_ACTION_LINES.en : TODAY_ACTION_LINES.ja)[typeId];
   const copyPrompt = COPY_PROMPTS[typeId];
   const introPrompt = INTRO_PROMPTS[typeId];
   const label = AI_LABELS[typeId];
   const primaryUrl = PRIMARY_URLS[typeId];
+  const taskTypeOptions = isEn ? TASK_TYPE_OPTIONS_EN : TASK_TYPE_OPTIONS_JA;
   const [taskType, setTaskType] = useState<TaskType | null>(null);
   const [showFeedbackPrompt, setShowFeedbackPrompt] = useState(false);
   const [showFeedbackThanks, setShowFeedbackThanks] = useState(false);
@@ -168,7 +191,11 @@ export function OneClickAIButton({
 
     try {
       await navigator.clipboard.writeText(copyPrompt);
-      toast.success("プロンプトをコピーしました。貼り付けてすぐ使えます");
+      toast.success(
+        isEn
+          ? "Prompt copied. Paste it and start now."
+          : "プロンプトをコピーしました。貼り付けてすぐ使えます"
+      );
       if (diagnosisRecordId !== null && diagnosisRecordId.trim() !== "") {
         enqueueDiagnosisBehaviorLog({
           recordId: diagnosisRecordId.trim(),
@@ -178,7 +205,11 @@ export function OneClickAIButton({
         });
       }
     } catch {
-      toast.error("コピーに失敗しました。ブラウザの設定を確認してください。");
+      toast.error(
+        isEn
+          ? "Copy failed. Please check your browser permissions."
+          : "コピーに失敗しました。ブラウザの設定を確認してください。"
+      );
     }
   };
 
@@ -207,9 +238,13 @@ export function OneClickAIButton({
   const handleIntroOnly = async () => {
     try {
       await navigator.clipboard.writeText(introPrompt);
-      toast.success("プロンプトをコピーしました");
+      toast.success(isEn ? "Prompt copied." : "プロンプトをコピーしました");
     } catch {
-      toast.error("コピーに失敗しました。ブラウザの設定を確認してください。");
+      toast.error(
+        isEn
+          ? "Copy failed. Please check your browser permissions."
+          : "コピーに失敗しました。ブラウザの設定を確認してください。"
+      );
     }
   };
 
@@ -278,7 +313,7 @@ export function OneClickAIButton({
     <div className="w-full space-y-3 text-center">
       <div style={summaryCardStyle}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <p style={actionTextStyle}>💡 今日のアクション：{todayLine}</p>
+          <p style={actionTextStyle}>{isEn ? "💡 Today's action:" : "💡 今日のアクション："}{todayLine}</p>
           <div>
             <p
               style={{
@@ -288,10 +323,10 @@ export function OneClickAIButton({
                 textAlign: "center",
               }}
             >
-              今日の用途は？
+              {isEn ? "What are you using it for today?" : "今日の用途は？"}
             </p>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-              {TASK_TYPE_OPTIONS.map((option) => (
+              {taskTypeOptions.map((option) => (
                 <button
                   key={option.value}
                   type="button"
@@ -324,7 +359,7 @@ export function OneClickAIButton({
                   onClick={() => void handleMainUse(entry.url, entry.label)}
                   style={mainButtonStyle}
                 >
-                  {entry.label}を使う →
+                  {isEn ? `Open ${entry.label} now →` : `${entry.label}を使う →`}
                 </button>
               ))}
             </div>
@@ -334,13 +369,13 @@ export function OneClickAIButton({
               onClick={() => void handleMainUse(primaryUrl, label)}
               style={mainButtonStyle}
             >
-              {label}を今すぐ使う →
+              {isEn ? `Open ${label} now →` : `${label}を今すぐ使う →`}
             </button>
           )}
         </div>
       </div>
       <button type="button" onClick={() => void handleIntroOnly()} style={introButtonStyle}>
-        「 自分の性格に合った使い方をAIに指示する 」
+        {isEn ? '" Tell AI how to work with you "' : "「 自分の性格に合った使い方をAIに指示する 」"}
       </button>
       {showFeedbackPrompt ? (
         <div
@@ -356,7 +391,7 @@ export function OneClickAIButton({
         >
           <button
             type="button"
-            aria-label="フィードバックを閉じる"
+            aria-label={isEn ? "Close feedback prompt" : "フィードバックを閉じる"}
             onClick={handleFeedbackSkip}
             style={{
               position: "absolute",
@@ -372,23 +407,25 @@ export function OneClickAIButton({
           >
             ×
           </button>
-          <p style={{ marginBottom: 8, color: "#444" }}>使ってみてどうでしたか？</p>
+          <p style={{ marginBottom: 8, color: "#444" }}>
+            {isEn ? "How did it go?" : "使ってみてどうでしたか？"}
+          </p>
           <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
             <button type="button" onClick={() => handleFeedback("good")} style={feedbackChoiceStyle}>
-              👍 よかった
+              {isEn ? "👍 Great" : "👍 よかった"}
             </button>
             <button type="button" onClick={() => handleFeedback("meh")} style={feedbackChoiceStyle}>
-              😐 まあまあ
+              {isEn ? "😐 Okay" : "😐 まあまあ"}
             </button>
             <button type="button" onClick={() => handleFeedback("bad")} style={feedbackChoiceStyle}>
-              👎 いまいち
+              {isEn ? "👎 Not great" : "👎 いまいち"}
             </button>
           </div>
         </div>
       ) : null}
       {showFeedbackThanks ? (
         <p style={{ marginTop: 12, textAlign: "center", fontSize: 13, color: "#444" }}>
-          ありがとうございました！
+          {isEn ? "Thanks!" : "ありがとうございました！"}
         </p>
       ) : null}
     </div>

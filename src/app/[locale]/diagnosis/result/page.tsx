@@ -503,6 +503,129 @@ function buildShareText(typeJa: string): string {
   return `私のAIタイプは「${typeJa}」でした！ #Kompass #AI診断`;
 }
 
+interface ResultUiText {
+  heroCompleteLine: string;
+  whoYouAre: string;
+  thinkingPattern: string;
+  workStyle: string;
+  aiCompatibility: string;
+  roadmapTitle: string;
+  compatibilityTitle: string;
+  compatibilityGood: string;
+  compatibilityWatchOut: string;
+  seeGuide: string;
+  famousLikeYou: string;
+  companiesLikeYou: string;
+  resultSaveAria: string;
+  resultSaveTitle: string;
+  resultSaveButton: string;
+  resultSavedToast: string;
+  continueHeading: string;
+  continueUnlockHint: string;
+  goDeeperBadge: string;
+  sharpenTitle: string;
+  continueDescription: (n: number) => string;
+  continueButton: (n: number) => string;
+  xShareButton: string;
+  nextStepCombo: string;
+  weeklyLead: string;
+  weeklySub: string;
+  weeklyButton: string;
+  weeklySaving: string;
+  weeklySaved: string;
+  nextActions: string;
+  mbtiSectionHeading: string;
+  diagnosisDateHeading: string;
+  diagnosisDateLabel: string;
+  retakeHeading: string;
+  unlockPromptCta: string;
+  unlockPromptHint: string;
+  heroFallbackTitle: string;
+}
+
+const RESULT_UI_TEXT: Record<"ja" | "en", ResultUiText> = {
+  ja: {
+    heroCompleteLine: "診断完了 ✦ あなたのAIタイプが決まりました",
+    whoYouAre: "あなたはこういう人です",
+    thinkingPattern: "思考パターン",
+    workStyle: "職場での振る舞い",
+    aiCompatibility: "AIとの相性",
+    roadmapTitle: "活用ロードマップ",
+    compatibilityTitle: "タイプ相性",
+    compatibilityGood: "相性◎",
+    compatibilityWatchOut: "注意⚠",
+    seeGuide: "使い方を見る →",
+    famousLikeYou: "同じタイプの有名人",
+    companiesLikeYou: "同じタイプの企業・職種",
+    resultSaveAria: "この診断結果を保存して、後から見返す",
+    resultSaveTitle: "この診断結果を保存して、後から見返す",
+    resultSaveButton: "保存する",
+    resultSavedToast: "保存しました。メールを確認してください",
+    continueHeading: "続きを診断する",
+    continueUnlockHint: "続けて診断すると「NGな使い方」「AIリテラシー分析」が解放されます",
+    goDeeperBadge: "🔍 もっと深く知る",
+    sharpenTitle: "診断の精度をもっと上げられます",
+    continueDescription: (n) =>
+      `残り${n}問に答えると、より詳細な分析と専用プロンプトが解放されます`,
+    continueButton: (n) => `続きを診断する（残り${n}問）→`,
+    xShareButton: "𝕏 でシェア",
+    nextStepCombo: "次の一歩 / まずこれだけOK",
+    weeklyLead: "毎週、あなたのタイプ向けAI活用法を届けます",
+    weeklySub: "新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。",
+    weeklyButton: "無料で受け取る",
+    weeklySaving: "登録中...",
+    weeklySaved: "登録しました。次回のアップデートをお楽しみに ✓",
+    nextActions: "次のアクション",
+    mbtiSectionHeading: "MBTI入力",
+    diagnosisDateHeading: "診断日時",
+    diagnosisDateLabel: "診断日：",
+    retakeHeading: "もう一度診断する",
+    unlockPromptCta: "診断する →",
+    unlockPromptHint: "診断を完了するとプロンプトが解放されます",
+    heroFallbackTitle: "診断であなたのタイプを表示",
+  },
+  en: {
+    heroCompleteLine: "Diagnosis complete ✦ Your AI type has been identified",
+    whoYouAre: "Who you are",
+    thinkingPattern: "How you think",
+    workStyle: "How you work",
+    aiCompatibility: "Your AI match",
+    roadmapTitle: "How to use it",
+    compatibilityTitle: "Type compatibility",
+    compatibilityGood: "Great match",
+    compatibilityWatchOut: "Watch out",
+    seeGuide: "See how to use →",
+    famousLikeYou: "Famous people like you",
+    companiesLikeYou: "Companies & roles like you",
+    resultSaveAria: "Save your result and revisit anytime",
+    resultSaveTitle: "Save your result and revisit anytime",
+    resultSaveButton: "Save",
+    resultSavedToast: "Saved. Check your inbox.",
+    continueHeading: "Continue",
+    continueUnlockHint: "Continue to unlock 'What not to do' and your AI literacy analysis.",
+    goDeeperBadge: "🔍 Go deeper",
+    sharpenTitle: "Get a sharper result",
+    continueDescription: (n) =>
+      `Answer ${n} more questions to unlock deeper analysis and personalized prompts.`,
+    continueButton: (n) => `Continue (${n} questions left) →`,
+    xShareButton: "Share on 𝕏",
+    nextStepCombo: "First step / Start here",
+    weeklyLead: "Weekly AI tips tailored to your type",
+    weeklySub: "Fresh prompts and tips, every week. Unsubscribe anytime.",
+    weeklyButton: "Get it free",
+    weeklySaving: "Saving...",
+    weeklySaved: "Saved. You'll get the next update soon ✓",
+    nextActions: "Next actions",
+    mbtiSectionHeading: "MBTI",
+    diagnosisDateHeading: "Diagnosis date",
+    diagnosisDateLabel: "Taken on ",
+    retakeHeading: "Retake diagnosis",
+    unlockPromptCta: "Take diagnosis →",
+    unlockPromptHint: "Finish diagnosis to unlock prompts",
+    heroFallbackTitle: "Take the diagnosis to reveal your type",
+  },
+};
+
 /**
  * タイプ別件数マップの合計件数
  */
@@ -653,6 +776,8 @@ export default function DiagnosisResultPage() {
       : "ja";
 
   const copy = messagesByLocale[locale] ?? messagesByLocale.ja;
+  const isEn = locale === "en";
+  const ui = isEn ? RESULT_UI_TEXT.en : RESULT_UI_TEXT.ja;
   const resultPageCopy =
     copy.diagnosis.resultPage ?? FALLBACK_RESULT_COPY;
 
@@ -810,12 +935,12 @@ export default function DiagnosisResultPage() {
       return [];
     }
     return [
-      { title: "あなたはこういう人です", body: personalityBlock.whoYouAre },
-      { title: "思考パターン", body: personalityBlock.thinkingPattern },
-      { title: "職場での振る舞い", body: personalityBlock.workStyle },
-      { title: "AIとの相性", body: personalityBlock.aiCompatibility },
+      { title: ui.whoYouAre, body: personalityBlock.whoYouAre },
+      { title: ui.thinkingPattern, body: personalityBlock.thinkingPattern },
+      { title: ui.workStyle, body: personalityBlock.workStyle },
+      { title: ui.aiCompatibility, body: personalityBlock.aiCompatibility },
     ];
-  }, [personalityBlock]);
+  }, [personalityBlock, ui]);
 
   const statsDisplay = useMemo(() => {
     if (result === null) {
@@ -950,8 +1075,11 @@ export default function DiagnosisResultPage() {
     X_SHARE_ONE_LINERS[xShareTypeId] ??
     "あなたは何タイプ？ ぜひ診断してみてください。";
   const xShareLandingUrl = "https://kompass-rosy.vercel.app";
+  const shareTypeNameEn = mbtiApplied?.correctedTypeEn ?? resolvedTypeCharacter.typeEn;
   const shareText = encodeURIComponent(
-    `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした。\n\n${xShareOneLiner}\n\nあなたは何タイプ？\n→ ${xShareLandingUrl}\n#Kompass`
+    isEn
+      ? `My AI type is '${shareTypeNameEn}'. What's yours? → https://kompass-rosy.vercel.app/en #Kompass`
+      : `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした。\n\n${xShareOneLiner}\n\nあなたは何タイプ？\n→ ${xShareLandingUrl}\n#Kompass`
   );
   const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}`;
 
@@ -972,8 +1100,8 @@ export default function DiagnosisResultPage() {
     const email = followupEmail.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      toast.error("正しいメールアドレスを入力してください");
-      setFollowupError("有効なメールアドレスを入力してください。");
+      toast.error(isEn ? "Enter a valid email address." : "正しいメールアドレスを入力してください");
+      setFollowupError(isEn ? "Please enter a valid email address." : "有効なメールアドレスを入力してください。");
       setFollowupStatus("error");
       return;
     }
@@ -989,8 +1117,12 @@ export default function DiagnosisResultPage() {
       return;
     }
     setFollowupStatus("error");
-    setFollowupError("現在は登録できません。時間をおいて再度お試しください。");
-  }, [result, followupEmail, displayPersonalityJa, resolvedTypeCharacter.aiKind]);
+    setFollowupError(
+      isEn
+        ? "Couldn't register right now. Please try again in a moment."
+        : "現在は登録できません。時間をおいて再度お試しください。"
+    );
+  }, [result, followupEmail, displayPersonalityJa, resolvedTypeCharacter.aiKind, isEn]);
 
   const handleResultSaveSubmit = useCallback(async () => {
     if (result === null) {
@@ -999,7 +1131,7 @@ export default function DiagnosisResultPage() {
     const email = resultSaveEmail.trim();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setResultSaveError("有効なメールアドレスを入力してください。");
+      setResultSaveError(isEn ? "Please enter a valid email address." : "有効なメールアドレスを入力してください。");
       setResultSaveStatus("error");
       return;
     }
@@ -1014,13 +1146,17 @@ export default function DiagnosisResultPage() {
     if (saved) {
       setResultSaveStatus("saved");
       setResultSaveEmail("");
-      toast.success("保存しました。メールを確認してください");
+      toast.success(ui.resultSavedToast);
       return;
     }
 
     setResultSaveStatus("error");
-    setResultSaveError("現在は保存できません。時間をおいて再度お試しください。");
-  }, [result, resultSaveEmail, displayPersonalityJa, resolvedTypeCharacter.aiKind]);
+    setResultSaveError(
+      isEn
+        ? "Couldn't save right now. Please try again in a moment."
+        : "現在は保存できません。時間をおいて再度お試しください。"
+    );
+  }, [result, resultSaveEmail, displayPersonalityJa, resolvedTypeCharacter.aiKind, ui.resultSavedToast, isEn]);
 
   if (!hydrated) {
     return (
@@ -1051,7 +1187,7 @@ export default function DiagnosisResultPage() {
             <div className="mt-4 flex justify-center">
               <Image
                 src={resolvedTypeCharacter.imageSrc}
-                alt="診断前キャラクターのプレビュー"
+                alt={isEn ? "Preview character before diagnosis" : "診断前キャラクターのプレビュー"}
                 width={280}
                 height={280}
                 className="h-[280px] w-[280px] object-contain"
@@ -1062,7 +1198,7 @@ export default function DiagnosisResultPage() {
               id="hero-heading"
               className="mt-4 text-4xl font-extrabold leading-tight md:text-5xl"
             >
-              診断であなたのタイプを表示
+              {ui.heroFallbackTitle}
             </h1>
           </div>
           <div className="relative mx-auto mt-6 max-w-2xl">
@@ -1072,19 +1208,20 @@ export default function DiagnosisResultPage() {
                   typeId={resolvedTypeCharacter.aiKind}
                   accentColor={AI_KIND_THEMES[resolvedTypeCharacter.aiKind].primary}
                   actionLabelColor={AI_KIND_THEMES[resolvedTypeCharacter.aiKind].cText}
+                  locale={locale}
                 />
               </div>
             </div>
             {!isDiagnosed ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                 <p className="px-4 text-center text-sm font-medium text-white">
-                  診断を完了するとプロンプトが解放されます
+                  {ui.unlockPromptHint}
                 </p>
                 <Link
                   href={`/${locale}/diagnosis`}
                   className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
                 >
-                  診断する →
+                  {ui.unlockPromptCta}
                 </Link>
               </div>
             ) : null}
@@ -1115,6 +1252,10 @@ export default function DiagnosisResultPage() {
       : undefined) ??
     oppositeCharacter?.typeId ??
     "empath";
+  const nextActionTryAiLabel =
+    resolvedTypeCharacter.aiKind === "jiyujin"
+      ? "Claude"
+      : (AI_LABEL_JA[resolvedTypeCharacter.aiKind] ?? resolvedTypeCharacter.aiName);
 
   return (
     <main className="min-h-screen pb-16">
@@ -1155,7 +1296,7 @@ export default function DiagnosisResultPage() {
             className="mb-4 mt-1 text-center text-xs"
             style={{ color: `${heroTheme.cText}99` }}
           >
-            診断完了 ✦ あなたのAIタイプが決まりました
+            {ui.heroCompleteLine}
           </p>
 
           <div className="mx-auto flex w-full max-w-2xl flex-col items-center overflow-visible">
@@ -1269,18 +1410,22 @@ export default function DiagnosisResultPage() {
           style={{ color: heroTheme.cText, marginTop: isOrchestratorDisplay ? 24 : undefined }}
         >
           {isOrchestratorDisplay
-            ? "メインAI: Claude（深掘り・思考整理）"
-            : (mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name)}
+            ? isEn
+              ? "Base AI: Claude (deep thinking & synthesis)"
+              : "メインAI: Claude（深掘り・思考整理）"
+            : `${isEn ? "Base AI: " : ""}${mbtiApplied?.displayPrimaryLabel ?? result.baseAI.name}`}
         </p>
         {isOrchestratorDisplay && (
           <p style={{ fontSize: 13, color: "#666", marginTop: 4 }}>
-            サブAI: Perplexity（調査・裏取り）/ ChatGPT（整理・アウトプット）
+            {isEn
+              ? "Sub AI: Perplexity (research & fact-check) / ChatGPT (structuring & output)"
+              : "サブAI: Perplexity（調査・裏取り）/ ChatGPT（整理・アウトプット）"}
           </p>
         )}
         {/* ヒーロー下部タブ（見た目＋スクロール） */}
         <nav
           className="relative z-10 mx-auto mt-10 flex max-w-lg gap-0 overflow-hidden rounded-t-2xl border border-black/[0.06] bg-white/55 backdrop-blur-md"
-          aria-label="結果セクション内ナビ"
+          aria-label={isEn ? "Result section navigation" : "結果セクション内ナビ"}
         >
           <button
             type="button"
@@ -1435,7 +1580,7 @@ export default function DiagnosisResultPage() {
                   return (
                     <div className="space-y-3">
                       <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                        活用ロードマップ
+                        {ui.roadmapTitle}
                       </p>
                       <div
                         className="rounded-2xl bg-white p-4 space-y-3"
@@ -1483,18 +1628,19 @@ export default function DiagnosisResultPage() {
                   accentColor={heroTheme.primary}
                   actionLabelColor={heroTheme.cText}
                   diagnosisRecordId={result.recordId ?? null}
+                  locale={locale}
                 />
               </div>
               {!isDiagnosed ? (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                   <p className="px-4 text-center text-sm font-medium text-[#1a3328]">
-                    診断を完了するとプロンプトが解放されます
+                    {ui.unlockPromptHint}
                   </p>
                   <Link
                     href={`/${locale}/diagnosis`}
                     className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
                   >
-                    診断する →
+                    {ui.unlockPromptCta}
                   </Link>
                 </div>
               ) : null}
@@ -1508,29 +1654,29 @@ export default function DiagnosisResultPage() {
                   return (
                     <div className="space-y-3">
                       <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                        タイプ相性
+                        {ui.compatibilityTitle}
                       </p>
                       <div className="grid grid-cols-2 gap-3 rounded-xl bg-[#f9f9f9] p-3">
                         <div className="rounded-xl bg-green-50 p-3 text-center">
-                          <p className="text-xs text-green-600 font-bold mb-1">相性◎</p>
+                          <p className="text-xs text-green-600 font-bold mb-1">{ui.compatibilityGood}</p>
                           <p className="text-sm font-bold text-gray-800">{goodChar.characterName}</p>
                           <p className="text-xs text-gray-400">{goodChar.aiName}</p>
                           <a
                             href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.good] ?? compat.good}`}
                             className="text-xs underline underline-offset-2 text-green-600 hover:text-green-800 mt-1 block"
                           >
-                            使い方を見る →
+                            {ui.seeGuide}
                           </a>
                         </div>
                         <div className="rounded-xl bg-red-50 p-3 text-center">
-                          <p className="text-xs text-red-500 font-bold mb-1">注意⚠</p>
+                          <p className="text-xs text-red-500 font-bold mb-1">{ui.compatibilityWatchOut}</p>
                           <p className="text-sm font-bold text-gray-800">{badChar.characterName}</p>
                           <p className="text-xs text-gray-400">{badChar.aiName}</p>
                           <a
                             href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.bad] ?? compat.bad}`}
                             className="text-xs underline underline-offset-2 text-red-400 hover:text-red-600 mt-1 block"
                           >
-                            使い方を見る →
+                            {ui.seeGuide}
                           </a>
                         </div>
                       </div>
@@ -1545,7 +1691,7 @@ export default function DiagnosisResultPage() {
                   return (
                     <div className="space-y-3">
                       <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                        同じタイプの有名人
+                        {ui.famousLikeYou}
                       </p>
                       <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
                         <div className="flex flex-wrap gap-2">
@@ -1572,7 +1718,7 @@ export default function DiagnosisResultPage() {
                     <div className="space-y-2">
                       <div className="rounded-xl bg-[#f9f9f9] p-4 space-y-2">
                         <p className="mb-3 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                          同じタイプの企業・職種
+                          {ui.companiesLikeYou}
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {companies.companies.map((name) => (
@@ -1599,7 +1745,7 @@ export default function DiagnosisResultPage() {
           <div className="space-y-4 rounded-2xl bg-[#fafafa] p-5 text-left">
               <button
                 type="button"
-                aria-label="この診断結果を保存して、後から見返す"
+                aria-label={ui.resultSaveAria}
                 onClick={() => {
                   setResultSaveExpanded((prev) => !prev);
                   setResultSaveError(null);
@@ -1612,7 +1758,7 @@ export default function DiagnosisResultPage() {
                   backgroundColor: heroTheme.primary,
                 }}
               >
-                この診断結果を保存して、後から見返す
+                {ui.resultSaveTitle}
               </button>
               {resultSaveExpanded ? (
                 <form
@@ -1639,7 +1785,7 @@ export default function DiagnosisResultPage() {
                     required
                   />
                   <Button type="submit" disabled={resultSaveStatus === "saving"}>
-                    {resultSaveStatus === "saving" ? "保存中..." : "保存する"}
+                    {resultSaveStatus === "saving" ? (isEn ? "Saving..." : "保存中...") : ui.resultSaveButton}
                   </Button>
                 </form>
               ) : null}
@@ -1665,7 +1811,7 @@ export default function DiagnosisResultPage() {
             }}
             className="space-y-3"
           >
-            <p className={BOTTOM_SECTION_HEADING_CLASS}>続きを診断する</p>
+            <p className={BOTTOM_SECTION_HEADING_CLASS}>{ui.continueHeading}</p>
             <p
               style={{
                 fontSize: 13,
@@ -1674,7 +1820,7 @@ export default function DiagnosisResultPage() {
                 marginBottom: 12,
               }}
             >
-              続けて診断すると「NGな使い方」「AIリテラシー分析」が解放されます
+              {ui.continueUnlockHint}
             </p>
             <span
               className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold"
@@ -1683,14 +1829,13 @@ export default function DiagnosisResultPage() {
                 color: "#fff",
               }}
             >
-              🔍 もっと深く知る
+              {ui.goDeeperBadge}
             </span>
             <p className="text-[18px] font-bold" style={{ color: heroTheme.cText }}>
-              診断の精度をもっと上げられます
+              {ui.sharpenTitle}
             </p>
             <p className="text-sm leading-relaxed text-zinc-700">
-              残り{remainingQuestions}
-              問に答えると、より詳細な分析と専用プロンプトが解放されます
+              {ui.continueDescription(remainingQuestions)}
             </p>
             <a
               href={`/${locale}/diagnosis?resumeFromLayer=${result.layerCompleted}`}
@@ -1705,7 +1850,7 @@ export default function DiagnosisResultPage() {
                 boxShadow: `0 4px 16px ${hexToRgba(heroTheme.primary, 0.3)}`,
               }}
             >
-              続きを診断する（残り{remainingQuestions}問）→
+              {ui.continueButton(remainingQuestions)}
             </a>
           </div>
         </div>
@@ -1739,7 +1884,7 @@ export default function DiagnosisResultPage() {
             className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "#000000", border: "none" }}
           >
-            𝕏 でシェア
+            {ui.xShareButton}
           </a>
           <a
             href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
@@ -1756,13 +1901,15 @@ export default function DiagnosisResultPage() {
           <button
             type="button"
             onClick={() => {
-              const imageUrl = `https://kompass-rosy.vercel.app/api/og/story?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
+              const imageUrl = `https://kompass-rosy.vercel.app/api/og/story?type=${resolvedTypeCharacter.aiKind}&lang=${isEn ? "en" : "ja"}`;
               const link = document.createElement("a");
               link.href = imageUrl;
               link.download = `kompass_${resolvedTypeCharacter.aiKind}.png`;
               link.click();
               toast.success(
-                "画像をダウンロードしました。Instagramストーリーに使えます ✓"
+                isEn
+                  ? "Image downloaded. You can use it for your Instagram Story ✓"
+                  : "画像をダウンロードしました。Instagramストーリーに使えます ✓"
               );
             }}
             className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
@@ -1828,7 +1975,7 @@ export default function DiagnosisResultPage() {
                     href={`/${locale}/guide/${oppositeGuideTypeId}`}
                     className="text-xs underline underline-offset-2 text-gray-400 hover:text-gray-600 mt-1 block"
                   >
-                    使い方を見る →
+                    {ui.seeGuide}
                   </a>
                 </CardContent>
               </Card>
@@ -1837,7 +1984,9 @@ export default function DiagnosisResultPage() {
               <>
                 <div className="mx-auto mt-4 max-w-2xl">
                   <p className="text-center text-xs text-gray-400 mb-2">
-                    ✦ Layer {result.layerCompleted} 解放済み
+                    {isEn
+                      ? `✦ Layer ${result.layerCompleted} unlocked`
+                      : `✦ Layer ${result.layerCompleted} 解放済み`}
                   </p>
                 </div>
                 <Card className="text-left">
@@ -1874,7 +2023,7 @@ export default function DiagnosisResultPage() {
               id="section-ai-usage"
               className="scroll-mt-4 border-t border-[#f0f0f0] bg-white pt-6 text-center"
             >
-              <p className={BOTTOM_SECTION_HEADING_CLASS}>次の一歩 / まずこれだけOK</p>
+              <p className={BOTTOM_SECTION_HEADING_CLASS}>{ui.nextStepCombo}</p>
               <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
                 {advanced ? (
                   <>
@@ -1906,10 +2055,10 @@ export default function DiagnosisResultPage() {
             <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center flex flex-col items-center">
               <p className={BOTTOM_SECTION_HEADING_CLASS}>WEEKLY UPDATE</p>
               <p className="mb-1 text-sm font-bold text-gray-900">
-                毎週、あなたのタイプ向けAI活用法を届けます
+                {ui.weeklyLead}
               </p>
               <p className="mb-4 text-xs text-gray-500">
-                新しいプロンプト・使い方のヒントをメールでお届け。いつでも解除できます。
+                {ui.weeklySub}
               </p>
               <form
                 className="w-full"
@@ -1947,12 +2096,12 @@ export default function DiagnosisResultPage() {
                   disabled={followupStatus === "saving"}
                   style={{ display: "block", margin: "8px auto 0" }}
                 >
-                  {followupStatus === "saving" ? "登録中..." : "無料で受け取る"}
+                  {followupStatus === "saving" ? ui.weeklySaving : ui.weeklyButton}
                 </Button>
               </form>
               {followupStatus === "saved" ? (
                 <p className="mt-3 text-sm text-emerald-600">
-                  登録しました。次回のアップデートをお楽しみに ✓
+                  {ui.weeklySaved}
                 </p>
               ) : null}
               {followupError !== null ? (
@@ -1967,7 +2116,7 @@ export default function DiagnosisResultPage() {
                   if (!nextActions) return null;
                   return (
                     <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
-                      <p className={BOTTOM_SECTION_HEADING_CLASS}>次のアクション</p>
+                      <p className={BOTTOM_SECTION_HEADING_CLASS}>{ui.nextActions}</p>
                       <div className="space-y-2">
                         {nextActions.actions.map((action, i) => (
                           <a
@@ -1985,7 +2134,15 @@ export default function DiagnosisResultPage() {
                             }
                             className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-gray-50"
                           >
-                            <span>{action.label}</span>
+                            <span>
+                              {isEn
+                                ? i === 0
+                                  ? `Try ${nextActionTryAiLabel} free`
+                                  : i === 1
+                                    ? `See ${resolvedTypeCharacter.typeEn} guide`
+                                    : "Retake diagnosis"
+                                : action.label}
+                            </span>
                             <span className="text-gray-400">→</span>
                           </a>
                         ))}
@@ -1996,7 +2153,7 @@ export default function DiagnosisResultPage() {
               : null}
             <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center flex flex-col items-center">
               <p className="mb-2 text-[13px] font-semibold tracking-[0.1em] text-[#999] uppercase">
-                MBTI入力
+                {ui.mbtiSectionHeading}
               </p>
               <p className="mb-3 text-[15px] font-semibold text-[#333]">
                 {resultPageCopy.mbtiCardTitle}
@@ -2071,10 +2228,10 @@ export default function DiagnosisResultPage() {
               </p>
             </section>
             <section className="border-t border-[#f0f0f0] bg-white pt-6 text-center">
-              <p className={BOTTOM_SECTION_HEADING_CLASS}>診断日時</p>
+              <p className={BOTTOM_SECTION_HEADING_CLASS}>{ui.diagnosisDateHeading}</p>
               <p className="text-xs text-gray-500">
-                診断日：
-                {new Date().toLocaleDateString("ja-JP", {
+                {ui.diagnosisDateLabel}
+                {new Date().toLocaleDateString(isEn ? "en-US" : "ja-JP", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -2108,7 +2265,7 @@ export default function DiagnosisResultPage() {
                 className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
                 style={{ background: "#000000", border: "none" }}
               >
-                𝕏 でシェア
+                {ui.xShareButton}
               </a>
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
@@ -2125,13 +2282,15 @@ export default function DiagnosisResultPage() {
               <button
                 type="button"
                 onClick={() => {
-                  const imageUrl = `https://kompass-rosy.vercel.app/api/og/story?type=${resolvedTypeCharacter.aiKind}&lang=ja`;
+                  const imageUrl = `https://kompass-rosy.vercel.app/api/og/story?type=${resolvedTypeCharacter.aiKind}&lang=${isEn ? "en" : "ja"}`;
                   const link = document.createElement("a");
                   link.href = imageUrl;
                   link.download = `kompass_${resolvedTypeCharacter.aiKind}.png`;
                   link.click();
                   toast.success(
-                    "画像をダウンロードしました。Instagramストーリーに使えます ✓"
+                    isEn
+                      ? "Image downloaded. You can use it for your Instagram Story ✓"
+                      : "画像をダウンロードしました。Instagramストーリーに使えます ✓"
                   );
                 }}
                 className="inline-flex h-11 w-[120px] cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[10px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
@@ -2150,7 +2309,7 @@ export default function DiagnosisResultPage() {
             </section>
             <section className="border-t border-[#f0f0f0] bg-white pt-6">
               <p className={cn(BOTTOM_SECTION_HEADING_CLASS, "text-center mb-3")}>
-                もう一度診断する
+                {ui.retakeHeading}
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <Link

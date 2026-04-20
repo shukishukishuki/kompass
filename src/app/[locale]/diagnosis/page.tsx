@@ -122,12 +122,20 @@ const LAYER_CARD_DEEP: CSSProperties = {
   border: "1.5px solid rgba(82,183,136,0.3)",
 };
 
-const LOADING_MESSAGES = [
-  "あなたの回答を分析中...",
-  "思考スタイルを解析しています...",
-  "あなたに最適なAIを探しています...",
-  "もうすぐ結果が出ます...",
-] as const;
+const LOADING_MESSAGES = {
+  ja: [
+    "あなたの回答を分析中...",
+    "思考スタイルを解析しています...",
+    "あなたに最適なAIを探しています...",
+    "もうすぐ結果が出ます...",
+  ],
+  en: [
+    "Analyzing your answers...",
+    "Reading your thinking style...",
+    "Finding your ideal AI...",
+    "Almost there...",
+  ],
+} as const;
 
 /** sessionStorage に保存するキー（結果ページと共有） */
 export const DIAGNOSIS_RESULT_STORAGE_KEY = "kompass_diagnosis_result";
@@ -263,14 +271,6 @@ function extractInfrastructureValue(answers: QuestionAnswer[]): string | null {
   return row?.value ?? null;
 }
 
-const AGE_RANGE_OPTIONS: readonly { value: string; label: string }[] = [
-  { value: "10代", label: "10代" },
-  { value: "20代", label: "20代" },
-  { value: "30代", label: "30代" },
-  { value: "40代", label: "40代" },
-  { value: "50代以上", label: "50代以上" },
-] as const;
-
 /**
  * ベースAI診断：1問ずつ回答 → Layer 区切り → 結果
  */
@@ -283,6 +283,23 @@ export default function DiagnosisPage() {
       : "ja";
 
   const copy = messagesByLocale[locale] ?? messagesByLocale.ja;
+  const isEn = locale === "en";
+  const loadingMessages = isEn ? LOADING_MESSAGES.en : LOADING_MESSAGES.ja;
+  const ageRangeOptions: readonly { value: string; label: string }[] = isEn
+    ? [
+        { value: "10代", label: "Under 20" },
+        { value: "20代", label: "20s" },
+        { value: "30代", label: "30s" },
+        { value: "40代", label: "40s" },
+        { value: "50代以上", label: "50+" },
+      ]
+    : [
+        { value: "10代", label: "10代" },
+        { value: "20代", label: "20代" },
+        { value: "30代", label: "30代" },
+        { value: "40代", label: "40代" },
+        { value: "50代以上", label: "50代以上" },
+      ];
   const questions = copy.diagnosis.questions;
   const total = questions.length;
   const flow = copy.diagnosis.flow ?? FALLBACK_FLOW;
@@ -316,19 +333,21 @@ export default function DiagnosisPage() {
 
   useEffect(() => {
     if (phase === "intro") {
-      document.title = "AI診断をはじめる | Kompass";
+      document.title = isEn
+        ? "Start AI Diagnosis | Kompass"
+        : "AI診断をはじめる | Kompass";
     } else if (phase === "quiz") {
       document.title = `Q${step + 1} | AI診断 | Kompass`;
     } else if (phase === "layer1-age") {
-      document.title = "年代 | AI診断 | Kompass";
+      document.title = isEn ? "Age Range | AI Diagnosis | Kompass" : "年代 | AI診断 | Kompass";
     } else if (phase === "layer1-break") {
-      document.title = "Layer 1 完了 | AI診断 | Kompass";
+      document.title = isEn ? "Layer 1 Complete | AI Diagnosis | Kompass" : "Layer 1 完了 | AI診断 | Kompass";
     } else if (phase === "layer2-break") {
-      document.title = "Layer 2 完了 | AI診断 | Kompass";
+      document.title = isEn ? "Layer 2 Complete | AI Diagnosis | Kompass" : "Layer 2 完了 | AI診断 | Kompass";
     } else if (phase === "layer3-break") {
-      document.title = "Layer 3 完了 | AI診断 | Kompass";
+      document.title = isEn ? "Layer 3 Complete | AI Diagnosis | Kompass" : "Layer 3 完了 | AI診断 | Kompass";
     }
-  }, [phase, step]);
+  }, [phase, step, isEn]);
 
   useEffect(() => {
     setHasPrevResult(
@@ -426,12 +445,12 @@ export default function DiagnosisPage() {
     }
     setLoadingMessageIndex(0);
     const timer = window.setInterval(() => {
-      setLoadingMessageIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+      setLoadingMessageIndex((prev) => (prev + 1) % loadingMessages.length);
     }, 1200);
     return () => {
       window.clearInterval(timer);
     };
-  }, [phase]);
+  }, [phase, loadingMessages.length]);
 
   const submitAnswers = useCallback(
     async (finalAnswers: QuestionAnswer[], layerDone: LayerCompleted) => {
@@ -667,10 +686,12 @@ export default function DiagnosisPage() {
     const loadingTexts =
       loadingLayerCompleted === 4
         ? [
-            "回答お疲れ様でした！ 詳細な分析を行っています...",
-            ...LOADING_MESSAGES,
+            isEn
+              ? "All 40 answered. Running a deep analysis..."
+              : "回答お疲れ様でした！ 詳細な分析を行っています...",
+            ...loadingMessages,
           ]
-        : [...LOADING_MESSAGES];
+        : [...loadingMessages];
     return (
       <main
         className="flex min-h-screen flex-col items-center justify-center px-4 text-center"
@@ -735,7 +756,7 @@ export default function DiagnosisPage() {
   if (!bootstrapped) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center px-4">
-        <p className="text-sm text-zinc-500">読み込み中…</p>
+        <p className="text-sm text-zinc-500">{isEn ? "Loading..." : "読み込み中…"}</p>
       </main>
     );
   }
@@ -753,17 +774,17 @@ export default function DiagnosisPage() {
           <KompassLogo className="mb-2" />
 
           <div className="flex items-center justify-center gap-3 text-sm font-medium text-[#1a7a4a]">
-            <span>10問</span>
+            <span>{isEn ? "10 Qs" : "10問"}</span>
             <span
               className="h-4 w-px shrink-0 bg-[#52B788]/40"
               aria-hidden
             />
-            <span>6タイプ</span>
+            <span>{isEn ? "6 Types" : "6タイプ"}</span>
             <span
               className="h-4 w-px shrink-0 bg-[#52B788]/40"
               aria-hidden
             />
-            <span>無料</span>
+            <span>{isEn ? "Free" : "無料"}</span>
           </div>
 
           <div className="space-y-2">
@@ -771,25 +792,47 @@ export default function DiagnosisPage() {
               AI TYPE DIAGNOSIS
             </p>
             <h1 className="text-2xl font-bold text-[#0a2e18]">
-              あなたのベースAIを
-              <br />
-              見つけよう
+              {isEn ? (
+                "Find the AI that fits how you think."
+              ) : (
+                <>
+                  あなたのベースAIを
+                  <br />
+                  見つけよう
+                </>
+              )}
             </h1>
             <p className="text-sm text-[#2d4a3e]/80 leading-relaxed">
-              思考スタイルに合ったAIを使うと、
-              <br />
-              仕事も思考も驚くほどラクになる。
+              {isEn ? (
+                "Answer 10 questions. We'll match you to your ideal AI based on how you think."
+              ) : (
+                <>
+                  思考スタイルに合ったAIを使うと、
+                  <br />
+                  仕事も思考も驚くほどラクになる。
+                </>
+              )}
             </p>
           </div>
 
           <div className="rounded-xl border border-white/60 bg-white/50 p-4 space-y-2 text-left shadow-sm backdrop-blur-sm">
-            <p className="text-xs font-bold text-[#0a2e18]">診断について</p>
+            <p className="text-xs font-bold text-[#0a2e18]">{isEn ? "About this diagnosis" : "診断について"}</p>
             <ul className="space-y-1.5 text-xs text-[#2d4a3e]/90">
-              <li>まず10問、深く知りたい人は最大40問</li>
-              <li>登録不要・完全無料</li>
-              <li>
-                ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案
-              </li>
+              {isEn ? (
+                <>
+                  <li>Start with 10 questions, and go up to 40 for deeper analysis</li>
+                  <li>No sign-up required, completely free</li>
+                  <li>Find your best fit from ChatGPT, Claude, Gemini, Perplexity, and Copilot</li>
+                </>
+              ) : (
+                <>
+                  <li>まず10問、深く知りたい人は最大40問</li>
+                  <li>登録不要・完全無料</li>
+                  <li>
+                    ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案
+                  </li>
+                </>
+              )}
             </ul>
           </div>
 
@@ -815,19 +858,19 @@ export default function DiagnosisPage() {
               boxShadow: "0 4px 20px rgba(26,122,74,0.28)",
             }}
           >
-            {starting ? "読み込み中..." : "診断をはじめる →"}
+            {starting ? (isEn ? "Loading..." : "読み込み中...") : isEn ? "Start →" : "診断をはじめる →"}
           </button>
           {hasPrevResult ? (
             <a
               href={`/${locale}/diagnosis/result`}
               className="block text-xs text-[#2d4a3e]/70 hover:text-[#0a2e18] underline underline-offset-2 transition-colors"
             >
-              前回の結果を見る →
+              {isEn ? "See previous result →" : "前回の結果を見る →"}
             </a>
           ) : null}
 
           <p className="text-xs text-[#2d4a3e]/60">
-            約1分〜 / 途中で結果を見ることもできます
+            {isEn ? "About 1 minute / You can view results anytime" : "約1分〜 / 途中で結果を見ることもできます"}
           </p>
         </div>
       </main>
@@ -865,10 +908,10 @@ export default function DiagnosisPage() {
               color: "#0a2e18",
             }}
           >
-            最後に、あなたの年代を教えてください
+            {isEn ? "One last thing — what's your age range?" : "最後に、あなたの年代を教えてください"}
           </p>
           <ul className="flex flex-1 flex-col gap-3">
-            {AGE_RANGE_OPTIONS.map((opt) => (
+            {ageRangeOptions.map((opt) => (
               <li key={opt.value}>
                 <button
                   type="button"
@@ -907,7 +950,7 @@ export default function DiagnosisPage() {
               {flow.layer1Heading}
             </h2>
             <p className="text-xs text-[#2d4a3e]/70">
-              思考スタイルの基本パターンがわかりました
+              {isEn ? "Your core thinking pattern is now clear" : "思考スタイルの基本パターンがわかりました"}
             </p>
             <p className="text-base leading-relaxed text-[#1a3328]">
               {flow.layer1Sub}
@@ -972,10 +1015,12 @@ export default function DiagnosisPage() {
           {mbtiValue === null && !hasStoredMbti ? (
             <div className="w-full space-y-2 rounded-2xl border border-white/60 bg-white/35 p-3.5 text-left shadow-sm backdrop-blur-sm">
               <h3 className="text-sm font-semibold text-[#0a2e18]">
-                精度を上げますか？（任意）
+                {isEn ? "Want to improve accuracy? (Optional)" : "精度を上げますか？（任意）"}
               </h3>
               <p className="text-xs text-[#1a3328]/85">
-                MBTI入力で診断精度が上がります。わからなければスキップでOKです。
+                {isEn
+                  ? "Adding MBTI can improve diagnosis accuracy. Skip if you're unsure."
+                  : "MBTI入力で診断精度が上がります。わからなければスキップでOKです。"}
               </p>
               <input
                 type="text"
@@ -991,7 +1036,7 @@ export default function DiagnosisPage() {
                   setLayer1MbtiDraft(v);
                   setLayer1MbtiError(null);
                 }}
-                placeholder="例：INFJ、ENTP..."
+                placeholder={isEn ? "e.g. INFJ, ENTP..." : "例：INFJ、ENTP..."}
                 className="w-full rounded-xl border border-[#52B788]/25 bg-white/90 px-4 py-2.5 text-center text-sm font-medium tracking-widest text-zinc-900 shadow-sm focus:border-[#52B788]/50 focus:outline-none focus:ring-2 focus:ring-[#52B788]/30"
               />
               {layer1MbtiError !== null ? (
@@ -1006,7 +1051,7 @@ export default function DiagnosisPage() {
                   rel="noopener noreferrer"
                   className="font-medium text-[#0a2e18] underline underline-offset-2 hover:text-[#52B788]"
                 >
-                  MBTIって何？
+                  {isEn ? "What is MBTI?" : "MBTIって何？"}
                 </a>
               </p>
             </div>
@@ -1030,7 +1075,7 @@ export default function DiagnosisPage() {
               {flow.layer2Heading}
             </h2>
             <p className="text-xs text-[#2d4a3e]/70">
-              AIとの相性パターンが明確になりました
+              {isEn ? "Your AI compatibility pattern is now clearer" : "AIとの相性パターンが明確になりました"}
             </p>
             <p className="text-base leading-relaxed text-[#1a3328]">
               {flow.layer2Sub}
@@ -1098,7 +1143,7 @@ export default function DiagnosisPage() {
               {flow.layer3Heading}
             </h2>
             <p className="text-xs text-[#2d4a3e]/70">
-              あなたの詳細な活用スタイルが見えてきました
+              {isEn ? "Your detailed usage style is coming into focus" : "あなたの詳細な活用スタイルが見えてきました"}
             </p>
             <p className="text-base leading-relaxed text-[#1a3328]">
               {flow.layer3Sub}
@@ -1172,9 +1217,26 @@ export default function DiagnosisPage() {
         <p className="sr-only">{title}</p>
 
         <div className="mb-1 flex justify-between text-xs text-[#2d4a3e]/70">
-          <span>Q{step + 1}</span>
-          <span>残り {total - step - 1} 問</span>
+          <span>Q{step + 1} / {total}</span>
+          <span>{isEn ? `${total - step - 1} left` : `残り ${total - step - 1} 問`}</span>
         </div>
+        <p className="mb-2 text-center text-[11px] font-semibold tracking-[0.12em] text-[#2d4a3e]/70 uppercase">
+          {step < 10
+            ? isEn
+              ? "LAYER 1 · Core"
+              : "LAYER 1 · 基本診断"
+            : step < 20
+              ? isEn
+                ? "LAYER 2 · Focus"
+                : "LAYER 2 · 拡張診断"
+              : step < 30
+                ? isEn
+                  ? "LAYER 3 · Fit"
+                  : "LAYER 3 · 相性診断"
+                : isEn
+                  ? "LAYER 4 · Deep"
+                  : "LAYER 4 · 詳細診断"}
+        </p>
         <div
           className="mb-4 h-1 w-full overflow-hidden rounded-full bg-[#e8f7ef]"
           role="progressbar"
@@ -1211,6 +1273,9 @@ export default function DiagnosisPage() {
           }}
         >
           {currentQuestion.prompt}
+        </p>
+        <p className="mb-6 text-center text-xs text-[#2d4a3e]/70">
+          {isEn ? "Go with your gut" : "直感で答えてください"}
         </p>
 
         {errorMessage !== null ? (
