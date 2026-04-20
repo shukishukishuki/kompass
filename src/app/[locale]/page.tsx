@@ -108,6 +108,16 @@ const TYPE_PREVIEWS = [
 ] as const;
 
 type LocaleCode = "ja" | "en";
+type PreviewTypeId = "claude" | "copilot" | "perplexity" | "chatgpt" | "gemini" | "jiyujin";
+
+const TYPE_CATCH_EN: Record<PreviewTypeId, string> = {
+  claude: "I don't need answers. I need to be heard.",
+  copilot: "Chaos isn't a vibe. It's a problem.",
+  perplexity: "I don't do 'probably'.",
+  chatgpt: "Why think when you can delegate?",
+  gemini: "Just give me what I need. Nothing else.",
+  jiyujin: "One AI was never going to be enough.",
+};
 
 interface LandingCopy {
   logo: string;
@@ -203,7 +213,7 @@ const COPY_BY_LOCALE: Record<LocaleCode, LandingCopy> = {
     ],
     bottomCtaTitle: "Find your own “type”",
     bottomCtaSub: "Your relationship with AI changes from today.",
-    bottomCtaButton: "Start Free Diagnosis (30 sec)",
+    bottomCtaButton: "Start free diagnosis",
     recommendedPrefix: "Best with",
   },
 };
@@ -237,8 +247,108 @@ export default async function LocaleHomePage({
 }>) {
   const { locale } = await params;
   const lc: LocaleCode = locale === "en" ? "en" : "ja";
+  const isEn = lc === "en";
   const copy = COPY_BY_LOCALE[lc];
   const ctaHref = `https://kompass-rosy.vercel.app/${lc}/diagnosis`;
+  const howItWorks = isEn
+    ? [
+        { step: "01", title: "Take the quiz", desc: "Answer 10 quick questions in about a minute." },
+        {
+          step: "02",
+          title: "Find your type",
+          desc: "See which AI style aligns with the way you think.",
+        },
+        {
+          step: "03",
+          title: "Start using AI better",
+          desc: "Apply practical prompts and use AI with more confidence.",
+        },
+      ]
+    : [
+        { step: "01", title: "診断する", desc: "10問に答えるだけ。約1分で完了。" },
+        { step: "02", title: "タイプを知る", desc: "あなたの思考スタイルに合うAIが判明。" },
+        { step: "03", title: "使い始める", desc: "専用プロンプトですぐにAIを活用。" },
+      ];
+  const voices = isEn
+    ? [
+        {
+          type: "The Confidant",
+          text: "I finally feel like I'm using AI the right way.",
+          role: "Designer, 28",
+        },
+        {
+          type: "The Executive",
+          text: "The result was so accurate it was almost unsettling.",
+          role: "Product Manager, 34",
+        },
+        {
+          type: "The Scout",
+          text: "I shared it with my whole team. Everyone was surprised.",
+          role: "Marketer, 31",
+        },
+      ]
+    : [
+        {
+          type: "丸投げ屋",
+          text: "ChatGPTをなんとなく使ってたけど、診断して使い方が変わった。作業が半分になった気がする。",
+          role: "フリーランス / 30代",
+        },
+        {
+          type: "裏取りマニア",
+          text: "Perplexityは知ってたけど「自分向け」だとわかって初めてちゃんと使い始めた。",
+          role: "マーケター / 20代",
+        },
+        {
+          type: "共感ジャンキー",
+          text: "Claudeって感情的な相談が得意なんですね。転職悩みを整理するのに使ってます。",
+          role: "会社員 / 30代",
+        },
+      ];
+  const faqs = isEn
+    ? [
+        {
+          q: "How is this different from other AI tools?",
+          a: "We match you based on thinking style, not task type.",
+        },
+        {
+          q: "Which AI services do you cover?",
+          a: "ChatGPT, Claude, Gemini, Perplexity, and Copilot.",
+        },
+        {
+          q: "Is it free?",
+          a: "Yes. The diagnosis is completely free.",
+        },
+        {
+          q: "How accurate is it?",
+          a: "Based on 40 questions across 4 layers. The more you answer, the sharper the result.",
+        },
+        {
+          q: "Can I retake it?",
+          a: "Yes, anytime.",
+        },
+      ]
+    : [
+        {
+          q: "診断は無料ですか？",
+          a: "はい、完全無料です。登録も不要でそのまま診断できます。",
+        },
+        {
+          q: "何問ありますか？",
+          a: "まず10問で診断できます。深く知りたい方は最大40問まで回答できます。",
+        },
+        {
+          q: "診断結果は保存されますか？",
+          a: "診断結果はブラウザのセッションに保存されます。ブラウザを閉じると消えるため、結果はスクリーンショットやシェア機能でお手元に保存してください。",
+        },
+        {
+          q: "どのAIが一番いいですか？",
+          a: "「一番良いAI」は人によって違います。Kompassはあなたの思考スタイルに合ったAIを提案します。使い方次第でどのAIも強力なツールになります。",
+        },
+        {
+          q: "診断結果が気に入らない場合は？",
+          a: "何度でも診断し直せます。また、結果はあくまで参考です。気になる別のAIを試してみることも大切です。",
+        },
+      ];
 
   return (
     <main className="bg-[#f8f7ff] text-slate-900">
@@ -434,22 +544,22 @@ export default async function LocaleHomePage({
       <div className="flex items-center justify-center gap-6 py-6 text-center">
         <div>
           <p className="text-2xl font-bold text-gray-900">6</p>
-          <p className="text-xs text-gray-400">AIタイプ</p>
+          <p className="text-xs text-gray-400">{isEn ? "AI Types" : "AIタイプ"}</p>
         </div>
         <div className="w-px h-8 bg-gray-200" />
         <div>
           <p className="text-2xl font-bold text-gray-900">40</p>
-          <p className="text-xs text-gray-400">診断問題数</p>
+          <p className="text-xs text-gray-400">{isEn ? "Questions" : "診断問題数"}</p>
         </div>
         <div className="w-px h-8 bg-gray-200" />
         <div>
-          <p className="text-2xl font-bold text-gray-900">無料</p>
-          <p className="text-xs text-gray-400">完全無料</p>
+          <p className="text-2xl font-bold text-gray-900">{isEn ? "Free" : "無料"}</p>
+          <p className="text-xs text-gray-400">{isEn ? "Free" : "完全無料"}</p>
         </div>
         <div className="w-px h-8 bg-gray-200" />
         <div>
-          <p className="text-2xl font-bold text-gray-900">1分</p>
-          <p className="text-xs text-gray-400">で診断完了</p>
+          <p className="text-2xl font-bold text-gray-900">{isEn ? "1 min" : "1分"}</p>
+          <p className="text-xs text-gray-400">{isEn ? "Diagnoses done" : "で診断完了"}</p>
         </div>
       </div>
 
@@ -459,10 +569,10 @@ export default async function LocaleHomePage({
           6 TYPES
         </p>
         <h2 className="mb-2 text-center text-xl font-bold text-gray-900">
-          あなたはどのタイプ？
+          {isEn ? "Which type are you?" : "あなたはどのタイプ？"}
         </h2>
         <p className="mb-8 text-center text-sm text-gray-500">
-          思考スタイルで、あなたに合うAIが決まる。
+          {isEn ? "Your thinking style determines your ideal AI." : "思考スタイルで、あなたに合うAIが決まる。"}
         </p>
 
         <div className="grid grid-cols-2 gap-3">
@@ -485,12 +595,18 @@ export default async function LocaleHomePage({
                 style={{ backgroundColor: `${type.color}33` }}
               />
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-gray-900">
-                  {type.name}
-                </p>
-                <p className="mb-1 text-xs text-gray-400">{type.en}</p>
+                {isEn ? (
+                  <p className="mb-1 text-sm font-bold text-gray-900">{type.en}</p>
+                ) : (
+                  <>
+                    <p className="truncate text-sm font-bold text-gray-900">
+                      {type.name}
+                    </p>
+                    <p className="mb-1 text-xs text-gray-400">{type.en}</p>
+                  </>
+                )}
                 <p className="text-xs leading-relaxed text-gray-600">
-                  {type.catch}
+                  {isEn ? TYPE_CATCH_EN[type.id as PreviewTypeId] : type.catch}
                 </p>
               </div>
             </Link>
@@ -502,7 +618,7 @@ export default async function LocaleHomePage({
             href={`/${locale}/diagnosis`}
             className="inline-block rounded-full bg-gray-900 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-gray-700"
           >
-            診断してタイプを知る →
+            {isEn ? "Find your type →" : "診断してタイプを知る →"}
           </a>
         </div>
       </section>
@@ -512,14 +628,10 @@ export default async function LocaleHomePage({
           HOW IT WORKS
         </p>
         <h2 className="text-center text-xl font-bold text-gray-900 mb-8">
-          3ステップで完了
+          {isEn ? "Three steps. That's it." : "3ステップで完了"}
         </h2>
         <div className="grid grid-cols-3 gap-4 text-center">
-          {[
-            { step: "01", title: "診断する", desc: "10問に答えるだけ。約1分で完了。" },
-            { step: "02", title: "タイプを知る", desc: "あなたの思考スタイルに合うAIが判明。" },
-            { step: "03", title: "使い始める", desc: "専用プロンプトですぐにAIを活用。" },
-          ].map((item) => (
+          {howItWorks.map((item) => (
             <div key={item.step} className="space-y-2">
               <p className="text-2xl font-bold text-gray-200">{item.step}</p>
               <p className="text-sm font-bold text-gray-900">{item.title}</p>
@@ -534,28 +646,12 @@ export default async function LocaleHomePage({
           VOICES
         </p>
         <h2 className="text-center text-xl font-bold text-gray-900 mb-6">
-          診断した人の声
+          {isEn ? "What people are saying" : "診断した人の声"}
         </h2>
         <div className="space-y-3">
-          {[
-            {
-              type: "丸投げ屋",
-              text: "ChatGPTをなんとなく使ってたけど、診断して使い方が変わった。作業が半分になった気がする。",
-              role: "フリーランス / 30代",
-            },
-            {
-              type: "裏取りマニア",
-              text: "Perplexityは知ってたけど「自分向け」だとわかって初めてちゃんと使い始めた。",
-              role: "マーケター / 20代",
-            },
-            {
-              type: "共感ジャンキー",
-              text: "Claudeって感情的な相談が得意なんですね。転職悩みを整理するのに使ってます。",
-              role: "会社員 / 30代",
-            },
-          ].map((v, i) => (
+          {voices.map((v, i) => (
             <div key={i} className="rounded-xl border border-gray-200 bg-white p-4 space-y-2">
-              <p className="text-sm text-gray-700 leading-relaxed">「{v.text}」</p>
+              <p className="text-sm text-gray-700 leading-relaxed">{isEn ? `"${v.text}"` : `「${v.text}」`}</p>
               <div className="flex items-center gap-2">
                 <span className="text-xs rounded-full bg-gray-100 px-2 py-0.5 text-gray-600">
                   {v.type}
@@ -568,30 +664,9 @@ export default async function LocaleHomePage({
       </section>
 
       <section className="w-full max-w-2xl mx-auto px-6 py-10">
-        <h2 className="text-center text-xl font-bold text-gray-900 mb-6">よくある質問</h2>
+        <h2 className="text-center text-xl font-bold text-gray-900 mb-6">{isEn ? "FAQ" : "よくある質問"}</h2>
         <div className="space-y-3">
-          {[
-            {
-              q: "診断は無料ですか？",
-              a: "はい、完全無料です。登録も不要でそのまま診断できます。",
-            },
-            {
-              q: "何問ありますか？",
-              a: "まず10問で診断できます。深く知りたい方は最大40問まで回答できます。",
-            },
-            {
-              q: "診断結果は保存されますか？",
-              a: "診断結果はブラウザのセッションに保存されます。ブラウザを閉じると消えるため、結果はスクリーンショットやシェア機能でお手元に保存してください。",
-            },
-            {
-              q: "どのAIが一番いいですか？",
-              a: "「一番良いAI」は人によって違います。Kompassはあなたの思考スタイルに合ったAIを提案します。使い方次第でどのAIも強力なツールになります。",
-            },
-            {
-              q: "診断結果が気に入らない場合は？",
-              a: "何度でも診断し直せます。また、結果はあくまで参考です。気になる別のAIを試してみることも大切です。",
-            },
-          ].map((item, i) => (
+          {faqs.map((item, i) => (
             <details key={i} className="rounded-xl border border-gray-200 bg-white">
               <summary className="cursor-pointer px-5 py-4 text-sm font-medium text-gray-800 list-none flex items-center justify-between group">
                 {item.q}
@@ -609,15 +684,18 @@ export default async function LocaleHomePage({
         <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2">
           ABOUT
         </p>
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Kompassについて</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-4">
+          {isEn ? "About Kompass" : "Kompassについて"}
+        </h2>
         <p className="text-sm text-gray-500 leading-relaxed mb-6">
-          Kompassは「思考スタイルで最適なAIを選ぶ」という新しい視点でAI選びを提案する診断サービスです。
-          ChatGPT・Claude・Gemini・Perplexity・Copilotそれぞれの特性を分析し、あなたの思考パターンに本当に合う1つのAIを提案します。
+          {isEn
+            ? "Kompass is an AI diagnosis service built on a new idea: choosing AI by thinking style. We analyze ChatGPT, Claude, Gemini, Perplexity, and Copilot, then recommend the one that truly fits the way you think."
+            : "Kompassは「思考スタイルで最適なAIを選ぶ」という新しい視点でAI選びを提案する診断サービスです。ChatGPT・Claude・Gemini・Perplexity・Copilotそれぞれの特性を分析し、あなたの思考パターンに本当に合う1つのAIを提案します。"}
         </p>
         <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-400">
-          <span>✦ 2026年提供開始</span>
-          <span>✦ 完全無料</span>
-          <span>✦ 登録不要</span>
+          <span>{isEn ? "✦ Launched in 2026" : "✦ 2026年提供開始"}</span>
+          <span>{isEn ? "✦ Free" : "✦ 完全無料"}</span>
+          <span>{isEn ? "✦ No sign-up" : "✦ 登録不要"}</span>
         </div>
       </section>
 
@@ -627,48 +705,14 @@ export default async function LocaleHomePage({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            mainEntity: [
-              {
-                "@type": "Question",
-                name: "診断は無料ですか？",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "はい、完全無料です。登録も不要でそのまま診断できます。",
-                },
+            mainEntity: faqs.map((item) => ({
+              "@type": "Question",
+              name: item.q,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: item.a,
               },
-              {
-                "@type": "Question",
-                name: "何問ありますか？",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "まず10問で診断できます。深く知りたい方は最大40問まで回答できます。",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "診断結果は保存されますか？",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "診断結果はブラウザのセッションに保存されます。ブラウザを閉じると消えるため、結果はスクリーンショットやシェア機能でお手元に保存してください。",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "どのAIが一番いいですか？",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "「一番良いAI」は人によって違います。Kompassはあなたの思考スタイルに合ったAIを提案します。",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "診断結果が気に入らない場合は？",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "何度でも診断し直せます。また、結果はあくまで参考です。気になる別のAIを試してみることも大切です。",
-                },
-              },
-            ],
+            })),
           }),
         }}
       />
