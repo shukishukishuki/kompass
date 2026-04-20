@@ -22,16 +22,42 @@ const TYPE_ID_MAP: Record<string, string> = {
 };
 
 export async function GET(request: Request) {
-  async function loadFont(weight: number): Promise<ArrayBuffer> {
-    const url = `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@${weight}&display=swap&subset=japanese`;
-    const css = await fetch(url, {
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1)" },
-    }).then((r) => r.text());
-    const fontUrl = css.match(/src: url\((.+?)\)/)?.[1]?.replace(/['"]/g, "");
-    if (fontUrl === undefined || fontUrl.length === 0) {
-      throw new Error("Font URL not found");
+  async function loadFont(weight: number): Promise<ArrayBuffer | null> {
+    try {
+      const text = "共感ジャンキー整理の鬼裏取りマニア丸投げ屋情報スナイパーAI遊牧民あなたに合ったAIが見つかりましたKOMPASS";
+      const url = new URL("https://fonts.googleapis.com/css2");
+      url.searchParams.set("family", `Noto Sans JP:wght@${weight}`);
+      url.searchParams.set("text", text);
+      url.searchParams.set("display", "swap");
+
+      const css = await fetch(url.toString(), {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        },
+      }).then((r) => r.text());
+
+      const matches = css.matchAll(/src: url\((.+?)\) format\('woff2'\)/g);
+      const urls = [...matches].map((m) => m[1]);
+      if (!urls.length) {
+        return null;
+      }
+
+      const buffers = await Promise.all(
+        urls.map((u) => fetch(u).then((r) => r.arrayBuffer()))
+      );
+      const total = buffers.reduce((a, b) => a + b.byteLength, 0);
+      const merged = new Uint8Array(total);
+      let offset = 0;
+      for (const buf of buffers) {
+        merged.set(new Uint8Array(buf), offset);
+        offset += buf.byteLength;
+      }
+      return merged.buffer;
+    } catch (e) {
+      console.error("loadFont error:", e);
+      return null;
     }
-    return fetch(fontUrl).then((r) => r.arrayBuffer());
   }
 
   const { searchParams } = new URL(request.url);
@@ -40,15 +66,11 @@ export async function GET(request: Request) {
   const d = TYPE_DATA[typeKey];
   type ImageResponseOptions = NonNullable<ConstructorParameters<typeof ImageResponse>[1]>;
   let fonts: ImageResponseOptions["fonts"] = [];
-  try {
-    const [bold, black] = await Promise.all([loadFont(700), loadFont(900)]);
-    fonts = [
-      { name: "NotoSansJP", data: bold, weight: 700 },
-      { name: "NotoSansJP", data: black, weight: 900 },
-    ];
-  } catch (e) {
-    console.error("Font load failed:", e);
-  }
+  const [bold, black] = await Promise.all([loadFont(700), loadFont(900)]);
+  fonts = [
+    ...(bold ? [{ name: "NotoSansJP", data: bold, weight: 700 as const }] : []),
+    ...(black ? [{ name: "NotoSansJP", data: black, weight: 900 as const }] : []),
+  ];
 
   const charImgRes = await fetch(d.charImg);
   const charImgBuf = await charImgRes.arrayBuffer();
