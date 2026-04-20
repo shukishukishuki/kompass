@@ -24,36 +24,22 @@ const TYPE_ID_MAP: Record<string, string> = {
 export async function GET(request: Request) {
   async function loadFont(weight: number): Promise<ArrayBuffer | null> {
     try {
-      const text = "共感ジャンキー整理の鬼裏取りマニア丸投げ屋情報スナイパーAI遊牧民あなたに合ったAIが見つかりましたKOMPASS";
-      const url = new URL("https://fonts.googleapis.com/css2");
-      url.searchParams.set("family", `Noto Sans JP:wght@${weight}`);
-      url.searchParams.set("text", text);
-      url.searchParams.set("display", "swap");
-
-      const css = await fetch(url.toString(), {
+      const text = encodeURIComponent(
+        "共感ジャンキー整理の鬼裏取りマニア丸投げ屋情報スナイパーAI遊牧民あなたに合ったAIが見つかりましたKOMPASS"
+      );
+      const cssUrl = `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@${weight}&text=${text}&display=swap`;
+      const css = await fetch(cssUrl, {
         headers: {
           "User-Agent":
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         },
       }).then((r) => r.text());
 
-      const matches = css.matchAll(/src: url\((.+?)\) format\('woff2'\)/g);
-      const urls = [...matches].map((m) => m[1]);
-      if (!urls.length) {
+      const match = css.match(/src: url\((.+?)\)/);
+      if (!match) {
         return null;
       }
-
-      const buffers = await Promise.all(
-        urls.map((u) => fetch(u).then((r) => r.arrayBuffer()))
-      );
-      const total = buffers.reduce((a, b) => a + b.byteLength, 0);
-      const merged = new Uint8Array(total);
-      let offset = 0;
-      for (const buf of buffers) {
-        merged.set(new Uint8Array(buf), offset);
-        offset += buf.byteLength;
-      }
-      return merged.buffer;
+      return fetch(match[1]).then((r) => r.arrayBuffer());
     } catch (e) {
       console.error("loadFont error:", e);
       return null;
