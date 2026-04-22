@@ -254,6 +254,64 @@ const X_SHARE_ONE_LINERS: Record<string, string> = {
   orchestrator: "1つのAIで満足できたことがない、AI使い分け派。",
 };
 
+const TYPE_NAME_EN_BY_KEY: Record<string, string> = {
+  empath: "The Confidant",
+  executor: "The Executive",
+  executive: "The Executive",
+  analyst: "The Analyst",
+  generalist: "The Generalist",
+  scout: "The Scout",
+  jiyujin: "The Orchestrator",
+  nomad: "The Orchestrator",
+  orchestrator: "The Orchestrator",
+  "相談相手タイプ": "The Confidant",
+  "秘書タイプ": "The Executive",
+  "研究者タイプ": "The Analyst",
+  "万能助手タイプ": "The Generalist",
+  "情報通タイプ": "The Scout",
+  "自由人タイプ": "The Orchestrator",
+};
+
+const TYPE_NAME_JA_BY_KEY: Record<string, string> = {
+  empath: "相談相手タイプ",
+  executor: "秘書タイプ",
+  executive: "秘書タイプ",
+  analyst: "研究者タイプ",
+  generalist: "万能助手タイプ",
+  scout: "情報通タイプ",
+  jiyujin: "自由人タイプ",
+  nomad: "自由人タイプ",
+  orchestrator: "自由人タイプ",
+};
+
+function normalizeTypeKey(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function resolveTypeNameJa(rawType: string): string {
+  const normalized = normalizeTypeKey(rawType);
+  return TYPE_NAME_JA_BY_KEY[normalized] ?? rawType;
+}
+
+function resolveTypeNameEn(...candidates: Array<string | null | undefined>): string {
+  for (const candidate of candidates) {
+    if (typeof candidate !== "string") {
+      continue;
+    }
+    const normalized = normalizeTypeKey(candidate);
+    const matched = TYPE_NAME_EN_BY_KEY[normalized];
+    if (matched !== undefined) {
+      return matched;
+    }
+  }
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim() !== "") {
+      return candidate;
+    }
+  }
+  return "The Confidant";
+}
+
 const BOTTOM_SECTION_HEADING_CLASS =
   "mb-2 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase";
 
@@ -920,7 +978,7 @@ export default function DiagnosisResultPage() {
     if (result === null) {
       return "";
     }
-    return mbtiApplied?.correctedPersonalityJa ?? result.type;
+    return resolveTypeNameJa(mbtiApplied?.correctedPersonalityJa ?? result.type);
   }, [result, mbtiApplied]);
 
   const personalityBlock = useMemo(() => {
@@ -1235,8 +1293,15 @@ export default function DiagnosisResultPage() {
   const heroTheme = AI_KIND_THEMES[resolvedTypeCharacter.aiKind];
   const theme = heroTheme;
   const heroTypeEnLine = mbtiApplied?.correctedTypeEn ?? result.typeEn;
-  const heroCharacterName =
-    personalityBlock?.characterName ?? displayPersonalityJa;
+  const heroCharacterName = isEn
+    ? resolveTypeNameEn(
+        mbtiApplied?.correctedTypeEn,
+        result.type,
+        displayPersonalityJa,
+        result.typeEn,
+        resolvedTypeCharacter.typeEn
+      )
+    : (personalityBlock?.characterName ?? displayPersonalityJa);
   const resolvedTypeCharacterView = {
     ...resolvedTypeCharacter,
     imagePath: resolvedTypeCharacter.imageSrc,
@@ -1659,7 +1724,9 @@ export default function DiagnosisResultPage() {
                       <div className="grid grid-cols-2 gap-3 rounded-xl bg-[#f9f9f9] p-3">
                         <div className="rounded-xl bg-green-50 p-3 text-center">
                           <p className="text-xs text-green-600 font-bold mb-1">{ui.compatibilityGood}</p>
-                          <p className="text-sm font-bold text-gray-800">{goodChar.characterName}</p>
+                          <p className="text-sm font-bold text-gray-800">
+                            {isEn ? goodChar.typeEn : goodChar.characterName}
+                          </p>
                           <p className="text-xs text-gray-400">{goodChar.aiName}</p>
                           <a
                             href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.good] ?? compat.good}`}
@@ -1670,7 +1737,9 @@ export default function DiagnosisResultPage() {
                         </div>
                         <div className="rounded-xl bg-red-50 p-3 text-center">
                           <p className="text-xs text-red-500 font-bold mb-1">{ui.compatibilityWatchOut}</p>
-                          <p className="text-sm font-bold text-gray-800">{badChar.characterName}</p>
+                          <p className="text-sm font-bold text-gray-800">
+                            {isEn ? badChar.typeEn : badChar.characterName}
+                          </p>
                           <p className="text-xs text-gray-400">{badChar.aiName}</p>
                           <a
                             href={`/${locale}/guide/${AI_KIND_TO_GUIDE[compat.bad] ?? compat.bad}`}

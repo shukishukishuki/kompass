@@ -474,15 +474,17 @@ export default async function LocaleHomePage({
               >
                 <CharacterAvatar
                   src={card.imageSrc}
-                  alt={card.nameJa}
+                  alt={isEn ? card.nameEn : card.nameJa}
                   color={card.color}
                 />
                 <h3 className="mt-4 text-base font-bold text-slate-900">
-                  {card.nameJa}
+                  {isEn ? card.nameEn : card.nameJa}
                 </h3>
-                <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">
-                  {card.nameEn}
-                </p>
+                {isEn ? null : (
+                  <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">
+                    {card.nameEn}
+                  </p>
+                )}
                 <p className="mt-2 rounded-md bg-zinc-50 py-1 text-xs text-slate-600">
                   {copy.recommendedPrefix}: {card.recommendedAi}
                 </p>
@@ -566,10 +568,10 @@ export default async function LocaleHomePage({
       {/* タイプ紹介セクション */}
       <section className="mx-auto w-full max-w-2xl px-6 py-12">
         <p className="mb-2 text-center text-xs font-bold tracking-widest text-gray-400 uppercase">
-          6 TYPES
+          {isEn ? "6 AI Thinking Types" : "6 TYPES"}
         </p>
         <h2 className="mb-2 text-center text-xl font-bold text-gray-900">
-          {isEn ? "Which type are you?" : "あなたはどのタイプ？"}
+          {isEn ? "Which AI brings out your real strengths?" : "あなたはどのタイプ？"}
         </h2>
         <p className="mb-8 text-center text-sm text-gray-500">
           {isEn ? "Your thinking style determines your ideal AI." : "思考スタイルで、あなたに合うAIが決まる。"}

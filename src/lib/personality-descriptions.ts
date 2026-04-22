@@ -221,6 +221,39 @@ const PERSONALITY_DESCRIPTIONS_JA: Record<string, PersonalityDescription> = {
   },
 };
 
+const EN_SUPPLEMENT_BY_TYPE_JA: Record<string, string> = {
+  相談相手タイプ:
+    "Process over answers. You need to feel understood before you can move forward.",
+  万能助手タイプ:
+    "Speed over perfection. A rough draft beats a blank page every time.",
+  情報通タイプ:
+    "Fresh over familiar. Stale information isn't just useless — it's dangerous.",
+  研究者タイプ:
+    "Evidence over opinion. If you can't back it up, it doesn't count.",
+  秘書タイプ:
+    "Structure over chaos. You can't work well until everything has its place.",
+  自由人タイプ:
+    "Options over commitment. One tool was never going to be enough.",
+};
+
+const EN_CHARACTER_NAME_BY_TYPE_JA: Record<string, string> = {
+  相談相手タイプ: "The Confidant",
+  万能助手タイプ: "The Generalist",
+  情報通タイプ: "The Scout",
+  研究者タイプ: "The Analyst",
+  秘書タイプ: "The Executive",
+  自由人タイプ: "The Orchestrator",
+};
+
+const EN_CATCH_COPY_BY_TYPE_JA: Record<string, string> = {
+  相談相手タイプ: "I don't need answers. I need to be heard.",
+  万能助手タイプ: "Why think when you can delegate?",
+  情報通タイプ: "Just give me what I need. Nothing else.",
+  研究者タイプ: "I don't do 'probably'.",
+  秘書タイプ: "Chaos isn't a vibe. It's a problem.",
+  自由人タイプ: "One AI was never going to be enough.",
+};
+
 /** aiKind から結果画面用の説明を引けるマップ */
 export const PERSONALITY_DESCRIPTIONS: Record<AiKind, PersonalityDescription> = {
   claude: PERSONALITY_DESCRIPTIONS_JA["相談相手タイプ"],
@@ -238,8 +271,22 @@ export const PERSONALITY_DESCRIPTIONS: Record<AiKind, PersonalityDescription> = 
  */
 export function getPersonalityDescription(
   typeJa: string,
-  _locale: string
+  locale: string
 ): PersonalityDescription | null {
   const desc = PERSONALITY_DESCRIPTIONS_JA[typeJa];
-  return desc !== undefined ? desc : null;
+  if (desc === undefined) {
+    return null;
+  }
+  if (locale !== "en") {
+    return desc;
+  }
+  const supplement = EN_SUPPLEMENT_BY_TYPE_JA[typeJa];
+  const characterName = EN_CHARACTER_NAME_BY_TYPE_JA[typeJa];
+  const catchCopy = EN_CATCH_COPY_BY_TYPE_JA[typeJa];
+  return {
+    ...desc,
+    supplement: supplement ?? desc.supplement,
+    characterName: characterName ?? desc.characterName,
+    catchCopy: catchCopy ?? desc.catchCopy,
+  };
 }

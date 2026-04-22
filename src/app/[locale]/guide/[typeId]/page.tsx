@@ -26,6 +26,15 @@ const OTHER_TYPES: Record<TypeId, string> = {
   orchestrator: "AI遊牧民",
 };
 
+const OTHER_TYPES_EN: Record<TypeId, string> = {
+  empath: "The Confidant",
+  generalist: "The Generalist",
+  scout: "The Scout",
+  analyst: "The Analyst",
+  executive: "The Executive",
+  orchestrator: "The Orchestrator",
+};
+
 const JA_LABEL_TO_GUIDE_TYPE: Record<string, TypeId> = (
   Object.entries(OTHER_TYPES) as [TypeId, string][]
 ).reduce<Record<string, TypeId>>((acc, [id, ja]) => {
@@ -81,6 +90,7 @@ function resolveUserTypeIdFromStorage(raw: string | null): TypeId | null {
 export default function GuideTypeDetailPage() {
   const params = useParams();
   const locale = typeof params?.locale === "string" ? params.locale : "ja";
+  const isEn = locale === "en";
   const rawTypeId = typeof params?.typeId === "string" ? params.typeId : "";
   const typeId = rawTypeId as TypeId;
 
@@ -103,12 +113,16 @@ export default function GuideTypeDetailPage() {
     return (
       <main className="bg-[#f8f7ff] px-4 py-8">
         <div className="mx-auto max-w-4xl rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
-          <p className="text-sm text-slate-600">指定されたガイドが見つかりませんでした。</p>
+          <p className="text-sm text-slate-600">
+            {isEn
+              ? "The requested guide could not be found."
+              : "指定されたガイドが見つかりませんでした。"}
+          </p>
           <Link
             href={`/${locale}/guide`}
             className="mt-4 inline-flex text-sm font-medium text-slate-700 underline underline-offset-2"
           >
-            AI活用ガイドに戻る
+            {isEn ? "Back to AI Usage Guide" : "AI活用ガイドに戻る"}
           </Link>
         </div>
       </main>
@@ -125,7 +139,7 @@ export default function GuideTypeDetailPage() {
           href={`/${locale}/guide`}
           className="inline-flex text-sm font-medium text-slate-600 underline underline-offset-2"
         >
-          ← AI活用ガイドに戻る
+          {isEn ? "← Back to AI Usage Guide" : "← AI活用ガイドに戻る"}
         </Link>
 
         <section
@@ -148,12 +162,16 @@ export default function GuideTypeDetailPage() {
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">いつ使うか</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            {isEn ? "When to use" : "いつ使うか"}
+          </h2>
           <p className="mt-3 text-sm leading-relaxed text-slate-700">{content.whenToUse}</p>
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">何が強いか</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            {isEn ? "What this AI does best" : "何が強いか"}
+          </h2>
           <ul className="mt-3 space-y-2">
             {content.strengths.map((item, i) => (
               <li key={i} className="mt-0.5 flex items-start gap-2 text-sm text-gray-600">
@@ -178,7 +196,9 @@ export default function GuideTypeDetailPage() {
           </div>
 
           <div className="mt-6 space-y-2">
-            <h2 className="text-sm font-bold text-gray-700">実際の使い方</h2>
+            <h2 className="text-sm font-bold text-gray-700">
+              {isEn ? "Best uses" : "実際の使い方"}
+            </h2>
             <ul className="space-y-2">
               {content.useCases.map((item, i) => (
                 <li
@@ -200,15 +220,23 @@ export default function GuideTypeDetailPage() {
           }}
         >
           <h2 className="text-xl font-bold text-slate-900">
-            自分の性格に合った使い方をAIに指示する
+            {isEn
+              ? "Tell AI how to work with you"
+              : "自分の性格に合った使い方をAIに指示する"}
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            右のボタンでそのままコピーして使えます。
+            {isEn
+              ? "Copy and paste directly with the button on the right."
+              : "右のボタンでそのままコピーして使えます。"}
           </p>
           <div className="mb-2 mt-3 space-y-2">
-            <h3 className="text-sm font-bold text-gray-700">すぐ使えるプロンプト</h3>
+            <h3 className="text-sm font-bold text-gray-700">
+              {isEn ? "Ready-to-use prompts" : "すぐ使えるプロンプト"}
+            </h3>
             <p className="text-xs text-gray-400">
-              コピーしてそのままAIに貼り付けて使えます。診断済みの方はあなた専用プロンプトが結果画面に表示されます。
+              {isEn
+                ? "Copy and paste directly into AI. If you've completed diagnosis, your personalized prompts appear on the result page."
+                : "コピーしてそのままAIに貼り付けて使えます。診断済みの方はあなた専用プロンプトが結果画面に表示されます。"}
             </p>
           </div>
           <div className="relative mt-4">
@@ -221,7 +249,9 @@ export default function GuideTypeDetailPage() {
                     className="max-w-sm px-2 text-center text-slate-700"
                     style={{ fontSize: 14, textAlign: "center" }}
                   >
-                    診断すると、あなた専用のプロンプトが解放されます
+                    {isEn
+                      ? "Take the diagnosis to unlock your personalized prompts."
+                      : "診断すると、あなた専用のプロンプトが解放されます"}
                   </p>
                   <Link
                     href={`/${locale}/diagnosis`}
@@ -233,7 +263,9 @@ export default function GuideTypeDetailPage() {
                       borderRadius: 10,
                     }}
                   >
-                    診断してプロンプトを解放する →
+                    {isEn
+                      ? "Take the diagnosis to unlock prompts →"
+                      : "診断してプロンプトを解放する →"}
                   </Link>
                 </>
               }
@@ -242,7 +274,9 @@ export default function GuideTypeDetailPage() {
         </section>
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900">NGな使い方</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            {isEn ? "What not to do" : "NGな使い方"}
+          </h2>
           <div className="relative mt-3">
             <ul
               className="space-y-2"
@@ -272,7 +306,9 @@ export default function GuideTypeDetailPage() {
                   href={`/${locale}/diagnosis`}
                   className="inline-block rounded-full bg-gray-900 px-6 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
                 >
-                  診断してプロンプトを解放する →
+                  {isEn
+                    ? "Take the diagnosis to unlock prompts →"
+                    : "診断してプロンプトを解放する →"}
                 </Link>
               </div>
             ) : null}
@@ -302,7 +338,7 @@ export default function GuideTypeDetailPage() {
                   href={`/${locale}/guide/${id}`}
                   className="rounded-full border border-gray-200 px-3 py-1.5 text-xs text-gray-600 transition-colors hover:bg-gray-50"
                 >
-                  {OTHER_TYPES[id]}
+                  {isEn ? OTHER_TYPES_EN[id] : OTHER_TYPES[id]}
                 </a>
               ))}
           </div>
@@ -310,15 +346,19 @@ export default function GuideTypeDetailPage() {
 
         <div className="mx-auto max-w-2xl px-6 py-10">
           <div className="space-y-3 rounded-xl border border-gray-200 bg-gray-50 p-6 text-center">
-            <p className="text-sm font-bold text-gray-800">自分のタイプを知っていますか？</p>
+            <p className="text-sm font-bold text-gray-800">
+              {isEn ? "Do you know your type?" : "自分のタイプを知っていますか？"}
+            </p>
             <p className="text-xs text-gray-500">
-              診断するとあなた専用のプロンプトが生成されます
+              {isEn
+                ? "Take the diagnosis to generate prompts tailored to you."
+                : "診断するとあなた専用のプロンプトが生成されます"}
             </p>
             <Link
               href={`/${locale}/diagnosis`}
               className="inline-block rounded-full bg-gray-900 px-7 py-2.5 text-sm font-bold text-white transition-colors hover:bg-gray-700"
             >
-              診断してみる →
+              {isEn ? "Take diagnosis →" : "診断してみる →"}
             </Link>
           </div>
         </div>

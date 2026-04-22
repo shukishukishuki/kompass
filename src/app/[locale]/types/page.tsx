@@ -2,8 +2,20 @@ import Image from "next/image";
 import Link from "next/link";
 import { AI_THEME_COLORS } from "@/types/ai";
 import { hexToRgba, TYPE_CHARACTERS } from "@/lib/type-characters";
+import { getPersonalityDescription } from "@/lib/personality-descriptions";
 
-export async function generateMetadata() {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (locale === "en") {
+    return {
+      title: "6 AI Thinking Types",
+      description: "Find the AI type that matches how you think.",
+    };
+  }
   return {
     title: "AIタイプ一覧",
     description:
@@ -21,13 +33,13 @@ interface TypesPageCopy {
 const COPY_BY_LOCALE: Record<"ja" | "en", TypesPageCopy> = {
   ja: {
     title: "6つのAI思考タイプ",
-    subtitle: "キャラクターから、あなたに合う使い方を見つけよう。",
+    subtitle: "あなたの思考スタイルに合うAIタイプを見つけよう",
     aiLabel: "対応AI",
     cta: "診断ページへ",
   },
   en: {
     title: "6 AI Thinking Types",
-    subtitle: "Find your best usage style through each character.",
+    subtitle: "Find the AI type that matches how you think.",
     aiLabel: "Recommended AI",
     cta: "Go to Diagnosis",
   },
@@ -55,11 +67,19 @@ export default async function TypesPage({
           {copy.subtitle}
         </p>
         <p className="text-sm text-gray-500 text-center mb-8 leading-relaxed">
-          あなたはどのタイプ？タップして詳しい使い方を見る。
+          {lc === "en"
+            ? "Which type are you? Tap to see how to use each one."
+            : "あなたはどのタイプ？タップして詳しい使い方を見る。"}
         </p>
         <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TYPE_CHARACTERS.map((character) => {
             const color = AI_THEME_COLORS[character.aiKind];
+            const personalityDescription = getPersonalityDescription(
+              character.typeJa,
+              lc
+            );
+            const displayName = personalityDescription?.characterName ?? character.characterName;
+            const catchCopy = personalityDescription?.catchCopy ?? character.oneLiner;
             return (
               <Link
                 key={character.typeId}
@@ -75,18 +95,18 @@ export default async function TypesPage({
                 >
                   <Image
                     src={character.imageSrc}
-                    alt={character.characterName}
+                    alt={displayName}
                     width={220}
                     height={220}
                     className="mx-auto h-[220px] w-[220px] max-w-full object-contain"
                   />
                   <p className="mt-4 text-lg font-bold text-slate-900">
-                    {character.characterName}
+                    {displayName}
                   </p>
                   <p className="text-xs uppercase tracking-wide text-slate-500">
                     {character.typeEn}
                   </p>
-                  <p className="mt-3 text-sm text-slate-700">{character.oneLiner}</p>
+                  <p className="mt-3 text-sm text-slate-700">{catchCopy}</p>
                   <p className="mt-4 rounded-lg bg-white/75 px-3 py-2 text-sm font-medium text-slate-800">
                     {copy.aiLabel}: {character.aiName}
                   </p>
@@ -96,12 +116,14 @@ export default async function TypesPage({
           })}
         </div>
         <div className="mt-10 space-y-2 text-center">
-          <p className="text-sm text-gray-500">自分がどのタイプか気になったら</p>
+          <p className="text-sm text-gray-500">
+            {lc === "en" ? "Want to find your type?" : "自分がどのタイプか気になったら"}
+          </p>
           <Link
             href={`/${locale}/diagnosis`}
             className="inline-block rounded-full bg-gray-900 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-gray-700"
           >
-            診断してタイプを知る →
+            {lc === "en" ? "Take diagnosis →" : "診断してタイプを知る →"}
           </Link>
         </div>
       </div>
