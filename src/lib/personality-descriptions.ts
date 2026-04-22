@@ -344,6 +344,21 @@ const EN_LITERACY_ANALYSIS_BY_TYPE_JA: Record<string, string> = {
     "You're built for flexibility over depth. Your edge is knowing which AI to use for which job — and switching without friction.",
 };
 
+const EN_A_LITTLE_DEEPER_BY_TYPE_JA: Record<string, string> = {
+  相談相手タイプ:
+    "You don't need instant answers. You need room to untangle what you feel and what you think. When AI listens before it solves, your decisions get sharper.",
+  万能助手タイプ:
+    "Momentum is your advantage. You create clarity by moving, not by waiting. A fast draft gives you something real to improve.",
+  情報通タイプ:
+    "You decide from fresh signals, not stale summaries. Real-time context gives you confidence, and that speed becomes your edge.",
+  研究者タイプ:
+    "Trust starts with verification. You pressure-test claims, compare sources, and only then commit. That rigor is your strength.",
+  秘書タイプ:
+    "You perform best when chaos turns into structure. Once priorities are clear, execution becomes smooth and reliable.",
+  自由人タイプ:
+    "No single AI is enough for how you work. Your strength is orchestration: pick the right model per phase, then connect outputs into one flow.",
+};
+
 /** aiKind から結果画面用の説明を引けるマップ */
 export const PERSONALITY_DESCRIPTIONS: Record<AiKind, PersonalityDescription> = {
   claude: PERSONALITY_DESCRIPTIONS_JA["相談相手タイプ"],
@@ -379,6 +394,7 @@ export function getPersonalityDescription(
   const aiCompatibility = EN_AI_COMPATIBILITY_BY_TYPE_JA[typeJa];
   const firstStepText = EN_FIRST_STEP_TEXT_BY_TYPE_JA[typeJa];
   const literacyAnalysis = EN_LITERACY_ANALYSIS_BY_TYPE_JA[typeJa];
+  const aLittleDeeperText = EN_A_LITTLE_DEEPER_BY_TYPE_JA[typeJa];
   return {
     ...desc,
     supplement: supplement ?? desc.supplement,
@@ -390,5 +406,6 @@ export function getPersonalityDescription(
     aiCompatibility: aiCompatibility ?? desc.aiCompatibility,
     firstStepText,
     literacyAnalysis: literacyAnalysis ?? desc.literacyAnalysis,
+    aLittleDeeperText,
   };
 }

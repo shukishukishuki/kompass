@@ -325,6 +325,10 @@ function sanitizeJapaneseFixedCopyForEn(text: string, isEn: boolean): string {
     .trim();
 }
 
+function hasJapaneseCharacters(text: string): boolean {
+  return /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(text);
+}
+
 const BOTTOM_SECTION_HEADING_CLASS =
   "mb-2 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase";
 
@@ -1017,14 +1021,26 @@ export default function DiagnosisResultPage() {
     if (result === null) {
       return "";
     }
-    return sanitizeJapaneseFixedCopyForEn(result.baseAI.reason, isEn);
-  }, [result, isEn]);
+    if (isEn) {
+      if (personalityBlock?.aLittleDeeperText !== undefined) {
+        return personalityBlock.aLittleDeeperText;
+      }
+      const sanitized = sanitizeJapaneseFixedCopyForEn(result.baseAI.reason, true);
+      return hasJapaneseCharacters(sanitized) ? "" : sanitized;
+    }
+    return result.baseAI.reason;
+  }, [result, isEn, personalityBlock]);
 
   const detailNoteText = useMemo(() => {
     if (result === null) {
       return "";
     }
-    return sanitizeJapaneseFixedCopyForEn(result.baseAI.note ?? "", isEn);
+    const note = result.baseAI.note ?? "";
+    if (isEn) {
+      const sanitized = sanitizeJapaneseFixedCopyForEn(note, true);
+      return hasJapaneseCharacters(sanitized) ? "" : sanitized;
+    }
+    return note;
   }, [result, isEn]);
 
   const firstStepText = useMemo(() => {
