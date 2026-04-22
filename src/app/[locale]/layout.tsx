@@ -27,6 +27,9 @@ export async function generateMetadata({
       siteName: "Kompass",
       locale: isEn ? "en_US" : "ja_JP",
     },
+    verification: {
+      google: "bVqveGgq8n4asqRxx096fIvL06kfwPXk_DbYi1F43lg",
+    },
   };
 }
 
