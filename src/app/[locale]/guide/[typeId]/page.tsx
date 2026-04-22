@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DIAGNOSIS_RESULT_STORAGE_KEY } from "@/app/[locale]/diagnosis/page";
 import { OneClickAIButton } from "@/components/diagnosis/OneClickAIButton";
 import { PromptList } from "@/components/guide/prompt-list";
-import { GUIDE_DETAILS } from "@/lib/guide-details";
+import { GUIDE_DETAILS, getGuideDetailContent } from "@/lib/guide-details";
 import { AI_KIND_TO_PERSONALITY_JA } from "@/lib/mbti-correction";
 import { AI_KIND_TO_GUIDE, GUIDE_TO_AI_KIND } from "@/lib/type-id-map";
 import { getTypeCharacterByTypeId, hexToRgba, type TypeId } from "@/lib/type-characters";
@@ -101,7 +101,7 @@ export default function GuideTypeDetailPage() {
     setUserTypeId(resolveUserTypeIdFromStorage(stored));
   }, []);
 
-  const content = GUIDE_DETAILS[typeId];
+  const content = getGuideDetailContent(typeId, locale);
   const character = getTypeCharacterByTypeId(typeId);
 
   const aiKind = useMemo(() => {
@@ -184,7 +184,9 @@ export default function GuideTypeDetailPage() {
 
         <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="space-y-2">
-            <h2 className="text-sm font-bold text-gray-700">こんな人に向いている</h2>
+            <h2 className="text-sm font-bold text-gray-700">
+              {isEn ? "Who this is for" : "こんな人に向いている"}
+            </h2>
             <ul className="space-y-1.5">
               {content.bestFor.map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
@@ -205,7 +207,7 @@ export default function GuideTypeDetailPage() {
                   key={i}
                   className="rounded-lg bg-gray-50 px-4 py-3 text-sm leading-relaxed text-gray-700"
                 >
-                  「{item}」
+                  {isEn ? item : `「${item}」`}
                 </li>
               ))}
             </ul>

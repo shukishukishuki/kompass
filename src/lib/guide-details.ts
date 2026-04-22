@@ -19,6 +19,12 @@ export interface GuideDetailContent {
     label: string;
     href: string;
   }[];
+  en?: {
+    whenToUse: string;
+    strengths: [string, string];
+    bestFor: [string, string, string];
+    useCases: [string, string];
+  };
 }
 
 /** タイプ別ガイド本文（プロンプト含む）— 結果画面のタブとも共有 */
@@ -72,6 +78,23 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
       "「これで合ってますか？」と1回で終わらせる",
     ],
     quickUseButtons: [{ label: "Claudeを開く", href: "https://claude.ai" }],
+    en: {
+      whenToUse:
+        "When your head is foggy and you're not sure what the problem even is. When you want to think out loud, not just get an answer.",
+      strengths: [
+        "Takes emotional and vague language at face value",
+        "Digs into 'why did I feel that?' alongside you",
+      ],
+      bestFor: [
+        "People who need to process feelings before acting",
+        "Those who value the journey over the destination",
+        "People who want a thinking partner, not just an answer machine",
+      ],
+      useCases: [
+        "Talk through a career decision you've been sitting on",
+        "Deep-dive a book you just read and put it in your own words",
+      ],
+    },
   },
   generalist: {
     oneShotCopy: "とりあえず出すなら最速",
@@ -116,6 +139,23 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
     ],
     ngUsages: ["深い感情的な相談", "出典や根拠が重要な調べもの"],
     quickUseButtons: [{ label: "ChatGPTを開く", href: "https://chatgpt.com" }],
+    en: {
+      whenToUse:
+        "When you need a first draft fast. When you want to delegate a task and shape the result.",
+      strengths: [
+        "Handles vague instructions and produces output immediately",
+        "Versatile across almost any task type",
+      ],
+      bestFor: [
+        "People who act first and refine later",
+        "Those who need a starting point, not a perfect answer",
+        "Anyone who moves fast and iterates",
+      ],
+      useCases: [
+        "Draft a proposal outline in 60 seconds",
+        "Throw a messy brief at it and see what comes back",
+      ],
+    },
   },
   scout: {
     oneShotCopy: "今この瞬間の正解を取りに行くAI",
@@ -160,6 +200,23 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
     ],
     ngUsages: ["感情的な相談", "深い思考の壁打ち"],
     quickUseButtons: [{ label: "Geminiを開く", href: "https://gemini.google.com" }],
+    en: {
+      whenToUse:
+        "When you need to know what's happening right now. When Google speed matters more than depth.",
+      strengths: [
+        "Directly connected to Google for real-time results",
+        "Handles video, images, and text simultaneously",
+      ],
+      bestFor: [
+        "People chasing the latest trends",
+        "Those who want Google Calendar and Gmail integration",
+        "Anyone who needs to analyze images or video alongside text",
+      ],
+      useCases: [
+        "Summarize this week's AI news in 5 minutes",
+        "Find the optimal route for an upcoming business trip using Maps",
+      ],
+    },
   },
   analyst: {
     oneShotCopy: "“それ本当？”を潰すAI",
@@ -206,6 +263,23 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
     quickUseButtons: [
       { label: "Perplexityを開く", href: "https://www.perplexity.ai" },
     ],
+    en: {
+      whenToUse:
+        "When you need current information with sources attached. When you want to verify something, not just accept it.",
+      strengths: [
+        "Every answer comes with source URLs",
+        "Real-time web search built in",
+      ],
+      bestFor: [
+        "People who fact-check before deciding",
+        "Researchers and analysts",
+        "Anyone who asks 'but is that actually true?'",
+      ],
+      useCases: [
+        "Verify a claim you saw in an article",
+        "Research a topic with citations you can actually check",
+      ],
+    },
   },
   executive: {
     oneShotCopy: "仕事を人間より整理するAI",
@@ -258,6 +332,23 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
         href: "https://copilot.microsoft.com",
       },
     ],
+    en: {
+      whenToUse:
+        "When you need to organize scattered information. When you're working inside Microsoft 365 and want AI built into your workflow.",
+      strengths: [
+        "Directly integrated with Microsoft 365",
+        "Built for structured, task-oriented work",
+      ],
+      bestFor: [
+        "People who need order before they can act",
+        "Microsoft 365 power users",
+        "Those who want AI embedded in their existing tools",
+      ],
+      useCases: [
+        "Auto-generate meeting notes from a Teams call",
+        "Have Copilot prioritize your task list for the day",
+      ],
+    },
   },
   orchestrator: {
     oneShotCopy: "AIを使う側に回った人",
@@ -309,5 +400,45 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
       { label: "ChatGPT", href: "https://chatgpt.com" },
       { label: "Perplexity", href: "https://www.perplexity.ai" },
     ],
+    en: {
+      whenToUse:
+        "When no single AI covers everything you need. When you want to use the right tool for each phase.",
+      strengths: [
+        "Combines strengths of multiple AI tools",
+        "Optimized for people who already use more than one AI",
+      ],
+      bestFor: [
+        "Power users who switch tools without friction",
+        "Those who think in workflows, not single prompts",
+        "Anyone who's frustrated that one AI can't do it all",
+      ],
+      useCases: [
+        "Research with Perplexity -> organize with ChatGPT -> deep dive with Claude",
+        "Route each task in your day to the AI best suited for it",
+      ],
+    },
   },
 };
+
+/**
+ * ロケールに応じてガイド本文を切り替える
+ */
+export function getGuideDetailContent(
+  typeId: TypeId,
+  locale: string
+): GuideDetailContent | undefined {
+  const base = GUIDE_DETAILS[typeId];
+  if (base === undefined) {
+    return undefined;
+  }
+  if (locale !== "en" || base.en === undefined) {
+    return base;
+  }
+  return {
+    ...base,
+    whenToUse: base.en.whenToUse,
+    strengths: base.en.strengths,
+    bestFor: base.en.bestFor,
+    useCases: base.en.useCases,
+  };
+}

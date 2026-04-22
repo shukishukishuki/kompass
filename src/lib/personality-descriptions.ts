@@ -329,6 +329,21 @@ const EN_FIRST_STEP_TEXT_BY_TYPE_JA: Record<string, string> = {
     "Dump everything in your head right now into Copilot and ask it to organize it.",
 };
 
+const EN_LITERACY_ANALYSIS_BY_TYPE_JA: Record<string, string> = {
+  相談相手タイプ:
+    "You're wired for reflection and resonance over raw generation. You use AI as a mirror — to understand yourself, not just to produce output.",
+  万能助手タイプ:
+    "You're built for speed and iteration. AI is your launchpad. The first output is never the final output — you treat it as a starting point.",
+  情報通タイプ:
+    "You're tuned for real-time signal detection. You use AI to stay ahead of the curve, not to process what you already know.",
+  研究者タイプ:
+    "You're wired for verification over acceptance. AI is a research partner, not an authority. You always cross-check.",
+  秘書タイプ:
+    "You're optimized for structure and efficiency. You use AI to process and organize information, not to explore or reflect.",
+  自由人タイプ:
+    "You're built for flexibility over depth. Your edge is knowing which AI to use for which job — and switching without friction.",
+};
+
 /** aiKind から結果画面用の説明を引けるマップ */
 export const PERSONALITY_DESCRIPTIONS: Record<AiKind, PersonalityDescription> = {
   claude: PERSONALITY_DESCRIPTIONS_JA["相談相手タイプ"],
@@ -363,6 +378,7 @@ export function getPersonalityDescription(
   const workStyle = EN_WORK_STYLE_BY_TYPE_JA[typeJa];
   const aiCompatibility = EN_AI_COMPATIBILITY_BY_TYPE_JA[typeJa];
   const firstStepText = EN_FIRST_STEP_TEXT_BY_TYPE_JA[typeJa];
+  const literacyAnalysis = EN_LITERACY_ANALYSIS_BY_TYPE_JA[typeJa];
   return {
     ...desc,
     supplement: supplement ?? desc.supplement,
@@ -373,5 +389,6 @@ export function getPersonalityDescription(
     workStyle: workStyle ?? desc.workStyle,
     aiCompatibility: aiCompatibility ?? desc.aiCompatibility,
     firstStepText,
+    literacyAnalysis: literacyAnalysis ?? desc.literacyAnalysis,
   };
 }
