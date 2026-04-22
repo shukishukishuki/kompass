@@ -28,8 +28,8 @@ export function Footer() {
           <a
             href={
               isEn
-                ? "https://twitter.com/intent/tweet?text=I%20just%20took%20the%20AI%20Type%20Diagnosis!%20%23Kompass&url=https://kompass-rosy.vercel.app/en"
-                : "https://twitter.com/intent/tweet?text=AIタイプ診断やってみた！%20%23Kompass&url=https://kompass-rosy.vercel.app/ja"
+                ? "https://twitter.com/intent/tweet?text=I%20just%20took%20the%20AI%20Type%20Diagnosis!%20%23Kompass&url=https://usekompass.com/en"
+                : "https://twitter.com/intent/tweet?text=AIタイプ診断やってみた！%20%23Kompass&url=https://usekompass.com/ja"
             }
             target="_blank"
             rel="noopener noreferrer"

@@ -1182,11 +1182,11 @@ export default function DiagnosisResultPage() {
   const xShareOneLiner =
     X_SHARE_ONE_LINERS[xShareTypeId] ??
     "あなたは何タイプ？ ぜひ診断してみてください。";
-  const xShareLandingUrl = "https://kompass-rosy.vercel.app";
+  const xShareLandingUrl = "https://usekompass.com";
   const shareTypeNameEn = mbtiApplied?.correctedTypeEn ?? resolvedTypeCharacter.typeEn;
   const shareText = encodeURIComponent(
     isEn
-      ? `My AI type is '${shareTypeNameEn}'. What's yours? → https://kompass-rosy.vercel.app/en #Kompass`
+      ? `My AI type is '${shareTypeNameEn}'. What's yours? → https://usekompass.com/en #Kompass`
       : `私のAIタイプは「${resolvedTypeCharacter.characterName}」でした。\n\n${xShareOneLiner}\n\nあなたは何タイプ？\n→ ${xShareLandingUrl}\n#Kompass`
   );
   const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}`;

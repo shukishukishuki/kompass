@@ -85,8 +85,8 @@ export default async function TypeResultPage({
   const guideTypeId = AI_KIND_TO_GUIDE[typeId] ?? typeId;
   const shareText = encodeURIComponent(
     isEn
-      ? `My AI type is '${displayName}'. What's yours? → https://kompass-rosy.vercel.app/en #Kompass`
-      : `私のAIタイプは「${displayName}」でした！あなたは何タイプ？ → https://kompass-rosy.vercel.app #Kompass`
+      ? `My AI type is '${displayName}'. What's yours? → https://usekompass.com/en #Kompass`
+      : `私のAIタイプは「${displayName}」でした！あなたは何タイプ？ → https://usekompass.com #Kompass`
   );
   const xShareUrl = `https://twitter.com/intent/tweet?text=${shareText}`;
 
