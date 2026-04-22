@@ -49,3 +49,14 @@ alter table users add column if not exists email_3_sent_at timestamptz;
 drop policy if exists "allow update diagnosis_results behavior" on diagnosis_results;
 create policy "allow update diagnosis_results behavior" on diagnosis_results
   for update using (true) with check (true);
+
+CREATE OR REPLACE VIEW user_action_stats AS
+SELECT 
+  ai_type,
+  task_type,
+  AVG(CAST(ai_execution_feedback AS numeric)) as avg_satisfaction,
+  COUNT(*) as sample_count
+FROM diagnosis_results
+WHERE ai_execution_feedback IS NOT NULL
+GROUP BY ai_type, task_type
+ORDER BY avg_satisfaction DESC;

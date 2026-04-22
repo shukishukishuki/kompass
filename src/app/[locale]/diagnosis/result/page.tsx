@@ -2431,6 +2431,22 @@ export default function DiagnosisResultPage() {
               <p className={cn(BOTTOM_SECTION_HEADING_CLASS, "text-center mb-3")}>
                 {ui.retakeHeading}
               </p>
+              <a
+                href="mailto:kompass.ai.contact@gmail.com"
+                style={{
+                  display: "block",
+                  textAlign: "center",
+                  fontSize: 13,
+                  color: "#888",
+                  textDecoration: "underline",
+                  padding: "8px 0",
+                  marginBottom: 8,
+                }}
+              >
+                {isEn
+                  ? "Corporate inquiries & team training \u2192"
+                  : "社員研修・法人利用のご相談はこちら \u2192"}
+              </a>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <Link
                   href={`/${locale}/diagnosis`}
