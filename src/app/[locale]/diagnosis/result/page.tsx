@@ -998,8 +998,8 @@ export default function DiagnosisResultPage() {
     if (result === null) {
       return null;
     }
-    return getPersonalityDescription(displayPersonalityJa, locale);
-  }, [result, locale, displayPersonalityJa]);
+    return getPersonalityDescription(displayPersonalityJa, isEn ? "en" : "ja");
+  }, [result, isEn, displayPersonalityJa]);
 
   const personalityDetailSections = useMemo(() => {
     if (personalityBlock === null) {

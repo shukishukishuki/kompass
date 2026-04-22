@@ -20,6 +20,7 @@ export interface GuideDetailContent {
     href: string;
   }[];
   en?: {
+    oneShotCopy: string;
     whenToUse: string;
     strengths: [string, string];
     bestFor: [string, string, string];
@@ -79,6 +80,7 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
     ],
     quickUseButtons: [{ label: "Claudeを開く", href: "https://claude.ai" }],
     en: {
+      oneShotCopy: "The AI that thinks with you",
       whenToUse:
         "When your head is foggy and you're not sure what the problem even is. When you want to think out loud, not just get an answer.",
       strengths: [
@@ -140,6 +142,7 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
     ngUsages: ["深い感情的な相談", "出典や根拠が重要な調べもの"],
     quickUseButtons: [{ label: "ChatGPTを開く", href: "https://chatgpt.com" }],
     en: {
+      oneShotCopy: "The AI that ships before you finish thinking",
       whenToUse:
         "When you need a first draft fast. When you want to delegate a task and shape the result.",
       strengths: [
@@ -201,6 +204,7 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
     ngUsages: ["感情的な相談", "深い思考の壁打ち"],
     quickUseButtons: [{ label: "Geminiを開く", href: "https://gemini.google.com" }],
     en: {
+      oneShotCopy: "The AI that knows what's happening right now",
       whenToUse:
         "When you need to know what's happening right now. When Google speed matters more than depth.",
       strengths: [
@@ -264,6 +268,7 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
       { label: "Perplexityを開く", href: "https://www.perplexity.ai" },
     ],
     en: {
+      oneShotCopy: "The AI that never takes your word for it",
       whenToUse:
         "When you need current information with sources attached. When you want to verify something, not just accept it.",
       strengths: [
@@ -333,6 +338,7 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
       },
     ],
     en: {
+      oneShotCopy: "The AI that organizes better than you do",
       whenToUse:
         "When you need to organize scattered information. When you're working inside Microsoft 365 and want AI built into your workflow.",
       strengths: [
@@ -401,6 +407,7 @@ export const GUIDE_DETAILS: Record<TypeId, GuideDetailContent> = {
       { label: "Perplexity", href: "https://www.perplexity.ai" },
     ],
     en: {
+      oneShotCopy: "The AI stack for people who use everything",
       whenToUse:
         "When no single AI covers everything you need. When you want to use the right tool for each phase.",
       strengths: [
@@ -436,6 +443,7 @@ export function getGuideDetailContent(
   }
   return {
     ...base,
+    oneShotCopy: base.en.oneShotCopy,
     whenToUse: base.en.whenToUse,
     strengths: base.en.strengths,
     bestFor: base.en.bestFor,

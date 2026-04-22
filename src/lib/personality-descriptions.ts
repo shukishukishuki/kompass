@@ -367,7 +367,7 @@ export function getPersonalityDescription(
   if (desc === undefined) {
     return null;
   }
-  if (locale !== "en") {
+  if (!locale.toLowerCase().startsWith("en")) {
     return desc;
   }
   const supplement = EN_SUPPLEMENT_BY_TYPE_JA[typeJa];

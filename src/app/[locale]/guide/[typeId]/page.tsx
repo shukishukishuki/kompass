@@ -35,6 +35,15 @@ const OTHER_TYPES_EN: Record<TypeId, string> = {
   orchestrator: "The Orchestrator",
 };
 
+const HERO_NAME_EN_BY_TYPE_ID: Record<TypeId, string> = {
+  empath: "The Confidant",
+  executive: "The Executive",
+  analyst: "The Analyst",
+  generalist: "The Generalist",
+  scout: "The Scout",
+  orchestrator: "The Orchestrator",
+};
+
 const JA_LABEL_TO_GUIDE_TYPE: Record<string, TypeId> = (
   Object.entries(OTHER_TYPES) as [TypeId, string][]
 ).reduce<Record<string, TypeId>>((acc, [id, ja]) => {
@@ -131,6 +140,9 @@ export default function GuideTypeDetailPage() {
 
   const accentColor = AI_THEME_COLORS[character.aiKind];
   const previewLocked = userTypeId === null || typeId !== userTypeId;
+  const heroCharacterName = isEn
+    ? HERO_NAME_EN_BY_TYPE_ID[typeId]
+    : character.characterName;
 
   return (
     <main className="bg-[#f8f7ff] px-4 py-8">
@@ -156,7 +168,7 @@ export default function GuideTypeDetailPage() {
               priority
             />
             <p className="text-sm uppercase tracking-wide text-white/90">{character.typeEn}</p>
-            <h1 className="text-3xl font-extrabold md:text-4xl">{character.characterName}</h1>
+            <h1 className="text-3xl font-extrabold md:text-4xl">{heroCharacterName}</h1>
             <p className="text-3xl font-black leading-tight md:text-5xl">{content.oneShotCopy}</p>
           </div>
         </section>
