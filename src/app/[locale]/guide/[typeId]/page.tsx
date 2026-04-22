@@ -321,6 +321,7 @@ export default function GuideTypeDetailPage() {
               typeId={aiKind}
               accentColor={character.theme.primary}
               actionLabelColor={character.theme.cText}
+              locale={locale}
             />
           </div>
         </section>

@@ -312,6 +312,19 @@ function resolveTypeNameEn(...candidates: Array<string | null | undefined>): str
   return "The Confidant";
 }
 
+const EN_BLOCKED_JA_PHRASES = ["自由人タイプの中でも、あなたの軸になるのは"];
+
+function sanitizeJapaneseFixedCopyForEn(text: string, isEn: boolean): string {
+  if (!isEn || text.trim() === "") {
+    return text;
+  }
+  return text
+    .split("\n")
+    .filter((line) => !EN_BLOCKED_JA_PHRASES.some((phrase) => line.includes(phrase)))
+    .join("\n")
+    .trim();
+}
+
 const BOTTOM_SECTION_HEADING_CLASS =
   "mb-2 text-[11px] font-semibold tracking-[0.1em] text-[#999] uppercase";
 
@@ -1000,6 +1013,27 @@ export default function DiagnosisResultPage() {
     ];
   }, [personalityBlock, ui]);
 
+  const detailReasonText = useMemo(() => {
+    if (result === null) {
+      return "";
+    }
+    return sanitizeJapaneseFixedCopyForEn(result.baseAI.reason, isEn);
+  }, [result, isEn]);
+
+  const detailNoteText = useMemo(() => {
+    if (result === null) {
+      return "";
+    }
+    return sanitizeJapaneseFixedCopyForEn(result.baseAI.note ?? "", isEn);
+  }, [result, isEn]);
+
+  const firstStepText = useMemo(() => {
+    if (result === null) {
+      return "";
+    }
+    return personalityBlock?.firstStepText ?? result.baseAI.setup;
+  }, [result, personalityBlock]);
+
   const statsDisplay = useMemo(() => {
     if (result === null) {
       return {
@@ -1599,11 +1633,12 @@ export default function DiagnosisResultPage() {
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {personalityBlock?.supplement ?? ""}
                 </p>
-                <p className="text-sm leading-relaxed">{result.baseAI.reason}</p>
-                {result.baseAI.note !== undefined &&
-                result.baseAI.note.trim() !== "" ? (
+                {detailReasonText !== "" ? (
+                  <p className="text-sm leading-relaxed">{detailReasonText}</p>
+                ) : null}
+                {detailNoteText !== "" ? (
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    {result.baseAI.note}
+                    {detailNoteText}
                   </p>
                 ) : null}
                 {result.layerCompleted >= 2 ? (
@@ -2116,7 +2151,7 @@ export default function DiagnosisResultPage() {
                   </>
                 ) : (
                   <div className="space-y-3">
-                    <p>{result.baseAI.setup}</p>
+                    <p>{firstStepText}</p>
                   </div>
                 )}
               </div>
@@ -2396,11 +2431,12 @@ export default function DiagnosisResultPage() {
         ) : (
           <Card className="text-left">
             <CardContent className="pt-6">
-              <p className="text-sm leading-relaxed">{result.baseAI.reason}</p>
-              {result.baseAI.note !== undefined &&
-              result.baseAI.note.trim() !== "" ? (
+              {detailReasonText !== "" ? (
+                <p className="text-sm leading-relaxed">{detailReasonText}</p>
+              ) : null}
+              {detailNoteText !== "" ? (
                 <p className="mt-3 text-sm text-muted-foreground">
-                  {result.baseAI.note}
+                  {detailNoteText}
                 </p>
               ) : null}
             </CardContent>

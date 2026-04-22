@@ -313,7 +313,10 @@ export function OneClickAIButton({
     <div className="w-full space-y-3 text-center">
       <div style={summaryCardStyle}>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <p style={actionTextStyle}>{isEn ? "💡 Today's action:" : "💡 今日のアクション："}{todayLine}</p>
+          <p style={actionTextStyle}>
+            {isEn ? "Today's action:" : "今日のアクション："}
+            {todayLine}
+          </p>
           <div>
             <p
               style={{
@@ -375,7 +378,7 @@ export function OneClickAIButton({
         </div>
       </div>
       <button type="button" onClick={() => void handleIntroOnly()} style={introButtonStyle}>
-        {isEn ? '" Tell AI how to work with you "' : "「 自分の性格に合った使い方をAIに指示する 」"}
+        {isEn ? "Tell AI how to work with you" : "「 自分の性格に合った使い方をAIに指示する 」"}
       </button>
       {showFeedbackPrompt ? (
         <div

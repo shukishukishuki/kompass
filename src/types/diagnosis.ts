@@ -18,6 +18,7 @@ export interface PersonalityDescription {
   thinkingPattern: string;
   workStyle: string;
   aiCompatibility: string;
+  firstStepText?: string;
   contraryCopy: string;
   strengths: string[];
   weaknesses: string[];

@@ -254,6 +254,81 @@ const EN_CATCH_COPY_BY_TYPE_JA: Record<string, string> = {
   自由人タイプ: "One AI was never going to be enough.",
 };
 
+const EN_WHO_YOU_ARE_BY_TYPE_JA: Record<string, string> = {
+  自由人タイプ:
+    "You never settle in one place. You're always hunting for the best option — and that applies to AI too. Using multiple tools for different jobs feels completely natural to you. Highly curious, always the first to try something new.",
+  相談相手タイプ:
+    "You value process over answers. You think by talking — the fog lifts when someone listens. You treat AI not as an answer machine but as a thinking partner. High empathy, but you sometimes need time to sort out your own feelings.",
+  万能助手タイプ:
+    "You move first and think second. A rough draft beats a blank page. Your approach to AI: 'Just give me something to work with.' You take the first output and shape it from there.",
+  情報通タイプ:
+    "You're obsessed with freshness. You need to know what's happening right now. Old or vague information stops you cold. High trend sensitivity — you spot industry shifts before most people.",
+  研究者タイプ:
+    "You don't move without evidence. 'Everyone says so' means nothing to you. You verify primary sources yourself before you commit. Others see you as logical and trustworthy.",
+  秘書タイプ:
+    "Disorder is physically stressful to you. You need to organize before you can act. People call your work thorough and airtight.",
+};
+
+const EN_THINKING_PATTERN_BY_TYPE_JA: Record<string, string> = {
+  自由人タイプ:
+    "You constantly ask 'Is this really the best way?' You can hold multiple perspectives at once and you're never stuck with a single answer. Combining A and B to see what happens is just how your mind works.",
+  相談相手タイプ:
+    "Emotion and logic are deeply linked for you. 'Why did I feel that?' comes before 'What should I do?' You're not satisfied with surface answers. You keep digging until you hit something real.",
+  万能助手タイプ:
+    "Action unlocks your thinking. 'How do I finish this today?' beats 'How do I make this perfect?' You filter fast and grab only what you need.",
+  情報通タイプ:
+    "You're always updating your picture of the present. Multiple sources, cross-checked for contradictions, before you land on a conclusion.",
+  研究者タイプ:
+    "Proof before conclusion. Every claim gets 'Why is that true?' and 'Where's the counter-argument?' One source is never enough.",
+  秘書タイプ:
+    "Top-down: big picture first, then details. You naturally sort by priority, category, and sequence. Ambiguity bothers you — you want definitions and scope locked in before you start.",
+};
+
+const EN_WORK_STYLE_BY_TYPE_JA: Record<string, string> = {
+  自由人タイプ:
+    "You push new tools, processes, and methods into your team. You thrive in cross-functional roles that connect different domains. The flip side: people sometimes ask 'So what exactly is your specialty?'",
+  相談相手タイプ:
+    "You naturally read the emotional temperature of a room and smooth over conflicts. Under pressure from deadlines and numbers, you feel the tension between 'I need to think this through' and 'I have to decide now.'",
+  万能助手タイプ:
+    "You're great at getting projects off the ground. You walk into meetings with a draft and move things forward. Detail-heavy planning and long-term management can slow you down — but pair with a perfectionist and you're unstoppable.",
+  情報通タイプ:
+    "Market research, competitive analysis, trend tracking — you dominate here. The risk: spending so long gathering that you miss the window to act.",
+  研究者タイプ:
+    "You're the person who asks 'Is that data actually correct?' in a room full of people nodding. Strong at research reports, evidence-based proposals, risk analysis. Watch out for analysis paralysis.",
+  秘書タイプ:
+    "Project management, meeting notes, documentation — you're exceptional here. Microsoft 365 is your natural habitat. The risk: optimizing so hard for completeness that speed suffers.",
+};
+
+const EN_AI_COMPATIBILITY_BY_TYPE_JA: Record<string, string> = {
+  自由人タイプ:
+    "Your power move is a 4-step flow: Perplexity for research, ChatGPT for organizing, Claude for deep thinking, Perplexity again to verify. Winging the tool choice makes you a wanderer, not an orchestrator. Decide which AI handles which phase.",
+  相談相手タイプ:
+    "Claude receives messy, emotional language without judgment and helps you find the words. Don't aim for a one-shot answer — go three exchanges deep and that's where the real value shows up.",
+  万能助手タイプ:
+    "ChatGPT turns even vague instructions into something fast. Don't stop at the first output — push back with 'more specific' or 'different angle' and it gets genuinely useful.",
+  情報通タイプ:
+    "Gemini is directly connected to Google, giving you real-time information no other AI can match. Specify a time range ('since 2025') and the freshness goes up sharply.",
+  研究者タイプ:
+    "Perplexity attaches source URLs to every answer — no other AI does this by default. Use ChatGPT to generate ideas, then Perplexity to verify them. That two-step is your power combo.",
+  秘書タイプ:
+    "Copilot integrates directly with Microsoft 365 and is built for exactly this kind of structured work. 'Organize this' and 'prioritize this' are the commands that unlock its best output. It works poorly outside the Microsoft ecosystem.",
+};
+
+const EN_FIRST_STEP_TEXT_BY_TYPE_JA: Record<string, string> = {
+  自由人タイプ:
+    "Start by routing today's tasks to the right AI for each one. Research -> Perplexity. Writing -> ChatGPT. Deep thinking -> Claude.",
+  相談相手タイプ:
+    "Open Claude and describe one thing that's been on your mind lately. Don't ask for a solution — just start talking.",
+  万能助手タイプ:
+    "Take one task you've been putting off and throw it at ChatGPT. Don't overthink the prompt.",
+  情報通タイプ:
+    "Search one thing you've been curious about this week on Gemini. Notice how fresh the results are.",
+  研究者タイプ:
+    "Find one claim you've accepted without questioning it and run it through Perplexity.",
+  秘書タイプ:
+    "Dump everything in your head right now into Copilot and ask it to organize it.",
+};
+
 /** aiKind から結果画面用の説明を引けるマップ */
 export const PERSONALITY_DESCRIPTIONS: Record<AiKind, PersonalityDescription> = {
   claude: PERSONALITY_DESCRIPTIONS_JA["相談相手タイプ"],
@@ -283,10 +358,20 @@ export function getPersonalityDescription(
   const supplement = EN_SUPPLEMENT_BY_TYPE_JA[typeJa];
   const characterName = EN_CHARACTER_NAME_BY_TYPE_JA[typeJa];
   const catchCopy = EN_CATCH_COPY_BY_TYPE_JA[typeJa];
+  const whoYouAre = EN_WHO_YOU_ARE_BY_TYPE_JA[typeJa];
+  const thinkingPattern = EN_THINKING_PATTERN_BY_TYPE_JA[typeJa];
+  const workStyle = EN_WORK_STYLE_BY_TYPE_JA[typeJa];
+  const aiCompatibility = EN_AI_COMPATIBILITY_BY_TYPE_JA[typeJa];
+  const firstStepText = EN_FIRST_STEP_TEXT_BY_TYPE_JA[typeJa];
   return {
     ...desc,
     supplement: supplement ?? desc.supplement,
     characterName: characterName ?? desc.characterName,
     catchCopy: catchCopy ?? desc.catchCopy,
+    whoYouAre: whoYouAre ?? desc.whoYouAre,
+    thinkingPattern: thinkingPattern ?? desc.thinkingPattern,
+    workStyle: workStyle ?? desc.workStyle,
+    aiCompatibility: aiCompatibility ?? desc.aiCompatibility,
+    firstStepText,
   };
 }
