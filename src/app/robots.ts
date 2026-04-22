@@ -5,8 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/"],
     },
-    sitemap: "https://kompass-rosy.vercel.app/sitemap.xml",
+    sitemap: "https://usekompass.com/sitemap.xml",
   };
 }

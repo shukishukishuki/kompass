@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { CharacterAvatar } from "@/components/lp/character-avatar";
 import { AI_KIND_TO_GUIDE } from "@/lib/type-id-map";
 import { AI_THEME_COLORS } from "@/types/ai";
@@ -222,21 +223,25 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
-}) {
+}): Promise<Metadata> {
   const { locale } = await params;
-
-  if (locale === "en") {
-    return {
-      title: "Kompass | Find Your Perfect AI",
-      description:
-        "Discover which AI — ChatGPT, Claude, Gemini, Perplexity, or Copilot — fits your thinking style. Free, 40-question diagnosis.",
-    };
-  }
+  const isEn = locale === "en";
+  const title = isEn
+    ? "Kompass | Find Your Perfect AI"
+    : "Kompass｜あなたに合うAIを40問で診断";
+  const description = isEn
+    ? "Discover which AI — ChatGPT, Claude, Gemini, Perplexity, or Copilot — fits your thinking style. Free, 40-question diagnosis."
+    : "ChatGPT・Claude・Gemini・Perplexity・Copilotの中から、あなたの思考スタイルに最適なAIを診断。無料・登録不要・3〜5分。";
+  const ogImage = "/api/og?type=empath&lang=ja";
 
   return {
-    title: "Kompass｜あなたに合うAIを40問で診断",
-    description:
-      "ChatGPT・Claude・Gemini・Perplexity・Copilotの中から、あなたの思考スタイルに最適なAIを診断。無料・登録不要・3〜5分。",
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+    },
   };
 }
 
