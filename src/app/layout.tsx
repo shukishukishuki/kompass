@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { Footer } from "@/components/layout/footer";
+import { GA_TRACKING_ID } from "@/lib/gtag";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,6 +49,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const hasGaId = GA_TRACKING_ID.length > 0;
+
   return (
     <html
       lang="en"
@@ -58,6 +63,24 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
+        {hasGaId ? (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                window.gtag = window.gtag || gtag;
+                gtag('js', new Date());
+                gtag('config', '${GA_TRACKING_ID}', { send_page_view: false });
+              `}
+            </Script>
+            <GoogleAnalytics />
+          </>
+        ) : null}
         {children}
         <Footer />
       </body>
