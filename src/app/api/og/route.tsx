@@ -28,6 +28,7 @@ async function loadNotoSansJp(weight: 500 | 700 | 900): Promise<ArrayBuffer> {
   const cssUrl =
     `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@${weight}&display=swap`;
   const cssResponse = await fetch(cssUrl, {
+    signal: AbortSignal.timeout(3000),
     headers: {
       "User-Agent":
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -41,7 +42,9 @@ async function loadNotoSansJp(weight: 500 | 700 | 900): Promise<ArrayBuffer> {
   if (!match?.[1]) {
     throw new Error("Noto Sans JP のフォントURL解析に失敗しました");
   }
-  const fontResponse = await fetch(match[1]);
+  const fontResponse = await fetch(match[1], {
+    signal: AbortSignal.timeout(3000),
+  });
   if (!fontResponse.ok) {
     throw new Error("Noto Sans JP のフォント取得に失敗しました");
   }
@@ -87,7 +90,19 @@ export async function GET(req: NextRequest) {
   const subColor = "rgba(31,41,55,0.68)";
 
   const charImgSrc = `https://kompass-rosy.vercel.app${data.charImg}`;
-  const fonts = await getNotoSansJpFonts();
+  let fonts:
+    | {
+        w500: ArrayBuffer;
+        w700: ArrayBuffer;
+        w900: ArrayBuffer;
+      }
+    | null = null;
+  try {
+    fonts = await getNotoSansJpFonts();
+  } catch {
+    // フォント取得失敗時はシステムフォントへフォールバック
+    fonts = null;
+  }
 
   const response = new ImageResponse(
     (
@@ -281,11 +296,15 @@ export async function GET(req: NextRequest) {
     {
       width: 1200,
       height: 630,
-      fonts: [
-        { name: "Noto Sans JP", data: fonts.w500, weight: 500, style: "normal" },
-        { name: "Noto Sans JP", data: fonts.w700, weight: 700, style: "normal" },
-        { name: "Noto Sans JP", data: fonts.w900, weight: 900, style: "normal" },
-      ],
+      ...(fonts !== null
+        ? {
+            fonts: [
+              { name: "Noto Sans JP", data: fonts.w500, weight: 500, style: "normal" as const },
+              { name: "Noto Sans JP", data: fonts.w700, weight: 700, style: "normal" as const },
+              { name: "Noto Sans JP", data: fonts.w900, weight: 900, style: "normal" as const },
+            ],
+          }
+        : {}),
     }
   );
   response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
