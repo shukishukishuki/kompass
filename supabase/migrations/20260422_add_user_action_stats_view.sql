@@ -3,7 +3,7 @@
 
 CREATE OR REPLACE VIEW user_action_stats AS
 SELECT
-  ai_type,
+  type,
   task_type,
   COUNT(*) AS sample_count,
   ROUND(
@@ -20,4 +20,4 @@ SELECT
 FROM diagnosis_results
 WHERE ai_execution_feedback IS NOT NULL
   AND task_type IS NOT NULL
-GROUP BY ai_type, task_type;
+GROUP BY type, task_type;
