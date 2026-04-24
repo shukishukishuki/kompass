@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
           <div style={{ display: "flex", flexDirection: "column", color: textColor }}>
             <span
               style={{
-                fontSize: 22,
+                fontSize: 26,
                 fontWeight: 900,
                 letterSpacing: "2.5px",
                 lineHeight: 1.1,
@@ -116,7 +116,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 marginTop: 2,
-                fontSize: 24,
+                fontSize: 28,
                 fontWeight: 900,
                 lineHeight: 1.05,
               }}
@@ -148,7 +148,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 color: textColor,
-                fontSize: 28,
+                fontSize: 48,
                 fontWeight: 900,
                 lineHeight: 1.1,
                 letterSpacing: "-1px",
@@ -160,7 +160,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 color: subColor,
-                fontSize: 9,
+                fontSize: 14,
                 letterSpacing: "2.5px",
                 fontWeight: 500,
                 textTransform: "uppercase",
@@ -168,23 +168,10 @@ export async function GET(req: NextRequest) {
             >
               {data.en.label.toUpperCase()}
             </span>
-            <span
-              style={{
-                color: textColor,
-                fontSize: 10,
-                opacity: 0.85,
-                fontWeight: 700,
-                textAlign: "center",
-              }}
-            >
-              {"「"}
-              {text.catch}
-              {"」"}
-            </span>
             <div
               style={{
-                width: 148,
-                height: 148,
+                width: 220,
+                height: 220,
                 borderRadius: "50%",
                 backgroundColor: `${data.accent}33`,
                 display: "flex",
@@ -197,12 +184,25 @@ export async function GET(req: NextRequest) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={charImgSrc}
-                width={148}
-                height={148}
+                width={220}
+                height={220}
                 style={{ objectFit: "contain" }}
                 alt=""
               />
             </div>
+            <span
+              style={{
+                color: textColor,
+                fontSize: 14,
+                opacity: 0.85,
+                fontWeight: 700,
+                textAlign: "center",
+              }}
+            >
+              {"「"}
+              {text.catch}
+              {"」"}
+            </span>
           </div>
 
           <div
@@ -218,7 +218,7 @@ export async function GET(req: NextRequest) {
           >
             <div
               style={{
-                fontSize: 10,
+                fontSize: 13,
                 fontWeight: 700,
                 color: textColor,
                 marginBottom: 14,
@@ -249,7 +249,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 color: data.accent,
-                fontSize: 26,
+                fontSize: 40,
                 fontWeight: 900,
                 lineHeight: 1.1,
                 marginTop: 10,
