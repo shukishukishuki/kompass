@@ -2432,7 +2432,7 @@ export default function DiagnosisResultPage() {
                 {ui.retakeHeading}
               </p>
               <a
-                href="mailto:kompass.ai.contact@gmail.com"
+                href="mailto:info@usekompass.com"
                 style={{
                   display: "block",
                   textAlign: "center",
@@ -2444,8 +2444,8 @@ export default function DiagnosisResultPage() {
                 }}
               >
                 {isEn
-                  ? "Corporate inquiries & team training \u2192"
-                  : "社員研修・法人利用のご相談はこちら \u2192"}
+                  ? "For corporate use or training inquiries, click here"
+                  : "法人での導入・研修利用をご検討の方はこちら"}
               </a>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <Link

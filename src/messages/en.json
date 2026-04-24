@@ -62,102 +62,104 @@
     "questions": [
       {
         "id": 1,
-        "prompt": "The weekend clears and you have zero plans. What happens?",
+        "prompt": "Your weekend suddenly opens up with no plans. What do you do?",
         "options": [
-          { "value": "A", "label": "Stay home, take it easy, do what I enjoy" },
-          { "value": "B", "label": "Message friends and get out of the house" },
-          { "value": "C", "label": "Try a spot or experience I’ve been curious about, solo" },
-          { "value": "D", "label": "Slide into work or a personal project" }
+          { "value": "A", "label": "Stay home, relax, and do what I enjoy" },
+          { "value": "B", "label": "Text friends and head out" },
+          { "value": "C", "label": "Try a place or activity I've been curious about on my own" },
+          { "value": "D", "label": "Get ahead on work or a personal project" }
         ]
       },
       {
         "id": 2,
-        "prompt": "When someone asks for your advice, what do you instinctively do?",
+        "prompt": "When someone comes to you for advice, what do you naturally do?",
         "options": [
-          { "value": "A", "label": "Lead with empathy—“That sounds rough”" },
-          { "value": "B", "label": "Offer fixes fast—“Try this”" },
-          { "value": "C", "label": "Want to verify—“Is that actually true?”" },
-          { "value": "D", "label": "Tidy the options—“Let’s sort the paths together”" }
+          { "value": "A", "label": "Start with empathy: \"That sounds tough.\"" },
+          { "value": "B", "label": "Quickly suggest a fix: \"Try this.\"" },
+          { "value": "C", "label": "Check the facts first: \"Is that really accurate?\"" },
+          { "value": "D", "label": "Organize options together: \"Let's map out the choices.\"" }
         ]
       },
       {
         "id": 3,
-        "prompt": "What kind of partner type pulls you in?",
+        "prompt": "What kind of partner are you most attracted to?",
         "options": [
-          { "value": "A", "label": "A listener with real emotional attunement" },
-          { "value": "B", "label": "Capable and dependable at pretty much anything" },
-          { "value": "C", "label": "Well-read, teaches me all kinds of things" },
-          { "value": "D", "label": "Respects my pace and doesn’t over-involve" }
+          { "value": "A", "label": "Someone who listens deeply and empathizes" },
+          { "value": "B", "label": "Someone capable and dependable in almost anything" },
+          { "value": "C", "label": "Someone knowledgeable who teaches me new things" },
+          { "value": "D", "label": "Someone who respects my pace and doesn't interfere too much" }
         ]
       },
       {
         "id": 4,
-        "prompt": "It’s 1 a.m. and you want someone to hear you out. Do you open AI?",
+        "prompt": "It's 1 a.m. and you want someone to listen. Do you open AI?",
         "options": [
-          { "value": "A", "label": "Yes—low social cost, easy" },
-          { "value": "B", "label": "Yes, but leaning Q&A for solutions" },
-          { "value": "C", "label": "No—for me AI is for pulling information" },
-          { "value": "D", "label": "Depends on my mood in the moment" }
+          { "value": "A", "label": "Yes. It's easy and takes no social energy." },
+          { "value": "B", "label": "Yes, but mainly to get practical answers." },
+          { "value": "C", "label": "No. I use AI for information, not emotional support." },
+          { "value": "D", "label": "Depends on how I feel at the time." }
         ]
       },
       {
         "id": 5,
-        "prompt": "How do you naturally move through work and tasks?",
+        "prompt": "How do you naturally handle work and tasks?",
         "options": [
           { "value": "A", "label": "Finish one fully, then the next" },
           { "value": "B", "label": "Run several in parallel" },
-          { "value": "C", "label": "Depends on the task—I use both" },
-          { "value": "D", "label": "I want one-thread focus but end up multitasking" }
+          { "value": "C", "label": "It depends on the task. I do both." },
+          { "value": "D", "label": "I want to focus on one thing, but end up multitasking." }
         ]
       },
       {
         "id": 6,
-        "prompt": "What kind of AI output do you lean toward?",
+        "prompt": "What kind of AI output do you prefer?",
         "options": [
-          { "value": "A", "label": "One single best answer, clearly" },
-          { "value": "B", "label": "Multiple angles I wouldn’t think of myself" },
-          { "value": "C", "label": "One answer, high quality and well reasoned" },
-          { "value": "D", "label": "Volume—I’ll choose from the pile" }
+          { "value": "A", "label": "One clear best answer" },
+          { "value": "B", "label": "Multiple unexpected perspectives" },
+          { "value": "C", "label": "One high-quality, carefully reasoned answer" },
+          { "value": "D", "label": "Lots of options, then I'll choose" }
         ]
       },
       {
         "id": 7,
-        "prompt": "What stresses you most in AI chats?",
+        "prompt": "What frustrates you most in AI conversations?",
         "options": [
-          { "value": "A", "label": "Wrong facts or confident BS" },
-          { "value": "B", "label": "Context doesn’t stick—reset every time" },
-          { "value": "C", "label": "Extra talk I didn’t ask for / too long" },
-          { "value": "D", "label": "Answers feel generic, nothing surprising" }
+          { "value": "A", "label": "Wrong facts or confident misinformation" },
+          { "value": "B", "label": "Losing context and having to restart every time" },
+          { "value": "C", "label": "Overly long answers or extra details I didn't ask for" },
+          { "value": "D", "label": "Generic answers with no fresh insight" }
         ]
       },
       {
         "id": 8,
         "prompt": "Should AI remember your past exchanges and context?",
         "options": [
-          { "value": "A", "label": "Remember everything—I don’t want to re-explain every time" },
+          { "value": "A", "label": "Remember everything. I don't want to re-explain each time." },
           { "value": "B", "label": "Remember the essentials; that’s enough" },
-          { "value": "C", "label": "This session only—dry is fine" },
-          { "value": "D", "label": "Per-project memory is enough" }
+          { "value": "C", "label": "Session-only memory is fine" },
+          { "value": "D", "label": "Project-level memory is enough" }
         ]
       },
       {
         "id": 9,
-        "prompt": "How do you plan a trip?",
+        "prompt": "In the past week, where did you use AI the most?",
         "options": [
-          { "value": "A", "label": "Let AI research everything and decide" },
-          { "value": "B", "label": "Research myself, then have AI organize it" },
-          { "value": "C", "label": "Ask friends or read reviews first" },
-          { "value": "D", "label": "Prefer to wing it" }
+          { "value": "A", "label": "Writing text or organizing my thoughts" },
+          { "value": "B", "label": "Quickly checking breaking news or trends" },
+          { "value": "C", "label": "Talking things through or brainstorming ideas" },
+          { "value": "D", "label": "Creating work docs or emails efficiently" },
+          { "value": "E", "label": "I hardly used AI" }
         ]
       },
       {
         "id": 10,
-        "prompt": "What do you want most from AI?",
+        "prompt": "What do you mainly use for email and file management?",
         "options": [
-          { "value": "A", "label": "Listen and care about my situation" },
-          { "value": "B", "label": "Accurate, trustworthy information" },
-          { "value": "C", "label": "Speed and versatility" },
-          { "value": "D", "label": "Fun and never boring" }
+          { "value": "A", "label": "Gmail, Google Docs, and Google Drive" },
+          { "value": "B", "label": "Word, Excel, PowerPoint, and Teams" },
+          { "value": "C", "label": "Mostly LINE or other tools" },
+          { "value": "D", "label": "I use both Google and Microsoft" },
+          { "value": "E", "label": "I rarely use either" }
         ]
       },
       {
