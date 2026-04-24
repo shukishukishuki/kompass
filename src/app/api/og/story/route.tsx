@@ -14,6 +14,7 @@ const darkTextTypes = new Set<OgTypeKey>(["empath", "executor", "scout"]);
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const typeParam = searchParams.get("type") ?? "empath";
+  const lang = searchParams.get("lang") === "en" ? "en" : "ja";
   const mappedType = TYPE_ID_MAP[typeParam];
   const typeKey: OgTypeKey =
     mappedType !== undefined ? mappedType : "empath";
@@ -202,6 +203,20 @@ export async function GET(request: Request) {
           }}
         >
           あなたに合ったAIが見つかりました
+        </div>
+        <div
+          style={{
+            marginTop: -18,
+            fontSize: 30,
+            color: subTextColor,
+            textAlign: "center",
+            fontWeight: 700,
+            letterSpacing: "0.01em",
+            position: "relative",
+            zIndex: 2,
+          }}
+        >
+          {d[lang].catch}
         </div>
 
         <div

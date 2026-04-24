@@ -4,6 +4,8 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import { TYPE_DATA, TYPE_ID_MAP } from "./type-data";
 
+export const dynamic = "force-dynamic";
+
 const OG_BACKGROUND_GRADIENT = {
   empath:
     "linear-gradient(160deg, #b8e8cf 0%, #e8f7ef 55%, #f8fffe 85%, #ffffff 100%)",
