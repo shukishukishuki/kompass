@@ -844,13 +844,13 @@ export default function DiagnosisPage() {
               <>
                 <li>・Start with 10 questions, and go up to 40 for deeper analysis</li>
                 <li>・No sign-up required, completely free</li>
-                <li>・Find your best fit from ChatGPT, Claude, Gemini, Perplexity, and Copilot</li>
+                <li>・We'll recommend the AI that fits your thinking style</li>
               </>
             ) : (
               <>
                 <li>・まず10問、深く知りたい人は最大40問</li>
                 <li>・登録不要・完全無料</li>
-                <li>・ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案</li>
+                <li>・あなたの思考スタイルに合ったAIを提案</li>
               </>
             )}
           </ul>

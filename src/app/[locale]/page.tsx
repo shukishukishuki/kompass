@@ -151,7 +151,7 @@ const COPY_BY_LOCALE: Record<LocaleCode, LandingCopy> = {
       "ChatGPT・Claude・Gemini・Perplexity・Copilot——あなたの思考スタイルに合うAIを、診断で見つける。",
     heroTitle: "AI使ってるのに、\nなんかしっくりこない人へ",
     heroSub: "10問でわかる、あなたに合うAIの使い方",
-    heroCta: "無料で診断する（30秒）",
+    heroCta: "無料で診断する",
     heroNote: "登録不要ですぐ無料公開",
     heroBadge: "✦ まず10問から ✦ 約1分〜 ✦ 登録不要",
     empathyTitle: "こんなこと、ありませんか？",
@@ -177,7 +177,7 @@ const COPY_BY_LOCALE: Record<LocaleCode, LandingCopy> = {
     ],
     bottomCtaTitle: "あなたの「型」を見つけよう",
     bottomCtaSub: "AIとの付き合い方が、今日から変わる。",
-    bottomCtaButton: "無料で診断する（30秒）",
+    bottomCtaButton: "無料で診断する",
     recommendedPrefix: "おすすめ",
   },
   en: {
