@@ -1,8 +1,8 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
+import { readFileSync } from "fs";
+import { join } from "path";
 import { TYPE_DATA, TYPE_ID_MAP } from "./type-data";
-
-export const runtime = "edge";
 
 const OG_BACKGROUND_GRADIENT = {
   empath:
@@ -18,42 +18,6 @@ const OG_BACKGROUND_GRADIENT = {
   nomad:
     "linear-gradient(160deg, #f0e8c8 0%, #f8f2e0 55%, #fdfaf2 85%, #ffffff 100%)",
 } as const;
-
-let notoSansJp700Promise: Promise<ArrayBuffer> | null = null;
-let notoSansJp900Promise: Promise<ArrayBuffer> | null = null;
-
-/** Noto Sans JP の TTF を直接取得 */
-async function loadNotoSansJp(weight: 700 | 900): Promise<ArrayBuffer> {
-  const fontUrl =
-    weight === 700
-      ? "https://fonts.gstatic.com/s/notosansjp/v53/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj757pyg.ttf"
-      : "https://fonts.gstatic.com/s/notosansjp/v53/-F6jfjtqLzI2JPCgQBnw7HFyzSD-AsregP8VFBEj75_syg.ttf";
-
-  const fontResponse = await fetch(fontUrl, {
-    signal: AbortSignal.timeout(3000),
-  });
-  if (!fontResponse.ok) {
-    throw new Error("Noto Sans JP のフォント取得に失敗しました");
-  }
-  return fontResponse.arrayBuffer();
-}
-
-async function getNotoSansJpFonts(): Promise<{
-  w700: ArrayBuffer;
-  w900: ArrayBuffer;
-}> {
-  if (notoSansJp700Promise === null) {
-    notoSansJp700Promise = loadNotoSansJp(700);
-  }
-  if (notoSansJp900Promise === null) {
-    notoSansJp900Promise = loadNotoSansJp(900);
-  }
-  const [w700, w900] = await Promise.all([
-    notoSansJp700Promise,
-    notoSansJp900Promise,
-  ]);
-  return { w700, w900 };
-}
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -72,19 +36,19 @@ export async function GET(req: NextRequest) {
   const subColor = "rgba(31,41,55,0.68)";
 
   const charImgSrc = `https://kompass-rosy.vercel.app${data.charImg}`;
-  let fonts:
-    | {
-        w700: ArrayBuffer;
-        w900: ArrayBuffer;
-      }
-    | null = null;
+  let fontBoldArrayBuffer: ArrayBuffer | null = null;
   try {
-    fonts = await getNotoSansJpFonts();
+    const fontBold = readFileSync(
+      join(process.cwd(), "public/fonts/NotoSansJP-Bold.otf")
+    );
+    fontBoldArrayBuffer = fontBold.buffer.slice(
+      fontBold.byteOffset,
+      fontBold.byteOffset + fontBold.byteLength
+    );
   } catch {
-    // フォント取得失敗時はシステムフォントへフォールバック
-    fonts = null;
+    // フォント読み込み失敗時はシステムフォントへフォールバック
+    fontBoldArrayBuffer = null;
   }
-
   const response = new ImageResponse(
     (
       <div
@@ -280,11 +244,21 @@ export async function GET(req: NextRequest) {
       },
       width: 1200,
       height: 630,
-      ...(fonts !== null
+      ...(fontBoldArrayBuffer !== null
         ? {
             fonts: [
-              { name: "Noto Sans JP", data: fonts.w700, weight: 700, style: "normal" as const },
-              { name: "Noto Sans JP", data: fonts.w900, weight: 900, style: "normal" as const },
+              {
+                name: "Noto Sans JP",
+                data: fontBoldArrayBuffer,
+                weight: 700,
+                style: "normal" as const,
+              },
+              {
+                name: "Noto Sans JP",
+                data: fontBoldArrayBuffer,
+                weight: 900,
+                style: "normal" as const,
+              },
             ],
           }
         : {}),
