@@ -4,7 +4,7 @@
 
 Most people choose AI based on tasks. Kompass takes a different approach: we match you with your Base AI based on how you think, feel, and process information.
 
-→ **[Try the diagnosis](https://kompass-rosy.vercel.app)**
+→ **[Try the diagnosis](https://usekompass.com)**
 
 ---
 
