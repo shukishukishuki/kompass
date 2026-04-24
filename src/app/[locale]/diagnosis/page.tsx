@@ -23,32 +23,12 @@ import type { MessagesFile } from "@/types/diagnosis-messages";
 import type { LayerCompleted } from "@/types/layer-completed";
 import type { QuestionAnswer, ScoringResult } from "@/types/scoring";
 
-/** コンパスSVG＋KOMPASS（絵文字は使わない） */
+/** テキストのみのロゴ表示 */
 function KompassLogo({ className }: Readonly<{ className?: string }>) {
   return (
     <div
-      className={`flex items-center justify-center gap-2 ${className ?? ""}`}
+      className={`flex items-center justify-center ${className ?? ""}`}
     >
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="shrink-0 text-[#1a7a4a]"
-        aria-hidden
-      >
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-        <path
-          d="M12 4l2.2 8L12 20l-2.2-8L12 4z"
-          fill="currentColor"
-        />
-        <path
-          d="M12 4l8 8h-8l-8-8h8z"
-          fill="currentColor"
-          opacity="0.25"
-        />
-      </svg>
       <span className="text-xl font-bold tracking-[0.25em] text-[#0a2e18]">
         KOMPASS
       </span>
@@ -317,6 +297,7 @@ export default function DiagnosisPage() {
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
   const [loadingLayerCompleted, setLoadingLayerCompleted] = useState<LayerCompleted>(1);
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
   /** Layer1 完了直後の年代（スコアに影響しない） */
@@ -551,10 +532,11 @@ export default function DiagnosisPage() {
 
       setErrorMessage(null);
 
+      const withoutCurrent = answers.filter((a) => a.questionId !== q.id);
       const nextAnswers: QuestionAnswer[] = [
-        ...answers,
+        ...withoutCurrent,
         { questionId: q.id, value },
-      ];
+      ].sort((a, b) => a.questionId - b.questionId);
 
       const answeredCount = nextAnswers.length;
 
@@ -602,6 +584,19 @@ export default function DiagnosisPage() {
     },
     [answers, copy.diagnosis.errorSubmit, questions, step, submitAnswers, total]
   );
+
+  useEffect(() => {
+    if (phase !== "quiz") {
+      return;
+    }
+    const q = questions[step];
+    if (q === undefined) {
+      setSelectedValue(null);
+      return;
+    }
+    const existing = answers.find((a) => a.questionId === q.id);
+    setSelectedValue(existing?.value ?? null);
+  }, [answers, phase, questions, step]);
 
   const runEarlyExit = useCallback(
     async (layerDone: LayerCompleted) => {
@@ -771,69 +766,44 @@ export default function DiagnosisPage() {
         }}
       >
         <div className="w-full max-w-md space-y-6 text-center">
-          <KompassLogo className="mb-2" />
-
-          <div className="flex items-center justify-center gap-3 text-sm font-medium text-[#1a7a4a]">
-            <span>{isEn ? "10 Qs" : "10問"}</span>
-            <span
-              className="h-4 w-px shrink-0 bg-[#52B788]/40"
-              aria-hidden
-            />
-            <span>{isEn ? "6 Types" : "6タイプ"}</span>
-            <span
-              className="h-4 w-px shrink-0 bg-[#52B788]/40"
-              aria-hidden
-            />
-            <span>{isEn ? "Free" : "無料"}</span>
+          <KompassLogo className="mb-1" />
+          <div className="flex items-center justify-center gap-4">
+            {[
+              "/images/kompass_char_01_empath.png",
+              "/images/kompass_char_03_analyst.png",
+              "/images/kompass_char_04_generalist.png",
+            ].map((src) => (
+              <div
+                key={src}
+                className="h-20 w-20 overflow-hidden rounded-full border border-[#52B788]/35 bg-white/60"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={src} alt="" className="h-full w-full object-contain" />
+              </div>
+            ))}
           </div>
-
           <div className="space-y-2">
-            <p className="text-xs font-bold tracking-widest text-[#52B788] uppercase">
+            <p className="text-[11px] font-bold tracking-[0.24em] text-[#52B788] uppercase">
               AI TYPE DIAGNOSIS
             </p>
-            <h1 className="text-2xl font-bold text-[#0a2e18]">
-              {isEn ? (
-                "Find the AI that fits how you think."
-              ) : (
-                <>
-                  あなたのベースAIを
-                  <br />
-                  見つけよう
-                </>
-              )}
+            <h1
+              className="text-[34px] font-bold leading-tight text-[#0a2e18]"
+              style={{ fontFamily: "Georgia, serif" }}
+            >
+              {isEn ? "Find the AI that fits you." : "あなたに合ったAIがわかる。"}
             </h1>
-            <p className="text-sm text-[#2d4a3e]/80 leading-relaxed">
-              {isEn ? (
-                "Answer 10 questions. We'll match you to your ideal AI based on how you think."
-              ) : (
-                <>
-                  思考スタイルに合ったAIを使うと、
-                  <br />
-                  仕事も思考も驚くほどラクになる。
-                </>
-              )}
+            <p className="text-xs leading-relaxed text-[#2d4a3e]/85">
+              {isEn
+                ? "Just answer 10 questions. We diagnose your best AI from your thinking style."
+                : "10問に答えるだけ。思考スタイルから、ベストなAIを診断します。"}
             </p>
           </div>
-
-          <div className="rounded-xl border border-white/60 bg-white/50 p-4 space-y-2 text-left shadow-sm backdrop-blur-sm">
-            <p className="text-xs font-bold text-[#0a2e18]">{isEn ? "About this diagnosis" : "診断について"}</p>
-            <ul className="space-y-1.5 text-xs text-[#2d4a3e]/90">
-              {isEn ? (
-                <>
-                  <li>Start with 10 questions, and go up to 40 for deeper analysis</li>
-                  <li>No sign-up required, completely free</li>
-                  <li>Find your best fit from ChatGPT, Claude, Gemini, Perplexity, and Copilot</li>
-                </>
-              ) : (
-                <>
-                  <li>まず10問、深く知りたい人は最大40問</li>
-                  <li>登録不要・完全無料</li>
-                  <li>
-                    ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案
-                  </li>
-                </>
-              )}
-            </ul>
+          <div className="flex items-center justify-center gap-3 text-sm font-medium text-[#1a7a4a]">
+            <span>{isEn ? "10 Qs" : "10問"}</span>
+            <span className="h-4 w-px shrink-0 bg-[#52B788]/40" aria-hidden />
+            <span>{isEn ? "6 Types" : "6タイプ"}</span>
+            <span className="h-4 w-px shrink-0 bg-[#52B788]/40" aria-hidden />
+            <span>{isEn ? "Free" : "無料"}</span>
           </div>
 
           <button
@@ -869,9 +839,6 @@ export default function DiagnosisPage() {
             </a>
           ) : null}
 
-          <p className="text-xs text-[#2d4a3e]/60">
-            {isEn ? "About 1 minute / You can view results anytime" : "約1分〜 / 途中で結果を見ることもできます"}
-          </p>
         </div>
       </main>
     );
@@ -1210,35 +1177,17 @@ export default function DiagnosisPage() {
       }}
     >
       <div className="mx-auto flex w-full max-w-lg flex-1 flex-col">
-        <div className="mb-6 flex shrink-0 justify-center">
+        <div className="mb-4 flex shrink-0 items-center justify-between">
           <KompassLogo />
+          <span className="rounded-full border border-[#52B788]/35 bg-white/70 px-3 py-1 text-xs font-semibold text-[#1a7a4a]">
+            Q{step + 1} / {total}
+          </span>
         </div>
 
         <p className="sr-only">{title}</p>
 
-        <div className="mb-1 flex justify-between text-xs text-[#2d4a3e]/70">
-          <span>Q{step + 1} / {total}</span>
-          <span>{isEn ? `${total - step - 1} left` : `残り ${total - step - 1} 問`}</span>
-        </div>
-        <p className="mb-2 text-center text-[11px] font-semibold tracking-[0.12em] text-[#2d4a3e]/70 uppercase">
-          {step < 10
-            ? isEn
-              ? "LAYER 1 · Core"
-              : "LAYER 1 · 基本診断"
-            : step < 20
-              ? isEn
-                ? "LAYER 2 · Focus"
-                : "LAYER 2 · 拡張診断"
-              : step < 30
-                ? isEn
-                  ? "LAYER 3 · Fit"
-                  : "LAYER 3 · 相性診断"
-                : isEn
-                  ? "LAYER 4 · Deep"
-                  : "LAYER 4 · 詳細診断"}
-        </p>
         <div
-          className="mb-4 h-1 w-full overflow-hidden rounded-full bg-[#e8f7ef]"
+          className="mb-5 h-[4px] w-full overflow-hidden rounded-full bg-[#e8f7ef]"
           role="progressbar"
           aria-valuenow={step + 1}
           aria-valuemin={1}
@@ -1246,7 +1195,7 @@ export default function DiagnosisPage() {
           aria-label="診断の進捗"
         >
           <div
-            className="h-1 rounded-full transition-all"
+            className="h-[4px] rounded-full transition-all"
             style={{
               width: `${progressRatio * 100}%`,
               backgroundColor: "#52B788",
@@ -1287,14 +1236,13 @@ export default function DiagnosisPage() {
         <ul className="flex flex-1 flex-col gap-3">
           {currentQuestion.options.map((opt) => {
             const selected =
-              answers.find((a) => a.questionId === currentQuestion.id)?.value ===
-              opt.value;
+              selectedValue === opt.value;
             return (
               <li key={`${currentQuestion.id}-${opt.value}`}>
                 <button
                   type="button"
                   onClick={() => {
-                    void handleChoose(opt.value);
+                    setSelectedValue(opt.value);
                   }}
                   className="w-full text-sm font-medium transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-[#52B788] focus-visible:ring-offset-2"
                   style={
@@ -1330,6 +1278,36 @@ export default function DiagnosisPage() {
             );
           })}
         </ul>
+        <div className="mt-5">
+          <button
+            type="button"
+            onClick={() => {
+              if (selectedValue === null) {
+                return;
+              }
+              void handleChoose(selectedValue);
+            }}
+            disabled={selectedValue === null}
+            className="w-full rounded-[14px] px-4 py-[15px] text-sm font-bold transition-all"
+            style={
+              selectedValue === null
+                ? {
+                    background: "rgba(82,183,136,0.15)",
+                    color: "#aaa",
+                  }
+                : {
+                    background: "#1a7a4a",
+                    color: "#fff",
+                    boxShadow: "0 4px 20px rgba(26,122,74,0.35)",
+                  }
+            }
+          >
+            {isEn ? "Next →" : "次へ →"}
+          </button>
+          <p className="mt-3 text-center text-[11px] font-semibold tracking-[0.12em] text-[#2d4a3e]/70 uppercase">
+            {isEn ? "LAYER 1 · Core Diagnosis" : "LAYER 1 · 基本診断"}
+          </p>
+        </div>
       </div>
     </main>
   );
