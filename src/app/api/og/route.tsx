@@ -268,7 +268,9 @@ export async function GET(req: NextRequest) {
                 fontWeight: 700,
               }}
             >
-              usekompass.com
+              <span style={{ width: "100%", display: "block" }}>
+                usekompass.com
+              </span>
             </div>
           </div>
         </div>
