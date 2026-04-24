@@ -294,6 +294,9 @@ export async function GET(req: NextRequest) {
       </div>
     ),
     {
+      headers: {
+        "Cache-Control": "no-store, max-age=0",
+      },
       width: 1200,
       height: 630,
       ...(fonts !== null
@@ -307,7 +310,6 @@ export async function GET(req: NextRequest) {
         : {}),
     }
   );
-  response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
   response.headers.set("Content-Type", "image/png");
   return response;
 }
