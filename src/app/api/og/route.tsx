@@ -34,14 +34,8 @@ export async function GET(req: NextRequest) {
     OG_BACKGROUND_GRADIENT.empath;
 
   const text = data[lang];
-  const darkTextTypes = new Set(["empath", "executor", "scout"]);
-  const isDarkText = darkTextTypes.has(
-    typeKey as "empath" | "executor" | "analyst" | "generalist" | "scout" | "nomad"
-  );
-  const textColor = isDarkText ? "#1a1a2e" : "#ffffff";
-  const subColor = isDarkText
-    ? "rgba(26,26,46,0.68)"
-    : "rgba(255,255,255,0.78)";
+  const textColor = "#1a1a2e";
+  const subColor = "rgba(26,26,46,0.68)";
 
   const charImgSrc = `https://kompass-rosy.vercel.app${data.charImg}`;
   let fontBoldArrayBuffer: ArrayBuffer | null = null;
@@ -227,37 +221,86 @@ export async function GET(req: NextRequest) {
             >
               あなたに合ったAIが見つかりました
             </div>
-            <div
-              style={{
-                color: subColor,
-                fontSize: 12,
-                letterSpacing: "0.2em",
-                fontWeight: 700,
-              }}
-            >
-              RECOMMENDED AI
-            </div>
-            <div
-              style={{
-                width: "44px",
-                height: "3px",
-                backgroundColor: data.accent,
-                borderRadius: "2px",
-                marginTop: 8,
-              }}
-            />
-            <span
-              style={{
-                color: data.accent,
-                fontSize: 56,
-                fontWeight: 900,
-                lineHeight: 1.1,
-                marginTop: 10,
-                textAlign: "center",
-              }}
-            >
-              {data.ai}
-            </span>
+            {typeKey === "nomad" ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 8,
+                }}
+              >
+                <span style={{ fontSize: 11, color: subColor, fontWeight: 700 }}>
+                  BASE AI
+                </span>
+                <span
+                  style={{
+                    color: data.accent,
+                    fontSize: 56,
+                    fontWeight: 900,
+                    lineHeight: 1.1,
+                    textAlign: "center",
+                  }}
+                >
+                  Claude
+                </span>
+                <div
+                  style={{
+                    width: "44px",
+                    height: "1px",
+                    backgroundColor: subColor,
+                  }}
+                />
+                <span style={{ fontSize: 11, color: subColor, fontWeight: 700 }}>
+                  SUB AI
+                </span>
+                <span
+                  style={{
+                    color: textColor,
+                    fontSize: 20,
+                    fontWeight: 700,
+                    lineHeight: 1.1,
+                    textAlign: "center",
+                  }}
+                >
+                  Perplexity / ChatGPT
+                </span>
+              </div>
+            ) : (
+              <>
+                <div
+                  style={{
+                    color: subColor,
+                    fontSize: 12,
+                    letterSpacing: "0.2em",
+                    fontWeight: 700,
+                  }}
+                >
+                  RECOMMENDED AI
+                </div>
+                <div
+                  style={{
+                    width: "44px",
+                    height: "3px",
+                    backgroundColor: data.accent,
+                    borderRadius: "2px",
+                    marginTop: 8,
+                  }}
+                />
+                <span
+                  style={{
+                    color: data.accent,
+                    fontSize: 56,
+                    fontWeight: 900,
+                    lineHeight: 1.1,
+                    marginTop: 10,
+                    textAlign: "center",
+                  }}
+                >
+                  {data.ai}
+                </span>
+              </>
+            )}
             <div
               style={{
                 marginTop: 16,
