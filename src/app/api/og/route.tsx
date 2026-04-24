@@ -148,7 +148,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 color: textColor,
-                fontSize: 72,
+                fontSize: 52,
                 fontWeight: 900,
                 lineHeight: 1.1,
                 letterSpacing: "-1px",
