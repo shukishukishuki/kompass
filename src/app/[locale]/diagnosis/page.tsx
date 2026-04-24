@@ -815,27 +815,6 @@ export default function DiagnosisPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-white/60 bg-white/50 p-4 space-y-2 text-left shadow-sm backdrop-blur-sm">
-            <p className="text-xs font-bold text-[#0a2e18]">{isEn ? "About this diagnosis" : "診断について"}</p>
-            <ul className="space-y-1.5 text-xs text-[#2d4a3e]/90">
-              {isEn ? (
-                <>
-                  <li>Start with 10 questions, and go up to 40 for deeper analysis</li>
-                  <li>No sign-up required, completely free</li>
-                  <li>Find your best fit from ChatGPT, Claude, Gemini, Perplexity, and Copilot</li>
-                </>
-              ) : (
-                <>
-                  <li>まず10問、深く知りたい人は最大40問</li>
-                  <li>登録不要・完全無料</li>
-                  <li>
-                    ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案
-                  </li>
-                </>
-              )}
-            </ul>
-          </div>
-
           <button
             type="button"
             onClick={() => {
@@ -860,6 +839,21 @@ export default function DiagnosisPage() {
           >
             {starting ? (isEn ? "Loading..." : "読み込み中...") : isEn ? "Start →" : "診断をはじめる →"}
           </button>
+          <ul className="space-y-1.5 text-left text-xs text-[#2d4a3e]/70">
+            {isEn ? (
+              <>
+                <li>・Start with 10 questions, and go up to 40 for deeper analysis</li>
+                <li>・No sign-up required, completely free</li>
+                <li>・Find your best fit from ChatGPT, Claude, Gemini, Perplexity, and Copilot</li>
+              </>
+            ) : (
+              <>
+                <li>・まず10問、深く知りたい人は最大40問</li>
+                <li>・登録不要・完全無料</li>
+                <li>・ChatGPT・Claude・Gemini・Perplexity・Copilotの中から最適な1つを提案</li>
+              </>
+            )}
+          </ul>
           {hasPrevResult ? (
             <a
               href={`/${locale}/diagnosis/result`}

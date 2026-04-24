@@ -402,15 +402,12 @@ export default async function LocaleHomePage({
             style={{
               fontWeight: 400,
               fontFamily: "Georgia, serif",
-              fontSize: "clamp(28px, 4vw, 48px)",
+              fontSize: "clamp(24px, 3.5vw, 42px)",
             }}
           >
             {copy.heroTitle}
           </h1>
           <p className="mb-4 mt-4 text-center text-sm leading-relaxed text-gray-500">{copy.heroLead}</p>
-          <p className="mt-0 text-center text-xs text-gray-400">
-            {lc === "en" ? "Up to 40 questions if you want to go deeper" : "深く知りたい人は最大40問まで"}
-          </p>
           <div className="mb-4 mt-4 flex flex-wrap justify-center gap-2">
             {[
               { name: "ChatGPT", color: AI_THEME_COLORS.chatgpt },
@@ -440,7 +437,9 @@ export default async function LocaleHomePage({
           >
             {copy.heroCta}
           </a>
-          <p className="mt-3 text-xs text-slate-500">{copy.heroNote}</p>
+          <p className="mt-3 text-center text-xs text-gray-400">
+            {lc === "en" ? "Up to 40 questions if you want to go deeper" : "深く知りたい人は最大40問まで"}
+          </p>
         </div>
       </section>
 
