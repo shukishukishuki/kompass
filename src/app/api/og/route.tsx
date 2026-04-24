@@ -83,7 +83,7 @@ export async function GET(req: NextRequest) {
           <div style={{ display: "flex", flexDirection: "column", color: textColor }}>
             <span
               style={{
-                fontSize: 26,
+                fontSize: 32,
                 fontWeight: 900,
                 letterSpacing: "2.5px",
                 lineHeight: 1.1,
@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 marginTop: 3,
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: 700,
                 color: subColor,
               }}
@@ -110,13 +110,13 @@ export async function GET(req: NextRequest) {
               color: textColor,
             }}
           >
-            <span style={{ fontSize: 10, fontWeight: 700, lineHeight: 1.1 }}>
+            <span style={{ fontSize: 12, fontWeight: 700, lineHeight: 1.1 }}>
               全体の
             </span>
             <span
               style={{
                 marginTop: 2,
-                fontSize: 28,
+                fontSize: 36,
                 fontWeight: 900,
                 lineHeight: 1.05,
               }}
@@ -140,15 +140,15 @@ export async function GET(req: NextRequest) {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: 8,
+              gap: 16,
               width: "66.6667%",
-              padding: "10px 0 12px",
+              padding: 0,
             }}
           >
             <span
               style={{
                 color: textColor,
-                fontSize: 48,
+                fontSize: 72,
                 fontWeight: 900,
                 lineHeight: 1.1,
                 letterSpacing: "-1px",
@@ -160,7 +160,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 color: subColor,
-                fontSize: 14,
+                fontSize: 18,
                 letterSpacing: "2.5px",
                 fontWeight: 500,
                 textTransform: "uppercase",
@@ -170,8 +170,8 @@ export async function GET(req: NextRequest) {
             </span>
             <div
               style={{
-                width: 220,
-                height: 220,
+                width: 320,
+                height: 320,
                 borderRadius: "50%",
                 backgroundColor: `${data.accent}33`,
                 display: "flex",
@@ -184,8 +184,8 @@ export async function GET(req: NextRequest) {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={charImgSrc}
-                width={220}
-                height={220}
+                width={320}
+                height={320}
                 style={{ objectFit: "contain" }}
                 alt=""
               />
@@ -193,7 +193,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 color: textColor,
-                fontSize: 14,
+                fontSize: 16,
                 opacity: 0.85,
                 fontWeight: 700,
                 textAlign: "center",
@@ -218,7 +218,7 @@ export async function GET(req: NextRequest) {
           >
             <div
               style={{
-                fontSize: 13,
+                fontSize: 16,
                 fontWeight: 700,
                 color: textColor,
                 marginBottom: 14,
@@ -230,7 +230,7 @@ export async function GET(req: NextRequest) {
             <div
               style={{
                 color: subColor,
-                fontSize: 10,
+                fontSize: 12,
                 letterSpacing: "0.2em",
                 fontWeight: 700,
               }}
@@ -249,7 +249,7 @@ export async function GET(req: NextRequest) {
             <span
               style={{
                 color: data.accent,
-                fontSize: 40,
+                fontSize: 56,
                 fontWeight: 900,
                 lineHeight: 1.1,
                 marginTop: 10,
@@ -264,7 +264,7 @@ export async function GET(req: NextRequest) {
                 width: "100%",
                 textAlign: "right",
                 color: subColor,
-                fontSize: 9,
+                fontSize: 11,
                 fontWeight: 700,
               }}
             >
