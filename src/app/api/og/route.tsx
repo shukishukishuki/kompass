@@ -32,8 +32,14 @@ export async function GET(req: NextRequest) {
     OG_BACKGROUND_GRADIENT.empath;
 
   const text = data[lang];
-  const textColor = "#1f2937";
-  const subColor = "rgba(31,41,55,0.68)";
+  const darkTextTypes = new Set(["empath", "executor", "scout"]);
+  const isDarkText = darkTextTypes.has(
+    typeKey as "empath" | "executor" | "analyst" | "generalist" | "scout" | "nomad"
+  );
+  const textColor = isDarkText ? "#1a1a2e" : "#ffffff";
+  const subColor = isDarkText
+    ? "rgba(26,26,46,0.68)"
+    : "rgba(255,255,255,0.78)";
 
   const charImgSrc = `https://kompass-rosy.vercel.app${data.charImg}`;
   let fontBoldArrayBuffer: ArrayBuffer | null = null;
@@ -68,7 +74,7 @@ export async function GET(req: NextRequest) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "32px 48px",
+            padding: "22px 40px 8px",
           }}
         >
           <span
@@ -82,17 +88,6 @@ export async function GET(req: NextRequest) {
           >
             Kompass
           </span>
-          <span
-            style={{
-              color: subColor,
-              fontSize: 18,
-              display: "flex",
-              letterSpacing: "0.2em",
-              fontWeight: 500,
-            }}
-          >
-            AI TYPE DIAGNOSIS
-          </span>
           <span style={{ color: subColor, fontSize: 18, display: "flex", fontWeight: 600 }}>
             全体の {data.percent}%
           </span>
@@ -103,14 +98,14 @@ export async function GET(req: NextRequest) {
             display: "flex",
             flex: 1,
             alignItems: "center",
-            padding: "0 48px 48px",
-            gap: "40px",
+            padding: "0 40px 30px",
+            gap: "24px",
           }}
         >
           <div
             style={{
-              width: "220px",
-              height: "220px",
+              width: "286px",
+              height: "286px",
               borderRadius: "50%",
               backgroundColor: `${data.accent}33`,
               border: `4px solid ${data.accent}`,
@@ -124,8 +119,8 @@ export async function GET(req: NextRequest) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={charImgSrc}
-              width={200}
-              height={200}
+              width={255}
+              height={255}
               style={{ objectFit: "contain" }}
               alt=""
             />
@@ -147,6 +142,7 @@ export async function GET(req: NextRequest) {
                 fontWeight: 900,
                 display: "flex",
                 lineHeight: 1.1,
+                letterSpacing: "-1px",
               }}
             >
               {text.label}
