@@ -261,14 +261,14 @@ export async function GET(req: NextRequest) {
             <div
               style={{
                 marginTop: 16,
+                display: "flex",
+                justifyContent: "flex-end",
                 width: "100%",
-                textAlign: "right",
-                color: subColor,
-                fontSize: 11,
-                fontWeight: 700,
               }}
             >
-              usekompass.com
+              <span style={{ fontSize: 11, color: subColor, fontWeight: 700 }}>
+                usekompass.com
+              </span>
             </div>
           </div>
         </div>
