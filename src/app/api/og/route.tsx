@@ -75,102 +75,133 @@ export async function GET(req: NextRequest) {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "center",
-            padding: "22px 40px 8px",
+            alignItems: "flex-start",
+            height: 60,
+            padding: "8px 20px 0",
           }}
         >
-          <span
+          <div style={{ display: "flex", flexDirection: "column", color: textColor }}>
+            <span
+              style={{
+                fontSize: 22,
+                fontWeight: 900,
+                letterSpacing: "2.5px",
+                lineHeight: 1.1,
+              }}
+            >
+              KOMPASS
+            </span>
+            <span
+              style={{
+                marginTop: 3,
+                fontSize: 10,
+                fontWeight: 700,
+                color: subColor,
+              }}
+            >
+              AIタイプ診断サービス
+            </span>
+          </div>
+          <div
             style={{
-              color: data.accent,
-              fontSize: 22,
-              fontWeight: 700,
               display: "flex",
-              letterSpacing: "0.15em",
+              flexDirection: "column",
+              alignItems: "flex-end",
+              color: textColor,
             }}
           >
-            Kompass
-          </span>
-          <span style={{ color: subColor, fontSize: 18, display: "flex", fontWeight: 600 }}>
-            全体の {data.percent}%
-          </span>
+            <span style={{ fontSize: 10, fontWeight: 700, lineHeight: 1.1 }}>
+              全体の
+            </span>
+            <span
+              style={{
+                marginTop: 2,
+                fontSize: 24,
+                fontWeight: 900,
+                lineHeight: 1.05,
+              }}
+            >
+              {data.percent}%
+            </span>
+          </div>
         </div>
 
         <div
           style={{
             display: "flex",
             flex: 1,
-            alignItems: "center",
-            padding: "0 40px 30px",
-            gap: "24px",
+            width: "100%",
+            paddingTop: 0,
           }}
         >
           <div
             style={{
-              width: "286px",
-              height: "286px",
-              borderRadius: "50%",
-              backgroundColor: `${data.accent}33`,
-              border: `4px solid ${data.accent}`,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              overflow: "hidden",
-              flexShrink: 0,
+              gap: 8,
+              width: "66.6667%",
+              padding: "10px 0 12px",
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={charImgSrc}
-              width={255}
-              height={255}
-              style={{ objectFit: "contain" }}
-              alt=""
-            />
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              flex: 1,
-              gap: "12px",
-              minWidth: 0,
-            }}
-          >
-            <div
+            <span
               style={{
                 color: textColor,
-                fontSize: 56,
+                fontSize: 28,
                 fontWeight: 900,
-                display: "flex",
                 lineHeight: 1.1,
                 letterSpacing: "-1px",
+                textAlign: "center",
               }}
             >
-              {text.label}
-            </div>
-            <div
+              {data.ja.label}
+            </span>
+            <span
               style={{
                 color: subColor,
-                fontSize: 26,
-                display: "flex",
-                letterSpacing: "0.1em",
-                fontWeight: 600,
+                fontSize: 9,
+                letterSpacing: "2.5px",
+                fontWeight: 500,
+                textTransform: "uppercase",
               }}
             >
-              {lang === "en" ? data.ja.label : data.ai}
-            </div>
-            <div
+              {data.en.label.toUpperCase()}
+            </span>
+            <span
               style={{
                 color: textColor,
-                fontSize: 24,
-                display: "flex",
-                marginTop: "8px",
+                fontSize: 10,
                 opacity: 0.85,
-                fontWeight: 500,
+                fontWeight: 700,
+                textAlign: "center",
               }}
             >
+              {"「"}
               {text.catch}
+              {"」"}
+            </span>
+            <div
+              style={{
+                width: 148,
+                height: 148,
+                borderRadius: "50%",
+                backgroundColor: `${data.accent}33`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+                marginTop: 2,
+              }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={charImgSrc}
+                width={148}
+                height={148}
+                style={{ objectFit: "contain" }}
+                alt=""
+              />
             </div>
           </div>
 
@@ -178,61 +209,68 @@ export async function GET(req: NextRequest) {
             style={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-end",
+              alignItems: "center",
               justifyContent: "center",
-              gap: "10px",
-              flexShrink: 0,
-              width: "320px",
+              width: "33.3333%",
+              borderLeft: `0.5px solid ${data.accent}55`,
+              padding: "0 14px",
             }}
           >
             <div
               style={{
+                fontSize: 10,
+                fontWeight: 700,
+                color: textColor,
+                marginBottom: 14,
+                textAlign: "center",
+              }}
+            >
+              あなたに合ったAIが見つかりました
+            </div>
+            <div
+              style={{
                 color: subColor,
-                fontSize: 15,
-                display: "flex",
+                fontSize: 10,
                 letterSpacing: "0.2em",
-                fontWeight: 600,
+                fontWeight: 700,
               }}
             >
               RECOMMENDED AI
             </div>
             <div
               style={{
-                width: "72px",
-                height: "6px",
+                width: "44px",
+                height: "3px",
                 backgroundColor: data.accent,
-                borderRadius: "3px",
-                display: "flex",
+                borderRadius: "2px",
+                marginTop: 8,
               }}
             />
-            <div
+            <span
               style={{
                 color: data.accent,
-                fontSize: 92,
+                fontSize: 26,
                 fontWeight: 900,
-                display: "flex",
-                lineHeight: 1.05,
-                textAlign: "right",
-                letterSpacing: "-0.02em",
+                lineHeight: 1.1,
+                marginTop: 10,
+                textAlign: "center",
               }}
             >
               {data.ai}
+            </span>
+            <div
+              style={{
+                marginTop: 16,
+                width: "100%",
+                textAlign: "right",
+                color: subColor,
+                fontSize: 9,
+                fontWeight: 700,
+              }}
+            >
+              usekompass.com
             </div>
           </div>
-        </div>
-
-        <div
-          style={{
-            position: "absolute",
-            bottom: 28,
-            right: 48,
-            color: subColor,
-            fontSize: 18,
-            display: "flex",
-            fontWeight: 600,
-          }}
-        >
-          usekompass.com
         </div>
       </div>
     ),
