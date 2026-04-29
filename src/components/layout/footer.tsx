@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 export function Footer() {
   const pathname = usePathname();
   const isEn = pathname.startsWith("/en");
-  const locale = isEn ? "en" : "ja";
 
   return (
     <footer className="w-full border-t border-gray-100 py-6 mt-10">
@@ -14,13 +13,13 @@ export function Footer() {
         <p>Kompass © 2026</p>
         <div className="flex gap-4">
           <Link
-            href={`/${locale}/terms`}
+            href="/terms"
             className="hover:text-gray-600 transition-colors"
           >
             {isEn ? "Terms" : "利用規約"}
           </Link>
           <Link
-            href={`/${locale}/privacy`}
+            href="/privacy"
             className="hover:text-gray-600 transition-colors"
           >
             {isEn ? "Privacy" : "プライバシーポリシー"}
